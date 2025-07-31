@@ -13,7 +13,7 @@ export class UsersService {
   ) {}
 
   // Crear usuario con contraseña encriptada
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltOrRounds);
 
@@ -28,7 +28,10 @@ export class UsersService {
 
   // Buscar por email
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } });
+  return this.userRepository.findOne({
+    where: { email },
+    select: ['id', 'username', 'email', 'password', 'role', 'refreshToken'],
+   });
   }
 
   // Buscar por username
@@ -51,8 +54,5 @@ export class UsersService {
     await this.userRepository.update(userId, { refreshToken: null });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = this.userRepository.create(createUserDto);
-    return this.userRepository.save(newUser);
-  }
 }
+

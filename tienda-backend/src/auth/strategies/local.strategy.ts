@@ -6,7 +6,8 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'email' }); // 👈 Aquí indicamos que se usará 'email'
+    // Usamos 'email' como campo de usuario en lugar de 'username'
+    super({ usernameField: 'email' });
   }
 
   async validate(email: string, password: string): Promise<any> {
@@ -14,6 +15,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
+
+    // Devuelve el usuario sin contraseña ni token
     return user;
   }
 }
