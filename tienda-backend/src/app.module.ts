@@ -4,6 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { UsersModule } from './users/users.module';
+import { ProductosModule } from './productos/productos.module';
+import { CarritoModule } from './carrito/carrito.module';
+import { OrderModule } from './ordenes/order.module'; // 👈 Asegúrate de que el path sea correcto
+
 
 @Module({
   imports: [
@@ -31,6 +35,9 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     AdminModule,
+    ProductosModule,
+    CarritoModule,
+    OrderModule,
   ],
 })
 export class AppModule {}
