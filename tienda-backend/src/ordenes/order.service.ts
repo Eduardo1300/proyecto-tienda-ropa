@@ -4,51 +4,51 @@ import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { User } from 'src/users/entities/user.entity';
-import { CarritoItem } from 'src/carrito/entities/carrito-item.entity';
+import { User } from '../users/entities/user.entity';
+import { CartItem } from '../carrito/entities/cart-item.entity';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(Order) private orderRepo: Repository<Order>,
     @InjectRepository(OrderItem) private orderItemRepo: Repository<OrderItem>,
-    @InjectRepository(CarritoItem) private carritoRepo: Repository<CarritoItem>,
+    @InjectRepository(CartItem) private cartRepo: Repository<CartItem>,
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
-  async crearOrden(dto: CreateOrderDto): Promise<Order> {
-    const usuario = await this.userRepo.findOne({ where: { id: dto.usuarioId } });
-    const carrito = await this.carritoRepo.find({
-      where: { usuario: { id: dto.usuarioId } },
-      relations: ['producto'],
+  async createOrder(dto: CreateOrderDto): Promise<Order> {
+    const user = await this.userRepo.findOne({ where: { id: dto.userId } });
+    const cart = await this.cartRepo.find({
+      where: { user: { id: dto.userId } },
+      relations: ['product'],
     });
 
-    if (!usuario || carrito.length === 0) {
-      throw new Error('Usuario no válido o carrito vacío');
+    if (!user || cart.length === 0) {
+      throw new Error('Invalid user or empty cart');
     }
 
-    const items: OrderItem[] = carrito.map(item => {
+    const items: OrderItem[] = cart.map(item => {
       const orderItem = this.orderItemRepo.create({
-        producto: item.producto,
-        cantidad: item.cantidad,
-        precio: Number(item.producto.precio),
+        product: item.product,
+        quantity: item.quantity,
+        price: Number(item.product.price),
       });
       return orderItem;
     });
 
-    const total = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    const orden = this.orderRepo.create({
-      usuario,
+    const order = this.orderRepo.create({
+      user,
       items,
       total,
     });
 
     // Guardar la orden
-    const savedOrder = await this.orderRepo.save(orden);
+    const savedOrder = await this.orderRepo.save(order);
 
     // Vaciar carrito (opcional)
-    await this.carritoRepo.remove(carrito);
+    await this.cartRepo.remove(cart);
 
     return savedOrder;
   }

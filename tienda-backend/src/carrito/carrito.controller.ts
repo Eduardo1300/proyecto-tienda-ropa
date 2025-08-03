@@ -1,23 +1,23 @@
 import { Controller, Post, Body, Get, Param, ParseIntPipe, Delete } from '@nestjs/common';
-import { CarritoService } from './carrito.service';
-import { CreateCarritoItemDto } from './dto/create-carrito-item.dto';
+import { CartService } from './carrito.service';
+import { CreateCartItemDto } from './dto/create-cart-item.dto';
 
-@Controller('carrito')
-export class CarritoController {
-  constructor(private readonly carritoService: CarritoService) {}
+@Controller('cart')
+export class CartController {
+  constructor(private readonly cartService: CartService) {}
 
   @Post()
-  async agregar(@Body() dto: CreateCarritoItemDto) {
-    return this.carritoService.agregarAlCarrito(dto);
+  async add(@Body() dto: CreateCartItemDto) {
+    return this.cartService.addToCart(dto);
   }
 
-  @Get(':usuarioId')
-  async obtener(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
-    return this.carritoService.obtenerCarrito(usuarioId);
+  @Get(':userId')
+  async get(@Param('userId', ParseIntPipe) userId: number) {
+    return this.cartService.getCart(userId);
   }
 
   @Delete(':id')
-async eliminar(@Param('id') id: string) {
-  return this.carritoService.eliminarDelCarrito(Number(id));
-}
+  async remove(@Param('id') id: string) {
+    return this.cartService.removeFromCart(Number(id));
+  }
 }

@@ -1,3 +1,3 @@
 export class CreateOrderDto {
-  usuarioId: number;
+  userId: number;
 }

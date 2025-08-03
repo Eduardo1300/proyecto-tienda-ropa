@@ -1,58 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CarritoItem } from './entities/carrito-item.entity';
-import { CreateCarritoItemDto } from './dto/create-carrito-item.dto';
-import { Producto } from 'src/productos/entities/producto.entity';
-import { User } from 'src/users/entities/user.entity';
+import { CartItem } from './entities/cart-item.entity';
+import { CreateCartItemDto } from './dto/create-cart-item.dto';
+import { Product } from '../products/entities/product.entity';
+import { User } from '../users/entities/user.entity';
 import { NotFoundException } from '@nestjs/common'; 
 
 @Injectable()
-export class CarritoService {
+export class CartService {
   constructor(
-    @InjectRepository(CarritoItem)
-    private carritoRepository: Repository<CarritoItem>,
+    @InjectRepository(CartItem)
+    private cartRepository: Repository<CartItem>,
     
-    @InjectRepository(Producto)
-    private productoRepository: Repository<Producto>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
 
     @InjectRepository(User)
-    private usuarioRepository: Repository<User>,
+    private userRepository: Repository<User>,
   ) {}
 
-  async agregarAlCarrito(dto: CreateCarritoItemDto): Promise<CarritoItem> {
-    const usuario = await this.usuarioRepository.findOneBy({ id: dto.usuarioId });
-    const producto = await this.productoRepository.findOneBy({ id: dto.productoId });
+  async addToCart(dto: CreateCartItemDto): Promise<CartItem> {
+    const user = await this.userRepository.findOneBy({ id: dto.userId });
+    const product = await this.productRepository.findOneBy({ id: dto.productId });
 
-    if (!usuario) {
-    throw new NotFoundException('Usuario no encontrado');
+    if (!user) {
+    throw new NotFoundException('User not found');
     }
 
-    if (!producto) {
-    throw new NotFoundException('Producto no encontrado');
+    if (!product) {
+    throw new NotFoundException('Product not found');
     }
 
-    const item = this.carritoRepository.create({
-      usuario,
-      producto,
-      cantidad: dto.cantidad,
+    const item = this.cartRepository.create({
+      user,
+      product,
+      quantity: dto.quantity,
     });
 
-    return this.carritoRepository.save(item);
+    return this.cartRepository.save(item);
   }
 
-  async obtenerCarrito(usuarioId: number): Promise<CarritoItem[]> {
-    return this.carritoRepository.find({
-      where: { usuario: { id: usuarioId } },
-      relations: ['producto'],
+  async getCart(userId: number): Promise<CartItem[]> {
+    return this.cartRepository.find({
+      where: { user: { id: userId } },
+      relations: ['product'],
     });
   }
 
-  async eliminarDelCarrito(id: number): Promise<void> {
-  const item = await this.carritoRepository.findOne({ where: { id } });
+  async removeFromCart(id: number): Promise<void> {
+  const item = await this.cartRepository.findOne({ where: { id } });
   if (!item) {
-    throw new NotFoundException('Producto en carrito no encontrado');
+    throw new NotFoundException('Cart item not found');
   }
-  await this.carritoRepository.remove(item);
+  await this.cartRepository.remove(item);
   }
 }

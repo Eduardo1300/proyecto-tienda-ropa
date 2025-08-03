@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { CarritoItem } from 'src/carrito/entities/carrito-item.entity';
-import { Order } from 'src/ordenes/entities/order.entity'; // ⬅️ NUEVO
+import { CartItem } from '../../carrito/entities/cart-item.entity';
+import { Order } from '../../ordenes/entities/order.entity';
 
 @Entity()
 export class User {
@@ -22,9 +22,9 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   refreshToken: string | null;
 
-  @OneToMany(() => CarritoItem, (item) => item.usuario)
-  carrito: CarritoItem[];
+  @OneToMany(() => CartItem, (item) => item.user)
+  cart: CartItem[];
 
-  @OneToMany(() => Order, (order) => order.usuario) // ⬅️ NUEVO
-  orders: Order[]; // ⬅️ NUEVO
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

@@ -1,54 +1,54 @@
 import { useEffect, useState } from 'react';
-import { useCarrito } from '../context/CarritoContext';
-import type { Producto } from '../types/Producto';
+import { useCart } from '../context/CartContext';
+import type { Product } from '../types/Product';
 
 
 const ProductList = () => {
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const { agregarAlCarrito } = useCarrito();
+  const [products, setProducts] = useState<Product[]>([]);
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    fetch('http://localhost:3000/productos')
+    fetch('http://localhost:3002/products')
       .then(res => res.json())
-      .then(data => setProductos(data))
-      .catch(error => console.error('Error cargando productos:', error));
+      .then(data => setProducts(data))
+      .catch(error => console.error('Error loading products:', error));
   }, []);
 
   return (
     <div className="p-10 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-10">
-        Productos Destacados 🛍️
+        Featured Products 🛍️
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {productos.map(producto => (
+        {products.map(product => (
           <div
-            key={producto.id}
+            key={product.id}
             className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105"
           >
             <img
-              src={producto.imagen}
-              alt={producto.nombre}
+              src={product.image}
+              alt={product.name}
               className="w-full h-48 object-cover"
             />
             <div className="p-5 text-center">
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">{producto.nombre}</h2>
-              <p className="text-gray-600 text-sm mb-2">{producto.descripcion}</p>
-              <p className="text-green-600 font-bold text-lg mb-4">S/ {producto.precio.toFixed(2)}</p>
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">{product.name}</h2>
+              <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+              <p className="text-green-600 font-bold text-lg mb-4">S/ {product.price.toFixed(2)}</p>
 
               <button
                 onClick={() =>{
-                    console.log('🛒 Clic en Añadir al carrito:', producto);
+                    console.log('🛒 Click on Add to cart:', product);
                 
-                    agregarAlCarrito({
-                        ...producto,
-                        cantidad: 1
-                    } as Producto & { cantidad: number })
+                    addToCart({
+                        ...product,
+                        quantity: 1
+                    } as Product & { quantity: number })
                     }}
 
                 className="bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-full transition"
               >
-                Añadir al carrito 🛒
+                Add to cart 🛒
               </button>
             </div>
           </div>

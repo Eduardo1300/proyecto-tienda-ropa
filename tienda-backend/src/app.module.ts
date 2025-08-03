@@ -4,10 +4,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { UsersModule } from './users/users.module';
-import { ProductosModule } from './productos/productos.module';
-import { CarritoModule } from './carrito/carrito.module';
-import { OrderModule } from './ordenes/order.module'; // 👈 Asegúrate de que el path sea correcto
+import { ProductsModule } from './products/products.module';
+import { CartModule } from './carrito/carrito.module';
+import { OrderModule } from './ordenes/order.module';
 
+// Import entities explicitly
+import { User } from './users/entities/user.entity';
+import { Product } from './products/entities/product.entity';
+import { CartItem } from './carrito/entities/cart-item.entity';
+import { Order } from './ordenes/entities/order.entity';
+import { OrderItem } from './ordenes/entities/order-item.entity';
 
 @Module({
   imports: [
@@ -26,8 +32,10 @@ import { OrderModule } from './ordenes/order.module'; // 👈 Asegúrate de que 
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
+        entities: [User, Product, CartItem, Order, OrderItem],
         synchronize: true, // Solo para desarrollo
+        // dropSchema: true, // ⚠️ Solo para desarrollo - comentado para preservar datos
+        logging: true, // Para ver las consultas SQL
       }),
       inject: [ConfigService],
     }),
@@ -35,8 +43,8 @@ import { OrderModule } from './ordenes/order.module'; // 👈 Asegúrate de que 
     AuthModule,
     UsersModule,
     AdminModule,
-    ProductosModule,
-    CarritoModule,
+    ProductsModule,
+    CartModule,
     OrderModule,
   ],
 })
