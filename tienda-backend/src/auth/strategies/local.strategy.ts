@@ -3,20 +3,30 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
+interface ValidatedUser {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+}
+
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    // Usamos 'email' como campo de usuario en lugar de 'username'
     super({ usernameField: 'email' });
   }
 
-  async validate(email: string, password: string): Promise<any> {
+  async validate(email: string, password: string): Promise<ValidatedUser> {
+    console.log('🔐 LocalStrategy.validate called with email:', email);
+    
     const user = await this.authService.validateUser(email, password);
+    
     if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      console.log('🚫 LocalStrategy: Authentication failed for email:', email);
+      throw new UnauthorizedException('Invalid credentials');
     }
-
-    // Devuelve el usuario sin contraseña ni token
+    
+    console.log('✅ LocalStrategy: Authentication successful for email:', user.email);
     return user;
   }
 }

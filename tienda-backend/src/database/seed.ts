@@ -1,70 +1,80 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
+import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import * as bcrypt from 'bcrypt';
 
-async function seedDatabase() {
+async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
+  const usersService = app.get(UsersService);
   const productsService = app.get(ProductsService);
 
-  const sampleProducts = [
-    {
-      name: 'Classic White T-Shirt',
-      description: 'Comfortable 100% cotton white t-shirt, perfect for everyday wear',
-      price: 29.99,
-      image: 'https://via.placeholder.com/300x300/ffffff/000000?text=White+T-Shirt',
-      stock: 100,
-    },
-    {
-      name: 'Blue Denim Jeans',
-      description: 'High-quality denim jeans with a modern slim fit',
-      price: 79.99,
-      image: 'https://via.placeholder.com/300x300/4169e1/ffffff?text=Blue+Jeans',
-      stock: 50,
-    },
-    {
-      name: 'Red Summer Dress',
-      description: 'Elegant red dress perfect for summer occasions',
-      price: 89.99,
-      image: 'https://via.placeholder.com/300x300/dc143c/ffffff?text=Red+Dress',
-      stock: 30,
-    },
-    {
-      name: 'Black Leather Jacket',
-      description: 'Premium leather jacket for a stylish and edgy look',
-      price: 199.99,
-      image: 'https://via.placeholder.com/300x300/000000/ffffff?text=Leather+Jacket',
-      stock: 25,
-    },
-    {
-      name: 'Comfortable Sneakers',
-      description: 'Ultra-comfortable sneakers for daily activities',
-      price: 119.99,
-      image: 'https://via.placeholder.com/300x300/808080/ffffff?text=Sneakers',
-      stock: 75,
-    },
-    {
-      name: 'Elegant Evening Gown',
-      description: 'Sophisticated evening gown for special occasions',
-      price: 259.99,
-      image: 'https://via.placeholder.com/300x300/800080/ffffff?text=Evening+Gown',
-      stock: 15,
-    }
-  ];
-
-  console.log('🌱 Starting database seed...');
-
   try {
-    for (const productData of sampleProducts) {
-      const product = await productsService.create(productData);
-      console.log(`✅ Created product: ${product.name}`);
+    console.log('🌱 Starting database seed...');
+
+    // Crear usuarios de prueba
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    const adminUser = await usersService.create({
+      username: 'admin',
+      email: 'admin@example.com',
+      password: hashedPassword,
+      firstName: 'Admin',
+      lastName: 'User',
+    });
+
+    // Set admin role manually after creation
+    await usersService.update(adminUser.id, { role: 'admin' });
+
+    const customerUser = await usersService.create({
+      username: 'customer',
+      email: 'customer@example.com',
+      password: hashedPassword,
+      firstName: 'Customer',
+      lastName: 'User',
+    });
+
+    console.log('✅ Users created:', { adminUser, customerUser });
+
+    // Crear productos de prueba
+    const products = [
+      {
+        name: 'Camiseta Básica',
+        description: 'Camiseta de algodón 100%',
+        price: 25.99,
+        stock: 100,
+        category: 'ropa',
+        imageUrl: 'https://via.placeholder.com/300x400',
+      },
+      {
+        name: 'Jeans Clásicos',
+        description: 'Jeans de alta calidad',
+        price: 59.99,
+        stock: 50,
+        category: 'ropa',
+        imageUrl: 'https://via.placeholder.com/300x400',
+      },
+      {
+        name: 'Zapatillas Deportivas',
+        description: 'Zapatillas cómodas para deporte',
+        price: 89.99,
+        stock: 30,
+        category: 'calzado',
+        imageUrl: 'https://via.placeholder.com/300x400',
+      },
+    ];
+
+    for (const productData of products) {
+      await productsService.create(productData);
     }
-    
-    console.log('🎉 Database seeded successfully!');
+
+    console.log('✅ Products created successfully');
+    console.log('🎉 Database seed completed!');
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
+    console.error('❌ Error during seeding:', error);
   } finally {
     await app.close();
   }
 }
 
-seedDatabase();
+void seed();

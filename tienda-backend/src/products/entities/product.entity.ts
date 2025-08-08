@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('products')
 export class Product {
@@ -16,6 +22,12 @@ export class Product {
 
   @Column({ nullable: true, length: 500 })
   image: string;
+
+  @Column({ nullable: true, length: 500 })
+  imageUrl: string;
+
+  @Column({ length: 100, default: 'general' })
+  category: string;
 
   @Column({ default: true })
   isActive: boolean;

@@ -1,8 +1,29 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UserPayload } from '../common/types/user.types';
+
+interface ValidatedUser {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface JwtVerifyResult {
+  sub: number;
+  username: string;
+  iat?: number;
+  exp?: number;
+}
 
 @Injectable()
 export class AuthService {
@@ -12,42 +33,89 @@ export class AuthService {
   ) {}
 
   // Validar email y contraseña
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user;
-      return result;
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<ValidatedUser | null> {
+    console.log('🔍 AuthService.validateUser called with email:', email);
+    
+    try {
+      // Buscar usuario por email (ya normalizado en UsersService)
+      const user = await this.usersService.findByEmail(email);
+      
+      if (!user) {
+        console.log('❌ User not found for email:', email);
+        return null;
+      }
+      
+      console.log('👤 User found, validating password...');
+      
+      // Verificar que el usuario tenga contraseña
+      if (!user.password) {
+        console.log('❌ User found but no password hash stored');
+        return null;
+      }
+      
+      // Comparar contraseña plana con hash
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      console.log('🔒 Password validation result:', isValidPassword);
+      
+      if (isValidPassword) {
+        // Remover password del objeto de retorno por seguridad
+        const { password: _password, refreshToken, passwordResetToken, ...validatedUser } = user;
+        console.log('✅ User validated successfully:', validatedUser.email);
+        return validatedUser;
+      } else {
+        console.log('❌ Invalid password for user:', email);
+        return null;
+      }
+    } catch (error) {
+      console.error('💥 Error in validateUser:', error);
+      return null;
     }
-    return null;
   }
 
   // Registro de nuevo usuario
   async register(createUserDto: CreateUserDto) {
-    const existingUser = await this.usersService.findByEmail(createUserDto.email);
-    if (existingUser) {
-      throw new ConflictException('Email is already in use');
+    console.log('📝 AuthService.register called for email:', createUserDto.email);
+    
+    try {
+      // Verificar si el usuario ya existe (la búsqueda ya normaliza el email)
+      const existingUser = await this.usersService.findByEmail(createUserDto.email);
+      
+      if (existingUser) {
+        console.log('❌ Email already exists:', createUserDto.email);
+        throw new ConflictException('Email is already in use');
+      }
+
+      // Crear el usuario (el UsersService ya maneja la normalización y el hash de la contraseña)
+      const newUser = await this.usersService.create(createUserDto);
+
+      console.log('✅ User registered successfully:', newUser.email);
+      return {
+        message: 'User registered successfully',
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          role: newUser.role,
+        },
+      };
+    } catch (error) {
+      console.error('💥 Error in register:', error);
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw new ConflictException('Registration failed');
     }
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = await this.usersService.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-
-    return {
-      message: 'User registered successfully',
-      user: {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
-      },
-    };
   }
 
   // Login: genera y guarda el refreshToken
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.id };
+  async login(user: ValidatedUser) {
+    const payload: UserPayload = {
+      username: user.username,
+      sub: user.id,
+    };
 
     const access_token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
@@ -89,7 +157,7 @@ export class AuthService {
       );
 
       return { access_token: newAccessToken };
-    } catch (err) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
@@ -98,5 +166,61 @@ export class AuthService {
   async logout(userId: number) {
     await this.usersService.updateRefreshToken(userId, null);
   }
-}
 
+  // Solicitar recuperación de contraseña
+  async requestPasswordReset(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      // Por seguridad, no revelamos si el email existe o no
+      return { message: 'If the email exists, a reset link has been sent' };
+    }
+
+    // Generar token de reset
+    const resetToken = this.jwtService.sign(
+      { sub: user.id, purpose: 'password-reset' },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '1h', // Token válido por 1 hora
+      },
+    );
+
+    // En una aplicación real, aquí enviarías un email con el token
+    // Para el demo, simplemente guardamos el token en la base de datos
+    await this.usersService.updatePasswordResetToken(user.id, resetToken);
+
+    return { 
+      message: 'If the email exists, a reset link has been sent',
+      // En desarrollo, devolvemos el token para poder probarlo
+      ...(process.env.NODE_ENV === 'development' && { resetToken }),
+    };
+  }
+
+  // Resetear contraseña con token
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+
+      if (payload.purpose !== 'password-reset') {
+        throw new UnauthorizedException('Invalid reset token');
+      }
+
+      const user = await this.usersService.findById(payload.sub);
+      if (!user || user.passwordResetToken !== token) {
+        throw new UnauthorizedException('Invalid or expired reset token');
+      }
+
+      // Hashear nueva contraseña
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Actualizar contraseña y limpiar token de reset
+      await this.usersService.updatePassword(user.id, hashedPassword);
+      await this.usersService.updatePasswordResetToken(user.id, null);
+
+      return { message: 'Password has been reset successfully' };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired reset token');
+    }
+  }
+}

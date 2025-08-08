@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import type { Product } from '../types';
 
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  stock: number;
+interface ExtendedProduct extends Product {
   features: string[];
-};
+}
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ExtendedProduct | null>(null);
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
@@ -24,13 +18,13 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   // Mock product data
-  const mockProducts: { [key: string]: Product } = {
+  const mockProducts: { [key: string]: ExtendedProduct } = {
     '1': {
       id: 1,
       name: "Vestido Elegante Negro",
       description: "Vestido negro elegante perfecto para ocasiones especiales y eventos formales. Confeccionado en tela de alta calidad con un corte que realza la figura.",
       price: 89.99,
-      image: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=600&h=800&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=600&h=800&fit=crop",
       category: "dresses",
       stock: 15,
       features: [
@@ -46,7 +40,7 @@ const ProductDetail = () => {
       name: "Camisa Casual Blanca",
       description: "Camisa de algodón premium, cómoda y fresca para el día a día. Perfecta para looks casuales o semi-formales.",
       price: 45.50,
-      image: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=800&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=800&fit=crop",
       category: "shirts",
       stock: 25,
       features: [
@@ -62,7 +56,7 @@ const ProductDetail = () => {
       name: "Jeans Premium Azul",
       description: "Jeans de mezclilla premium con corte moderno y cómodo. Diseñados para durar y mantener su forma.",
       price: 79.99,
-      image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=800&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=800&fit=crop",
       category: "pants",
       stock: 18,
       features: [
@@ -78,7 +72,7 @@ const ProductDetail = () => {
       name: "Chaqueta de Cuero Genuino",
       description: "Chaqueta de cuero genuino estilo motociclista. Un clásico atemporal que nunca pasa de moda.",
       price: 199.99,
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=800&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=800&fit=crop",
       category: "jackets",
       stock: 8,
       features: [
@@ -92,7 +86,7 @@ const ProductDetail = () => {
   };
 
   const productImages = [
-    product?.image,
+    product?.imageUrl,
     "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop",
     "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=800&fit=crop"
   ];
@@ -151,7 +145,7 @@ const ProductDetail = () => {
           <div className="space-y-4 animate-fade-in-up">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <img
-                src={productImages[activeImage] || product.image}
+                src={productImages[activeImage] || product.imageUrl}
                 alt={product.name}
                 className="w-full h-96 lg:h-[600px] object-cover"
               />
@@ -175,7 +169,7 @@ const ProductDetail = () => {
                   }`}
                 >
                   <img
-                    src={img || product.image}
+                    src={img || product.imageUrl}
                     alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -192,7 +186,7 @@ const ProductDetail = () => {
               </h1>
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-3xl font-bold text-purple-600">
-                  ${product.price}
+                  S/ {product.price.toFixed(2)}
                 </span>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                   ✅ En stock ({product.stock} disponibles)
@@ -260,7 +254,7 @@ const ProductDetail = () => {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    🛒 Agregar al carrito (${(product.price * quantity).toFixed(2)})
+                    🛒 Agregar al carrito (S/ {(product.price * quantity).toFixed(2)})
                   </span>
                 )}
               </button>
@@ -276,7 +270,7 @@ const ProductDetail = () => {
                 ✨ Características
               </h3>
               <ul className="space-y-2">
-                {product.features.map((feature, index) => (
+                {product.features.map((feature: string, index: number) => (
                   <li key={index} className="flex items-center gap-2 text-gray-600">
                     <span className="text-green-500">✓</span>
                     {feature}
@@ -291,7 +285,7 @@ const ProductDetail = () => {
                 🚚 Información de envío
               </h3>
               <div className="space-y-2 text-gray-600">
-                <p>🎁 Envío gratis en compras mayores a $50</p>
+                <p>🎁 Envío gratis en compras mayores a S/ 150</p>
                 <p>📦 Entrega en 2-3 días hábiles</p>
                 <p>🔄 Devoluciones gratis hasta 30 días</p>
                 <p>🛡️ Compra protegida 100%</p>

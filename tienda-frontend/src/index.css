@@ -12,6 +12,10 @@
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
   
+  .bg-gradient-success {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  }
+  
   .card-hover {
     transition: all 0.3s ease;
   }

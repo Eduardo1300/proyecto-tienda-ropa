@@ -10,8 +10,14 @@ export class User {
   @Column()
   username: string;
 
-  @Column({ name: 'email' })
+  @Column({ name: 'email', unique: true })
   email: string;
+
+  @Column({ nullable: true })
+  firstName: string;
+
+  @Column({ nullable: true })
+  lastName: string;
 
   @Column()
   password: string;
@@ -21,6 +27,9 @@ export class User {
 
   @Column({ nullable: true, type: 'varchar' })
   refreshToken: string | null;
+
+  @Column({ nullable: true, type: 'varchar' })
+  passwordResetToken: string | null;
 
   @OneToMany(() => CartItem, (item) => item.user)
   cart: CartItem[];

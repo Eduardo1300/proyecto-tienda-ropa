@@ -3,16 +3,25 @@ import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../users/users.service';
 
+interface JwtVerifyResult {
+  sub: number;
+  username: string;
+  iat?: number;
+  exp?: number;
+}
+
 @Controller('auth')
 export class RefreshController {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private jwtService: JwtService,
+    private usersService: UsersService,
   ) {}
 
   @Post('refresh')
-  async refresh(@Body() body: { refreshToken: string }) {
-    const { refreshToken } = body;
+  async refresh(@Body('refreshToken') refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token missing');
+    }
 
     try {
       const payload = this.jwtService.verify(refreshToken, {
@@ -20,19 +29,21 @@ export class RefreshController {
       });
 
       const user = await this.usersService.findById(payload.sub);
-
       if (!user || user.refreshToken !== refreshToken) {
-        throw new UnauthorizedException('Token inválido');
+        throw new UnauthorizedException('Invalid refresh token');
       }
 
       const newAccessToken = this.jwtService.sign(
-        { username: user.username, sub: user.id },
-        { expiresIn: '15m' },
+        { sub: user.id, username: user.username },
+        {
+          secret: process.env.JWT_SECRET,
+          expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+        },
       );
 
       return { access_token: newAccessToken };
-    } catch (err) {
-      throw new UnauthorizedException('Token inválido o expirado');
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
 }

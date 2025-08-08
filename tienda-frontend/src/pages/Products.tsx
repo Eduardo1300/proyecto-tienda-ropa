@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-}
+import type { Product } from '../types';
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,7 +18,8 @@ export default function Products() {
       name: "Vestido Elegante Negro",
       description: "Vestido negro elegante perfecto para ocasiones especiales y eventos formales",
       price: 89.99,
-      image: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=400&h=500&fit=crop",
+      stock: 15,
+      imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=400&h=500&fit=crop",
       category: "dresses"
     },
     {
@@ -34,7 +27,8 @@ export default function Products() {
       name: "Camisa Casual Blanca",
       description: "Camisa de algodón cómoda y fresca para el día a día",
       price: 45.50,
-      image: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop",
+      stock: 25,
+      imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop",
       category: "shirts"
     },
     {
@@ -42,7 +36,8 @@ export default function Products() {
       name: "Jeans Premium Azul",
       description: "Jeans de alta calidad con corte moderno y cómodo",
       price: 79.99,
-      image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop",
+      stock: 20,
+      imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop",
       category: "pants"
     },
     {
@@ -50,7 +45,8 @@ export default function Products() {
       name: "Chaqueta de Cuero",
       description: "Chaqueta de cuero genuino estilo motociclista",
       price: 199.99,
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop",
+      stock: 8,
+      imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop",
       category: "jackets"
     },
     {
@@ -58,7 +54,8 @@ export default function Products() {
       name: "Blusa Floral",
       description: "Blusa con estampado floral para un look primaveral",
       price: 52.99,
-      image: "https://images.unsplash.com/photo-1564759224907-65b0e9b4a6f8?w=400&h=500&fit=crop",
+      stock: 18,
+      imageUrl: "https://images.unsplash.com/photo-1564759224907-65b0e9b4a6f8?w=400&h=500&fit=crop",
       category: "shirts"
     },
     {
@@ -66,7 +63,8 @@ export default function Products() {
       name: "Falda Midi Plisada",
       description: "Falda midi plisada elegante y versátil",
       price: 65.00,
-      image: "https://images.unsplash.com/photo-1583496661160-fb5886a13d72?w=400&h=500&fit=crop",
+      stock: 12,
+      imageUrl: "https://images.unsplash.com/photo-1583496661160-fb5886a13d72?w=400&h=500&fit=crop",
       category: "skirts"
     },
     {
@@ -74,7 +72,8 @@ export default function Products() {
       name: "Suéter de Lana",
       description: "Suéter tejido de lana merino súper suave",
       price: 95.00,
-      image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400&h=500&fit=crop",
+      stock: 10,
+      imageUrl: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400&h=500&fit=crop",
       category: "sweaters"
     },
     {
@@ -82,7 +81,8 @@ export default function Products() {
       name: "Vestido Veraniego",
       description: "Vestido ligero perfecto para días soleados",
       price: 68.50,
-      image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=500&fit=crop",
+      stock: 16,
+      imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=500&fit=crop",
       category: "dresses"
     }
   ];
@@ -213,7 +213,7 @@ export default function Products() {
             >
               <div className="relative overflow-hidden group">
                 <img
-                  src={product.image}
+                  src={product.imageUrl}
                   alt={product.name}
                   className="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-110"
                 />

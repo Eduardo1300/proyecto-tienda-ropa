@@ -4,9 +4,9 @@ import { useCart } from '../context/CartContext';
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const { cart } = useCart();
+  const { getTotalItems } = useCart();
 
-  const totalItems = cart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+  const totalItems = getTotalItems();
 
   return (
     <header className="bg-gradient-primary text-white shadow-2xl sticky top-0 z-50 backdrop-blur-lg">
@@ -42,7 +42,7 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link 
-              to="/cart" 
+              to="/carrito" 
               className="relative group"
             >
               <div className="flex items-center space-x-2 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105">

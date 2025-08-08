@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { Product, CartItem, Order, LoginCredentials, RegisterData, ApiResponse, User } from '../types';
 
 // URL base del backend
 const API_BASE_URL = 'http://localhost:3002';
@@ -12,10 +13,60 @@ const api = axios.create({
   },
 });
 
-// Interceptor para manejar errores
+// Interceptor para agregar token automáticamente
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores y refresh tokens
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ refreshToken }),
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('access_token', data.access_token);
+            
+            // Reintentar la request original con el nuevo token
+            originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+            return api(originalRequest);
+          }
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+        }
+      }
+      
+      // Si no se puede refresh, limpiar tokens y redirigir a login
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    
     console.error('API Error:', error);
     return Promise.reject(error);
   }
@@ -24,52 +75,58 @@ api.interceptors.response.use(
 // Funciones para productos
 export const productsAPI = {
   // Obtener todos los productos
-  getAll: () => api.get('/products'),
+  getAll: () => api.get<ApiResponse<Product[]>>('/products'),
   
   // Obtener un producto por ID
-  getById: (id: number) => api.get(`/products/${id}`),
+  getById: (id: number) => api.get<ApiResponse<Product>>(`/products/${id}`),
   
   // Crear un nuevo producto (admin)
-  create: (product: any) => api.post('/products', product),
+  create: (product: Omit<Product, 'id'>) => api.post<ApiResponse<Product>>('/products', product),
   
   // Actualizar un producto (admin)
-  update: (id: number, product: any) => api.patch(`/products/${id}`, product),
+  update: (id: number, product: Partial<Product>) => api.patch<ApiResponse<Product>>(`/products/${id}`, product),
   
   // Eliminar un producto (admin)
-  delete: (id: number) => api.delete(`/products/${id}`),
+  delete: (id: number) => api.delete<ApiResponse<void>>(`/products/${id}`),
 };
 
 // Funciones para carrito
 export const cartAPI = {
   // Obtener carrito de un usuario
-  getByUserId: (userId: number) => api.get(`/cart/${userId}`),
+  getByUserId: (userId: number) => api.get<ApiResponse<CartItem[]>>(`/cart/${userId}`),
   
   // Agregar item al carrito
-  addItem: (item: any) => api.post('/cart', item),
+  addItem: (item: Omit<CartItem, 'id' | 'product'>) => api.post<ApiResponse<CartItem>>('/cart', item),
   
   // Eliminar item del carrito
-  removeItem: (id: number) => api.delete(`/cart/${id}`),
+  removeItem: (id: number) => api.delete<ApiResponse<void>>(`/cart/${id}`),
 };
 
 // Funciones para órdenes
 export const ordersAPI = {
   // Crear una nueva orden
-  create: (order: any) => api.post('/orders', order),
+  create: (order: Omit<Order, 'id' | 'createdAt'>) => api.post<ApiResponse<Order>>('/orders', order),
 };
 
 // Funciones para autenticación
 export const authAPI = {
   // Login
-  login: (credentials: any) => api.post('/auth/login', credentials),
+  login: (credentials: LoginCredentials) => api.post<ApiResponse<{ access_token: string; refresh_token: string }>>('/auth/login', credentials),
   
   // Registro
-  register: (userData: any) => api.post('/auth/register', userData),
+  register: (userData: RegisterData) => api.post<ApiResponse<{ user: User }>>('/auth/register', userData),
   
   // Refresh token
-  refresh: (refreshToken: string) => api.post('/auth/refresh', { refreshToken }),
+  refresh: (refreshToken: string) => api.post<ApiResponse<{ access_token: string }>>('/auth/refresh', { refreshToken }),
   
   // Logout
-  logout: () => api.post('/auth/logout'),
+  logout: () => api.post<ApiResponse<{ message: string }>>('/auth/logout'),
+
+  // Olvidé mi contraseña
+  forgotPassword: (email: string) => api.post<ApiResponse<{ message: string; resetToken?: string }>>('/auth/forgot-password', { email }),
+
+  // Resetear contraseña
+  resetPassword: (token: string, newPassword: string) => api.post<ApiResponse<{ message: string }>>('/auth/reset-password', { token, newPassword }),
 };
 
 export default api;

@@ -27,7 +27,7 @@ export class OrderService {
       throw new Error('Invalid user or empty cart');
     }
 
-    const items: OrderItem[] = cart.map(item => {
+    const items: OrderItem[] = cart.map((item) => {
       const orderItem = this.orderItemRepo.create({
         product: item.product,
         quantity: item.quantity,
@@ -36,7 +36,10 @@ export class OrderService {
       return orderItem;
     });
 
-    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const total = items.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0,
+    );
 
     const order = this.orderRepo.create({
       user,

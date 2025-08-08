@@ -1,5 +1,5 @@
 // src/users/dto/create-user.dto.ts
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -7,6 +7,12 @@ export class CreateUserDto {
 
   @IsEmail()
   email: string;
+
+  @IsOptional()
+  firstName?: string;
+
+  @IsOptional()
+  lastName?: string;
 
   @IsNotEmpty()
   @MinLength(6)

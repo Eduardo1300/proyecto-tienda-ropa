@@ -1,6 +1,8 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { GetUser } from './auth/decorators/get-user.decorator';
+import { RequestUser } from './common/types/user.types';
 
 @Controller()
 export class AppController {
@@ -11,13 +13,9 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  // 🔐 Ruta protegida: necesitas pasar token JWT
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return {
-      message: 'Acceso concedido al perfil protegido',
-      user: req.user,
-    };
+  getProfile(@GetUser() user: RequestUser) {
+    return user;
   }
 }

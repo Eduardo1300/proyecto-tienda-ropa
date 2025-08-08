@@ -5,7 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
-
+import { RequestUser } from '../common/types/user.types';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +20,7 @@ export class UsersController {
   // Ruta protegida que retorna datos del usuario autenticado
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@GetUser() user: any) {
+  getProfile(@GetUser() user: RequestUser) {
     return {
       message: 'Este es tu perfil',
       user,
@@ -28,12 +28,12 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
-@Get('admin-only')
-getAdminContent(@GetUser() user: any) {
-  return {
-    message: 'Contenido exclusivo para administradores',
-    user,
-  };
-}
+  @Roles('admin')
+  @Get('admin-only')
+  getAdminContent(@GetUser() user: RequestUser) {
+    return {
+      message: 'Contenido exclusivo para administradores',
+      user,
+    };
+  }
 }

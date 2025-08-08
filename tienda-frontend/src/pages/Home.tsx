@@ -2,15 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { productsAPI } from "../services/api";
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  stock: number;
-}
+import type { Product } from "../types";
 
 const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,7 +17,7 @@ const Home = () => {
         console.log('🔄 Fetching products from API...');
         const response = await productsAPI.getAll();
         console.log('✅ Products fetched:', response.data);
-        setProducts(response.data);
+        setProducts(response.data.data || response.data);
         setError(null);
       } catch (err) {
         console.error('❌ Error fetching products:', err);
@@ -38,32 +30,36 @@ const Home = () => {
             name: "Vestido Elegante",
             description: "Vestido negro elegante perfecto para ocasiones especiales",
             price: 89.99,
-            image: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop",
-            stock: 10
+            imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop",
+            stock: 10,
+            category: "ropa"
           },
           {
             id: 2,
             name: "Camisa Casual",
             description: "Camisa de algodón cómoda para el día a día",
             price: 45.50,
-            image: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=400&fit=crop",
-            stock: 15
+            imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=400&fit=crop",
+            stock: 15,
+            category: "ropa"
           },
           {
             id: 3,
             name: "Jeans Premium",
             description: "Jeans de alta calidad con corte moderno",
             price: 79.99,
-            image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=400&fit=crop",
-            stock: 8
+            imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=400&fit=crop",
+            stock: 8,
+            category: "ropa"
           },
           {
             id: 4,
             name: "Chaqueta de Cuero",
             description: "Chaqueta de cuero genuino estilo motociclista",
             price: 199.99,
-            image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop",
-            stock: 5
+            imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop",
+            stock: 5,
+            category: "ropa"
           }
         ];
         console.log('🔄 Using fallback mock data');
@@ -140,7 +136,7 @@ const Home = () => {
             >
               <div className="relative overflow-hidden group">
                 <img
-                  src={product.image}
+                  src={product.imageUrl}
                   alt={product.name}
                   className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                 />

@@ -109,9 +109,9 @@ const Login: React.FC = () => {
                 />
                 <span className="ml-2 text-sm text-purple-100">Recordarme</span>
               </label>
-              <a href="#" className="text-sm text-purple-200 hover:text-white transition-colors">
+              <Link to="/forgot-password" className="text-sm text-purple-200 hover:text-white transition-colors">
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
 
             <button
@@ -133,9 +133,12 @@ const Login: React.FC = () => {
             <div className="text-center">
               <p className="text-purple-100">
                 ¿No tienes cuenta?{' '}
-                <a href="#" className="font-bold text-white hover:text-purple-200 transition-colors">
+                <Link 
+                  to="/register" 
+                  className="font-bold text-white hover:text-purple-200 transition-colors"
+                >
                   Regístrate gratis
-                </a>
+                </Link>
               </p>
             </div>
 

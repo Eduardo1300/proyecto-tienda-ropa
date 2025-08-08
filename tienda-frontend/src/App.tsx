@@ -7,6 +7,7 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import './App.css';
 
 function App() {
@@ -14,15 +15,17 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
-          <div className="App">
+          <div className="App min-h-screen bg-gray-50">
             <Header />
-            <main className="main-content">
+            <main>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
-                <Route path="/products/:id" element={<ProductDetail />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/carrito" element={<Cart />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
               </Routes>
             </main>
           </div>

@@ -1,66 +1,96 @@
-import { Controller, Post, UseGuards, Request, Body, UnauthorizedException, } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  Get,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { UsersService } from '../users/users.service';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { GetUser } from './decorators/get-user.decorator';
+import { RequestUser } from '../common/types/user.types';
+
+interface RequestWithUser {
+  user: RequestUser;
+}
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private jwtService: JwtService,
-    private usersService: UsersService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
-  // Login con email y password
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  @Get('health')
+  healthCheck() {
+    return { 
+      status: 'OK', 
+      message: 'Auth service is running',
+      timestamp: new Date().toISOString()
+    };
   }
 
-  // auth.controller.ts
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
-}
-
-
-  // Refrescar token de acceso usando refresh_token
-  @Post('refresh')
-  async refresh(@Body('refresh_token') refreshToken: string) {
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token missing');
-    }
-
     try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
-      });
-
-      const user = await this.usersService.findById(payload.sub);
-      if (!user || user.refreshToken !== refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
-      return this.authService.login(user);
-    } catch (err) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      return await this.authService.register(createUserDto);
+    } catch (error) {
+      console.error('🚨 Registration error:', error.message);
+      throw error;
     }
   }
 
-  // Logout → revoca sesión
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Request() req: RequestWithUser) {
+    try {
+      const user = req.user;
+      console.log('🚀 Login successful for user:', user.email);
+      return await this.authService.login(user);
+    } catch (error) {
+      console.error('🚨 Login error:', error.message);
+      throw error;
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Body() body: { refreshToken: string }) {
+    return this.authService.getNewAccessToken(body.refreshToken);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Request() req) {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException();
-    }
-
-    await this.usersService.updateRefreshToken(userId, null);
+  @HttpCode(HttpStatus.OK)
+  async logout(@GetUser() user: RequestUser) {
+    await this.authService.logout(user.id);
     return { message: 'Logged out successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@GetUser() user: RequestUser) {
+    return user;
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.requestPasswordReset(forgotPasswordDto.email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.newPassword,
+    );
   }
 }
