@@ -1,30 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { CartItem } from '../../carrito/entities/cart-item.entity';
 import { Order } from '../../ordenes/entities/order.entity';
-
-@Entity()
-export class Address {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  street: string;
-
-  @Column()
-  city: string;
-
-  @Column()
-  state: string;
-
-  @Column()
-  postalCode: string;
-
-  @Column({ nullable: true })
-  country?: string;
-
-  @Column()
-  userId: number;
-}
+import { Address } from './address.entity';
 
 @Entity()
 export class User {
@@ -50,6 +27,10 @@ export class User {
   @Column({ default: 'user' })
   role: string;
 
+  // Puntos de fidelidad del usuario
+  @Column({ type: 'int', default: 0 })
+  loyaltyPoints: number;
+
   @Column({ nullable: true, type: 'varchar' })
   refreshToken: string | null;
 
@@ -63,6 +44,6 @@ export class User {
   orders: Order[];
 
   // Direcciones del usuario
-  @OneToMany(() => Address, (address) => address.userId, { cascade: true })
+  @OneToMany(() => Address, (address) => address.user, { cascade: true })
   addresses: Address[];
 }

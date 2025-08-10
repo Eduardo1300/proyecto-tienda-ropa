@@ -7,6 +7,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from '../users/entities/user.entity';
 import { CartItem } from '../carrito/entities/cart-item.entity';
 import { Product } from '../products/entities/product.entity';
+import { CouponsService } from '../coupons/coupons.service';
 
 @Injectable()
 export class OrderService {
@@ -16,6 +17,7 @@ export class OrderService {
     @InjectRepository(CartItem) private cartRepo: Repository<CartItem>,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Product) private productRepo: Repository<Product>,
+    private couponsService: CouponsService,
   ) {}
 
   // Crear una orden para el usuario, a partir de items explícitos del DTO o desde su carrito
@@ -70,7 +72,22 @@ export class OrderService {
       });
     }
 
-    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    // Total bruto
+    let total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    // Aplicar cupón si se envió
+    if ((dto as any).couponCode) {
+      const coupon = await this.couponsService.validate((dto as any).couponCode);
+      total = this.couponsService.applyDiscount(total, coupon);
+      await this.couponsService.redeem(coupon.code);
+    }
+
+    // Aplicar puntos de fidelidad si se envió (1 punto = 1 unidad monetaria por simplicidad)
+    if ((dto as any).usePoints && user.loyaltyPoints > 0) {
+      const pointsToUse = Math.min(user.loyaltyPoints, Math.floor(total));
+      total = Number((total - pointsToUse).toFixed(2));
+      user.loyaltyPoints -= pointsToUse;
+    }
 
     const order = this.orderRepo.create({
       user,
@@ -88,13 +105,15 @@ export class OrderService {
       if (!product) continue;
       product.stock = Math.max(0, (product.stock || 0) - item.quantity);
       await this.productRepo.save(product);
+      if (product.stock === 0) console.warn(`Product ${product.id} is now OUT OF STOCK`);
+      else if (product.stock <= 5) console.warn(`Product ${product.id} LOW STOCK: ${product.stock}`);
+    }
 
-      // Alertas de stock bajo (simple logging; en real, se podría emitir evento)
-      if (product.stock === 0) {
-        console.warn(`Product ${product.id} is now OUT OF STOCK`);
-      } else if (product.stock <= 5) {
-        console.warn(`Product ${product.id} LOW STOCK: ${product.stock}`);
-      }
+    // Sumar puntos por compra (ej.: 1 punto por cada 10 unidades monetarias gastadas)
+    const pointsEarned = Math.floor(total / 10);
+    if (pointsEarned > 0) {
+      user.loyaltyPoints = (user.loyaltyPoints || 0) + pointsEarned;
+      await this.userRepo.save(user);
     }
 
     // Si se creó desde carrito, limpiar

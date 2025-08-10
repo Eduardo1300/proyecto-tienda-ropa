@@ -35,6 +35,23 @@ export class Product {
   @Column({ default: 0 })
   stock: number;
 
+  // Filtros avanzados
+  @Column({ nullable: true })
+  size?: string;
+
+  @Column({ nullable: true })
+  color?: string;
+
+  @Column({ nullable: true })
+  brand?: string;
+
+  // Rating promedio y número de reseñas
+  @Column('decimal', { precision: 3, scale: 2, default: 0 })
+  averageRating: number;
+
+  @Column({ type: 'int', default: 0 })
+  reviewsCount: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
