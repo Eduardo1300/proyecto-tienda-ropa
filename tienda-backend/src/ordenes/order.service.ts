@@ -34,6 +34,12 @@ export class OrderService {
       items = dto.items.map((i) => {
         const product = productById.get(i.productId);
         if (!product) throw new BadRequestException(`Product ${i.productId} not found`);
+        if (!product.isActive || product.stock <= 0) {
+          throw new BadRequestException(`Product ${product.id} is out of stock`);
+        }
+        if (product.stock < i.quantity) {
+          throw new BadRequestException(`Insufficient stock for product ${product.id}`);
+        }
         return this.orderItemRepo.create({
           product,
           quantity: i.quantity,
@@ -48,13 +54,20 @@ export class OrderService {
       });
       if (cart.length === 0) throw new BadRequestException('Cart is empty');
 
-      items = cart.map((item) =>
-        this.orderItemRepo.create({
-          product: item.product,
+      items = cart.map((item) => {
+        const product = item.product;
+        if (!product.isActive || product.stock <= 0) {
+          throw new BadRequestException(`Product ${product.id} is out of stock`);
+        }
+        if (product.stock < item.quantity) {
+          throw new BadRequestException(`Insufficient stock for product ${product.id}`);
+        }
+        return this.orderItemRepo.create({
+          product,
           quantity: item.quantity,
-          price: Number(item.product.price),
-        }),
-      );
+          price: Number(product.price),
+        });
+      });
     }
 
     const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -68,6 +81,21 @@ export class OrderService {
     });
 
     const savedOrder = await this.orderRepo.save(order);
+
+    // Descontar stock y generar alertas si queda bajo
+    for (const item of savedOrder.items) {
+      const product = await this.productRepo.findOne({ where: { id: item.product.id } });
+      if (!product) continue;
+      product.stock = Math.max(0, (product.stock || 0) - item.quantity);
+      await this.productRepo.save(product);
+
+      // Alertas de stock bajo (simple logging; en real, se podría emitir evento)
+      if (product.stock === 0) {
+        console.warn(`Product ${product.id} is now OUT OF STOCK`);
+      } else if (product.stock <= 5) {
+        console.warn(`Product ${product.id} LOW STOCK: ${product.stock}`);
+      }
+    }
 
     // Si se creó desde carrito, limpiar
     if (!dto.items || dto.items.length === 0) {

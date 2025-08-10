@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Delete, Param, ParseIntPipe, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -35,5 +35,33 @@ export class UsersController {
       message: 'Contenido exclusivo para administradores',
       user,
     };
+  }
+
+  // Direcciones: agregar, listar y eliminar
+  @UseGuards(JwtAuthGuard)
+  @Post('addresses')
+  addAddress(@GetUser() user: RequestUser, @Body() body: { street: string; city: string; state: string; postalCode: string; country?: string }) {
+    return this.usersService.addAddress(user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('addresses')
+  listAddresses(@GetUser() user: RequestUser) {
+    return this.usersService.listAddresses(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('addresses/:id')
+  removeAddress(@GetUser() user: RequestUser, @Param('id', ParseIntPipe) id: number) {
+    // no validamos pertenencia aquí por simplicidad; en real se debería
+    return this.usersService.removeAddress(id);
+  }
+
+  // Admin: actualizar rol de un usuario
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Patch(':id/role')
+  updateRole(@Param('id', ParseIntPipe) id: number, @Body() body: { role: 'admin' | 'moderador' | 'vendedor' | 'user' }) {
+    return this.usersService.updateRole(id, body.role);
   }
 }

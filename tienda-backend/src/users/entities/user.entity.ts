@@ -3,6 +3,30 @@ import { CartItem } from '../../carrito/entities/cart-item.entity';
 import { Order } from '../../ordenes/entities/order.entity';
 
 @Entity()
+export class Address {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  street: string;
+
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  postalCode: string;
+
+  @Column({ nullable: true })
+  country?: string;
+
+  @Column()
+  userId: number;
+}
+
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,6 +46,7 @@ export class User {
   @Column()
   password: string;
 
+  // Roles extendidos: admin, moderador, vendedor, user
   @Column({ default: 'user' })
   role: string;
 
@@ -36,4 +61,8 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  // Direcciones del usuario
+  @OneToMany(() => Address, (address) => address.userId, { cascade: true })
+  addresses: Address[];
 }

@@ -5,7 +5,7 @@ import { CartItem } from './entities/cart-item.entity';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { Product } from '../products/entities/product.entity';
 import { User } from '../users/entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class CartService {
@@ -20,11 +20,10 @@ export class CartService {
     private userRepository: Repository<User>,
   ) {}
 
+  // Agrega un item al carrito validando disponibilidad e inventario
   async addToCart(dto: CreateCartItemDto): Promise<CartItem> {
     const user = await this.userRepository.findOneBy({ id: dto.userId });
-    const product = await this.productRepository.findOneBy({
-      id: dto.productId,
-    });
+    const product = await this.productRepository.findOneBy({ id: dto.productId });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -32,6 +31,19 @@ export class CartService {
 
     if (!product) {
       throw new NotFoundException('Product not found');
+    }
+
+    // Validaciones de inventario
+    if (product.isActive === false || product.stock <= 0) {
+      throw new BadRequestException('Product is out of stock');
+    }
+
+    if (dto.quantity <= 0) {
+      throw new BadRequestException('Quantity must be greater than 0');
+    }
+
+    if (product.stock < dto.quantity) {
+      throw new BadRequestException('Insufficient stock for this product');
     }
 
     const item = this.cartRepository.create({
