@@ -31,7 +31,7 @@ export class UsersService {
       password: hashedPassword,
       firstName: createUserDto.firstName?.trim(),
       lastName: createUserDto.lastName?.trim(),
-      role: createUserDto.role || 'customer', // Asignar rol o 'customer' por defecto
+      role: createUserDto.role || 'user',
     });
 
     const savedUser = await this.userRepository.save(user);
