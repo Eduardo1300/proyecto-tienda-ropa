@@ -1,6 +1,7 @@
 export interface UserPayload {
   sub: number;
   username: string;
+  email?: string;
   role?: string;
 }
 
@@ -14,6 +15,8 @@ export interface RequestUser {
 export interface JwtPayload {
   sub: number;
   username: string;
+  email?: string;
+  role?: string;
   iat?: number;
   exp?: number;
 }

@@ -6,6 +6,9 @@ const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { getTotalItems } = useCart();
 
+  // Temporal debug log
+  console.log('Header - Current user:', user);
+
   const totalItems = getTotalItems();
 
   return (
@@ -62,15 +65,35 @@ const Header = () => {
                 <div className="hidden sm:flex items-center space-x-2 bg-white bg-opacity-20 px-4 py-2 rounded-full">
                   <span className="text-lg">👤</span>
                   <span className="text-sm font-medium">
-                    ¡Hola, {user?.firstName}!
+                    ¡Hola, {user?.username}!
                   </span>
                 </div>
-                <button 
-                  onClick={logout}
-                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
-                >
-                  🚪 Salir
-                </button>
+                
+                {/* Profile & Admin Links */}
+                <div className="flex items-center space-x-2">
+                  <Link 
+                    to="/profile"
+                    className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                  >
+                    👤 Perfil
+                  </Link>
+                  
+                  {user?.role === 'admin' && (
+                    <Link 
+                      to="/admin"
+                      className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                    >
+                      👑 Admin
+                    </Link>
+                  )}
+                  
+                  <button 
+                    onClick={logout}
+                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                  >
+                    🚪 Salir
+                  </button>
+                </div>
               </div>
             ) : (
               <Link 

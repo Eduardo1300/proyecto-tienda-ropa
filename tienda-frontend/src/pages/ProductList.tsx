@@ -148,9 +148,14 @@ const ProductList = () => {
                       alt={product.name} 
                       className="w-full h-64 object-cover"
                     />
-                    {product.stock < 10 && (
+                    {(product.stock || 0) < 10 && (product.stock || 0) > 0 && (
                       <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
                         ¡Últimas unidades!
+                      </span>
+                    )}
+                    {(product.stock || 0) === 0 && (
+                      <span className="absolute top-2 right-2 bg-gray-500 text-white px-2 py-1 rounded-full text-xs">
+                        ¡Agotado!
                       </span>
                     )}
                   </div>
@@ -169,7 +174,7 @@ const ProductList = () => {
                     </div>
                     
                     <p className="text-xs text-gray-500 mt-2">
-                      Stock disponible: {product.stock}
+                      Stock disponible: {product.stock || 0}
                     </p>
                   </div>
                 </Link>
@@ -180,14 +185,14 @@ const ProductList = () => {
                       e.preventDefault();
                       handleAddToCart(product);
                     }}
-                    disabled={product.stock === 0}
+                    disabled={(product.stock || 0) === 0}
                     className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
-                      product.stock === 0
+                      (product.stock || 0) === 0
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-purple-600 text-white hover:bg-purple-700'
                     }`}
                   >
-                    {product.stock === 0 ? 'Agotado' : 'Agregar al carrito'}
+                    {(product.stock || 0) === 0 ? 'Agotado' : 'Agregar al carrito'}
                   </button>
                 </div>
               </div>

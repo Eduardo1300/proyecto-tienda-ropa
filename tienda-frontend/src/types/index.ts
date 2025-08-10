@@ -3,25 +3,28 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  stock: number;
+  stock?: number;
   category: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface User {
   id: number;
   email: string;
   username: string;
-  firstName: string;
-  lastName: string;
-  role: string;
+  firstName?: string;
+  lastName?: string;
+  role: 'user' | 'admin';
 }
 
 export interface CartItem {
   id: number;
-  productId: number;
+  name: string;
+  price: number;
   quantity: number;
-  product: Product;
+  imageUrl?: string;
+  productId?: number;
+  product?: Product;
 }
 
 export interface Order {
@@ -29,8 +32,10 @@ export interface Order {
   userId: number;
   items: OrderItem[];
   total: number;
-  status: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   createdAt: string;
+  orderNumber?: string;
+  trackingNumber?: string;
 }
 
 export interface OrderItem {

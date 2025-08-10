@@ -189,7 +189,7 @@ const ProductDetail = () => {
                   S/ {product.price.toFixed(2)}
                 </span>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                  ✅ En stock ({product.stock} disponibles)
+                  ✅ En stock ({product.stock || 0} disponibles)
                 </span>
               </div>
               <p className="text-gray-600 text-lg leading-relaxed">
@@ -233,7 +233,7 @@ const ProductDetail = () => {
                 </button>
                 <span className="text-xl font-semibold px-4">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() => setQuantity(Math.min(product.stock || 0, quantity + 1))}
                   className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center font-bold"
                 >
                   +

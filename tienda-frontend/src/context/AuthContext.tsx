@@ -65,6 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
+          console.log('👤 User data received from /auth/profile:', userData);
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
           return true;
