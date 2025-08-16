@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { productsAPI } from '../services/api';
+import { ReviewsList } from '../components/ReviewsList';
 import type { Product } from '../types';
 
 interface ExtendedProduct extends Product {
@@ -14,6 +16,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
@@ -94,12 +98,56 @@ const ProductDetail = () => {
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   useEffect(() => {
-    if (id && mockProducts[id]) {
-      setProduct(mockProducts[id]);
-    } else {
-      // If product not found, redirect to products page
-      navigate('/products');
-    }
+    const fetchProduct = async () => {
+      if (!id) {
+        navigate('/products');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        console.log('🔄 Fetching product details for ID:', id);
+        const response = await productsAPI.getById(parseInt(id));
+        console.log('✅ Product details fetched:', response.data);
+        
+        // Procesar datos del backend y agregar características por defecto
+        const backendProduct = response.data.data || response.data;
+        const extendedProduct: ExtendedProduct = {
+          id: backendProduct.id,
+          name: backendProduct.name?.replace(/�/g, 'á').replace(/�/g, 'ó').replace(/�/g, 'í') || backendProduct.name,
+          description: backendProduct.description?.replace(/�/g, 'á').replace(/�/g, 'ó').replace(/�/g, 'í') || backendProduct.description,
+          price: backendProduct.price || 0,
+          category: backendProduct.category || 'general',
+          stock: backendProduct.stock || 0,
+          imageUrl: backendProduct.imageUrl || `https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=600&h=800&fit=crop&sig=${backendProduct.id}`,
+          features: (backendProduct as any).features || [
+            "Material de alta calidad",
+            "Diseño moderno y elegante",
+            "Cómodo para uso diario",
+            "Fácil cuidado y mantenimiento",
+            "Disponible en múltiples tallas"
+          ]
+        };
+        
+        setProduct(extendedProduct);
+        setError(null);
+      } catch (err) {
+        console.error('❌ Error fetching product details:', err);
+        setError('Error al cargar los detalles del producto');
+        
+        // Fallback a datos mock si falla la API
+        if (id && mockProducts[id]) {
+          setProduct(mockProducts[id]);
+        } else {
+          // Si no hay datos mock, redirigir
+          setTimeout(() => navigate('/products'), 2000);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id, navigate]);
 
   const handleAddToCart = async () => {
@@ -115,12 +163,51 @@ const ProductDetail = () => {
     setIsAddingToCart(false);
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600">Cargando detalles del producto...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && !product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">😞</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error al cargar el producto</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Link
+            to="/products"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            ← Volver a productos
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Product not found
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <p className="text-xl text-gray-600">Cargando producto...</p>
+          <div className="text-6xl mb-4">🔍</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Producto no encontrado</h2>
+          <p className="text-gray-600 mb-6">El producto que buscas no existe o ha sido eliminado.</p>
+          <Link
+            to="/products"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            ← Volver a productos
+          </Link>
         </div>
       </div>
     );
@@ -291,6 +378,24 @@ const ProductDetail = () => {
                 <p>🛡️ Compra protegida 100%</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8 bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="p-8">
+            <ReviewsList
+              productId={product.id}
+              productName={product.name}
+              currentUserId={1} // Mock user ID, debería venir del contexto de autenticación
+              onReviewAdded={() => {
+                // Recargar el producto para actualizar el conteo de reviews
+                if (id) {
+                  // Simple reload usando window.location
+                  window.location.reload();
+                }
+              }}
+            />
           </div>
         </div>
       </div>

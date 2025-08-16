@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Header from './components/Header';
+import NotificationContainer from './components/NotificationContainer';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -13,16 +16,21 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmation from './pages/OrderConfirmation';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanel from './pages/AdminPanel';
+import OrderTracking from './pages/OrderTracking';
+import Wishlist from './pages/Wishlist';
+import DashboardPage from './pages/DashboardPage';
 import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <div className="App min-h-screen bg-gray-50">
-            <Header />
-            <main>
+    <ThemeProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Router>
+              <div className="App min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+                <Header />
+                <main>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
@@ -36,12 +44,19 @@ function App() {
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/favoritos" element={<Wishlist />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
               </Routes>
-            </main>
-          </div>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+                </main>
+                <NotificationContainer />
+              </div>
+            </Router>
+          </CartProvider>
+        </AuthProvider>
+      </NotificationProvider>
+    </ThemeProvider>
   );
 }
 

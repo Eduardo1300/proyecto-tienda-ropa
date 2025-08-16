@@ -1,0 +1,68 @@
+{
+  "short_name": "Fashion Store",
+  "name": "Fashion Store - Tienda de Ropa Online",
+  "description": "La mejor tienda de ropa online con las últimas tendencias de moda",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["shopping", "fashion", "lifestyle"],
+  "lang": "es",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver Productos",
+      "short_name": "Productos",
+      "description": "Explorar catálogo de productos",
+      "url": "/products",
+      "icons": [{ "src": "favicon.ico", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mi Carrito",
+      "short_name": "Carrito",
+      "description": "Ver carrito de compras",
+      "url": "/carrito",
+      "icons": [{ "src": "favicon.ico", "sizes": "192x192" }]
+    },
+    {
+      "name": "Favoritos",
+      "short_name": "Wishlist",
+      "description": "Ver lista de favoritos",
+      "url": "/wishlist",
+      "icons": [{ "src": "favicon.ico", "sizes": "192x192" }]
+    }
+  ]
+}

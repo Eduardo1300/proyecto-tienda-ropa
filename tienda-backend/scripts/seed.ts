@@ -49,10 +49,10 @@ async function seed() {
       console.log('👤 Test user already exists');
     }
 
-    // Verificar si ya existen productos
+    // Verificar si ya existen productos  
     const existingProducts = await productsService.findAll();
-    if (existingProducts.length > 0) {
-      console.log('📦 Products already exist in database');
+    if (existingProducts.length === 0) {
+      console.log('📦 No products found, creating sample products...');
       // Productos de ejemplo
       const mockProducts = [
         {
@@ -136,6 +136,8 @@ async function seed() {
       }
 
       console.log(`📊 Total products created: ${mockProducts.length}`);
+    } else {
+      console.log(`📦 Found ${existingProducts.length} products already in database`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

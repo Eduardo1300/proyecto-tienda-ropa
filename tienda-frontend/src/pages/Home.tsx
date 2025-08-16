@@ -17,40 +17,38 @@ const Home = () => {
         console.log('🔄 Fetching products from API...');
         const response = await productsAPI.getAll();
         console.log('✅ Products fetched:', response.data);
-        setProducts(response.data.data || response.data);
-        setError(null);
-      } catch (err) {
-        console.error('❌ Error fetching products:', err);
-        setError('Error al cargar los productos del servidor');
         
-        // Fallback a datos mock si falla la API
-        const mockProducts: Product[] = [
+        // Procesar y limpiar datos del backend
+        const backendProducts: any[] = response.data.data || response.data;
+        
+        // Filtrar duplicados por ID y limpiar datos
+        const displayProducts: Product[] = backendProducts.length > 0 ? backendProducts : [
           {
             id: 1,
-            name: "Vestido Elegante",
+            name: "Vestido Elegante Negro",
             description: "Vestido negro elegante perfecto para ocasiones especiales",
             price: 89.99,
             imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop",
-            stock: 10,
-            category: "ropa"
+            stock: 15,
+            category: "vestidos"
           },
           {
             id: 2,
-            name: "Camisa Casual",
-            description: "Camisa de algodón cómoda para el día a día",
+            name: "Camisa Casual Blanca",
+            description: "Camisa de algodón cómoda y fresca para el día a día",
             price: 45.50,
             imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=400&fit=crop",
-            stock: 15,
-            category: "ropa"
+            stock: 25,
+            category: "camisas"
           },
           {
             id: 3,
-            name: "Jeans Premium",
-            description: "Jeans de alta calidad con corte moderno",
+            name: "Jeans Premium Azul",
+            description: "Jeans de alta calidad con corte moderno y cómodo",
             price: 79.99,
             imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=400&fit=crop",
-            stock: 8,
-            category: "ropa"
+            stock: 20,
+            category: "pantalones"
           },
           {
             id: 4,
@@ -58,11 +56,142 @@ const Home = () => {
             description: "Chaqueta de cuero genuino estilo motociclista",
             price: 199.99,
             imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop",
-            stock: 5,
-            category: "ropa"
+            stock: 8,
+            category: "chaquetas"
+          },
+          {
+            id: 5,
+            name: "Blusa Floral",
+            description: "Blusa con estampado floral para un look primaveral",
+            price: 52.99,
+            imageUrl: "https://images.unsplash.com/photo-1564759224907-65b0e9b4a6f8?w=300&h=400&fit=crop",
+            stock: 18,
+            category: "blusas"
+          },
+          {
+            id: 6,
+            name: "Falda Midi Plisada",
+            description: "Falda midi plisada elegante y versátil",
+            price: 65.00,
+            imageUrl: "https://images.unsplash.com/photo-1583496661160-fb5886a13d72?w=300&h=400&fit=crop",
+            stock: 12,
+            category: "faldas"
+          },
+          {
+            id: 7,
+            name: "Suéter de Lana",
+            description: "Suéter tejido de lana merino súper suave",
+            price: 95.00,
+            imageUrl: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=300&h=400&fit=crop",
+            stock: 10,
+            category: "suéteres"
+          },
+          {
+            id: 8,
+            name: "Vestido Veraniego",
+            description: "Vestido ligero perfecto para días soleados",
+            price: 68.50,
+            imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300&h=400&fit=crop",
+            stock: 16,
+            category: "vestidos"
           }
         ];
-        console.log('🔄 Using fallback mock data');
+        
+        const cleanProducts = displayProducts
+          .filter((product: any, index: number, self: any[]) => 
+            index === self.findIndex((p: any) => p.id === product.id)
+          )
+          .map((product: any) => ({
+            ...product,
+            name: product.name?.replace(/�/g, 'á').replace(/�/g, 'ó').replace(/�/g, 'í') || product.name,
+            description: product.description?.replace(/�/g, 'á').replace(/�/g, 'ó').replace(/�/g, 'í') || product.description,
+            imageUrl: product.imageUrl || `https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop&sig=${product.id}`,
+            price: product.price || 0
+          }))
+          .slice(0, 8); // Limitar a 8 productos destacados
+        
+        setProducts(cleanProducts);
+        setError(null);
+      } catch (err) {
+        console.error('❌ Error fetching products:', err);
+        setError('Mostrando productos de ejemplo');
+        
+        // Datos mock mejorados y consistentes
+        const mockProducts: Product[] = [
+          {
+            id: 1,
+            name: "Vestido Elegante Negro",
+            description: "Vestido negro elegante perfecto para ocasiones especiales",
+            price: 89.99,
+            imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop",
+            stock: 15,
+            category: "vestidos"
+          },
+          {
+            id: 2,
+            name: "Camisa Casual Blanca",
+            description: "Camisa de algodón cómoda y fresca para el día a día",
+            price: 45.50,
+            imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=400&fit=crop",
+            stock: 25,
+            category: "camisas"
+          },
+          {
+            id: 3,
+            name: "Jeans Premium Azul",
+            description: "Jeans de alta calidad con corte moderno y cómodo",
+            price: 79.99,
+            imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=400&fit=crop",
+            stock: 20,
+            category: "pantalones"
+          },
+          {
+            id: 4,
+            name: "Chaqueta de Cuero",
+            description: "Chaqueta de cuero genuino estilo motociclista",
+            price: 199.99,
+            imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=400&fit=crop",
+            stock: 8,
+            category: "chaquetas"
+          },
+          {
+            id: 5,
+            name: "Blusa Floral",
+            description: "Blusa con estampado floral para un look primaveral",
+            price: 52.99,
+            imageUrl: "https://images.unsplash.com/photo-1564759224907-65b0e9b4a6f8?w=300&h=400&fit=crop",
+            stock: 18,
+            category: "blusas"
+          },
+          {
+            id: 6,
+            name: "Falda Midi Plisada",
+            description: "Falda midi plisada elegante y versátil",
+            price: 65.00,
+            imageUrl: "https://images.unsplash.com/photo-1583496661160-fb5886a13d72?w=300&h=400&fit=crop",
+            stock: 12,
+            category: "faldas"
+          },
+          {
+            id: 7,
+            name: "Suéter de Lana",
+            description: "Suéter tejido de lana merino súper suave",
+            price: 95.00,
+            imageUrl: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=300&h=400&fit=crop",
+            stock: 10,
+            category: "suéteres"
+          },
+          {
+            id: 8,
+            name: "Vestido Veraniego",
+            description: "Vestido ligero perfecto para días soleados",
+            price: 68.50,
+            imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300&h=400&fit=crop",
+            stock: 16,
+            category: "vestidos"
+          }
+        ];
+        console.log('🔄 Using improved mock data');
         setProducts(mockProducts);
       } finally {
         setLoading(false);

@@ -1,18 +1,46 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import type { Product } from '../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { productsAPI } from '../services/api';
+import ProductCard from '../components/ProductCard';
+import ProductQuickView from '../components/ProductQuickView';
 
-export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
+const Products: React.FC = () => {
+  const navigate = useNavigate();
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const { addToCart } = useCart();
+  const [sortBy, setSortBy] = useState('name');
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
+  const [comparisonItems, setComparisonItems] = useState<any[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
+  const [filters, setFilters] = useState({
+    category: '',
+    brand: '',
+    priceRange: [0, 1000] as [number, number],
+    colors: [] as string[],
+    sizes: [] as string[],
+    rating: 0,
+    inStock: true,
+    onSale: false,
+    featured: false,
+    new: false,
+    bestseller: false,
+  });
 
-  // Mock data - extensive product catalog
-  const mockProducts: Product[] = [
+  // Filter options for the ProductFilters component (unused for now)
+  // const filterOptions = {
+  //   categories: ['dresses', 'shirts', 'pants', 'jackets', 'skirts', 'sweaters'],
+  //   brands: ['Elegance', 'Casual Co', 'Denim Pro', 'Leather Works', 'Nike', 'Adidas', 'Zara', 'H&M'],
+  //   colors: ['Negro', 'Blanco', 'Azul', 'Rojo', 'Verde', 'Gris', 'Marrón', 'Rosa'],
+  //   sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36'],
+  //   priceRange: [0, 1000] as [number, number],
+  // };
+
+  // Mock data fallback
+  const mockProducts = [
     {
       id: 1,
       name: "Vestido Elegante Negro",
@@ -20,7 +48,15 @@ export default function Products() {
       price: 89.99,
       stock: 15,
       imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=400&h=500&fit=crop",
-      category: "dresses"
+      category: "dresses",
+      brand: "Elegance",
+      colors: ["Negro"],
+      sizes: ["S", "M", "L", "XL"],
+      rating: 4.5,
+      isNew: true,
+      isFeatured: false,
+      isOnSale: false,
+      isBestseller: false
     },
     {
       id: 2,
@@ -29,7 +65,15 @@ export default function Products() {
       price: 45.50,
       stock: 25,
       imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop",
-      category: "shirts"
+      category: "shirts",
+      brand: "Casual Co",
+      colors: ["Blanco"],
+      sizes: ["XS", "S", "M", "L", "XL"],
+      rating: 4.2,
+      isNew: false,
+      isFeatured: true,
+      isOnSale: true,
+      isBestseller: true
     },
     {
       id: 3,
@@ -38,7 +82,15 @@ export default function Products() {
       price: 79.99,
       stock: 20,
       imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop",
-      category: "pants"
+      category: "pants",
+      brand: "Denim Pro",
+      colors: ["Azul"],
+      sizes: ["28", "30", "32", "34", "36"],
+      rating: 4.7,
+      isNew: false,
+      isFeatured: false,
+      isOnSale: false,
+      isBestseller: true
     },
     {
       id: 4,
@@ -47,239 +99,485 @@ export default function Products() {
       price: 199.99,
       stock: 8,
       imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop",
-      category: "jackets"
-    },
-    {
-      id: 5,
-      name: "Blusa Floral",
-      description: "Blusa con estampado floral para un look primaveral",
-      price: 52.99,
-      stock: 18,
-      imageUrl: "https://images.unsplash.com/photo-1564759224907-65b0e9b4a6f8?w=400&h=500&fit=crop",
-      category: "shirts"
-    },
-    {
-      id: 6,
-      name: "Falda Midi Plisada",
-      description: "Falda midi plisada elegante y versátil",
-      price: 65.00,
-      stock: 12,
-      imageUrl: "https://images.unsplash.com/photo-1583496661160-fb5886a13d72?w=400&h=500&fit=crop",
-      category: "skirts"
-    },
-    {
-      id: 7,
-      name: "Suéter de Lana",
-      description: "Suéter tejido de lana merino súper suave",
-      price: 95.00,
-      stock: 10,
-      imageUrl: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400&h=500&fit=crop",
-      category: "sweaters"
-    },
-    {
-      id: 8,
-      name: "Vestido Veraniego",
-      description: "Vestido ligero perfecto para días soleados",
-      price: 68.50,
-      stock: 16,
-      imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=500&fit=crop",
-      category: "dresses"
+      category: "jackets",
+      brand: "Leather Works",
+      colors: ["Negro", "Marrón"],
+      sizes: ["S", "M", "L", "XL"],
+      rating: 4.8,
+      isNew: true,
+      isFeatured: true,
+      isOnSale: false,
+      isBestseller: false
     }
   ];
 
-  const categories = [
-    { value: 'all', label: '🛍️ Todos' },
-    { value: 'dresses', label: '👗 Vestidos' },
-    { value: 'shirts', label: '👕 Camisas' },
-    { value: 'pants', label: '👖 Pantalones' },
-    { value: 'jackets', label: '🧥 Chaquetas' },
-    { value: 'skirts', label: '🩱 Faldas' },
-    { value: 'sweaters', label: '🧶 Suéteres' }
-  ];
-
-  useEffect(() => {
-    setProducts(mockProducts);
-    setFilteredProducts(mockProducts);
-  }, []);
-
-  useEffect(() => {
-    let filtered = products;
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+  // Fetch products from API
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await productsAPI.getAll();
+      
+      if (response?.data && Array.isArray(response.data)) {
+        // Clean and process API data
+        const cleanedProducts = response.data
+          .filter(product => product && product.id && product.name)
+          .map(product => ({
+            ...product,
+            imageUrl: product.imageUrl || product.image || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=500&fit=crop",
+            price: parseFloat(product.price) || 0,
+            stock: parseInt(product.stock) || 0,
+            rating: product.rating || 0,
+            isNew: product.isNew || false,
+            isFeatured: product.isFeatured || false,
+            isOnSale: product.isOnSale || false,
+            isBestseller: product.isBestseller || false,
+            colors: product.colors || [],
+            sizes: product.sizes || [],
+            brand: product.brand || 'Sin marca'
+          }));
+        
+        setProducts(cleanedProducts);
+      } else {
+        console.warn('API response invalid, using mock data');
+        setProducts(mockProducts);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError('Error al cargar productos. Mostrando datos de ejemplo.');
+      setProducts(mockProducts);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Filter by search term
+  // Filter and search products using useMemo for better performance
+  const filteredProducts = useMemo(() => {
+    let filtered = [...products];
+
+    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Sort products
-    filtered = [...filtered].sort((a, b) => {
+    // Category filter
+    if (filters.category) {
+      filtered = filtered.filter(product => product.category === filters.category);
+    }
+
+    // Brand filter
+    if (filters.brand) {
+      filtered = filtered.filter(product => product.brand === filters.brand);
+    }
+
+    // Price range filter
+    filtered = filtered.filter(product => 
+      product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
+    );
+
+    // Colors filter
+    if (filters.colors.length > 0) {
+      filtered = filtered.filter(product =>
+        product.colors?.some((color: string) => filters.colors.includes(color))
+      );
+    }
+
+    // Sizes filter
+    if (filters.sizes.length > 0) {
+      filtered = filtered.filter(product =>
+        product.sizes?.some((size: string) => filters.sizes.includes(size))
+      );
+    }
+
+    // Rating filter
+    if (filters.rating > 0) {
+      filtered = filtered.filter(product => product.rating >= filters.rating);
+    }
+
+    // Stock filter
+    if (filters.inStock) {
+      filtered = filtered.filter(product => product.stock > 0);
+    }
+
+    // Special filters
+    if (filters.onSale) {
+      filtered = filtered.filter(product => product.isOnSale);
+    }
+    if (filters.featured) {
+      filtered = filtered.filter(product => product.isFeatured);
+    }
+    if (filters.new) {
+      filtered = filtered.filter(product => product.isNew);
+    }
+    if (filters.bestseller) {
+      filtered = filtered.filter(product => product.isBestseller);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low':
           return a.price - b.price;
         case 'price-high':
           return b.price - a.price;
-        case 'name':
+        case 'rating':
+          return b.rating - a.rating;
+        case 'newest':
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
         default:
           return a.name.localeCompare(b.name);
       }
     });
 
-    setFilteredProducts(filtered);
-  }, [products, selectedCategory, sortBy, searchTerm]);
+    return filtered;
+  }, [products, searchTerm, filters, sortBy]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // const handleFiltersChange = (newFilters: any) => {
+  //   setFilters(newFilters);
+  // };
+
+  const clearFilters = () => {
+    setFilters({
+      category: '',
+      brand: '',
+      priceRange: [0, 1000],
+      colors: [],
+      sizes: [],
+      rating: 0,
+      inStock: true,
+      onSale: false,
+      featured: false,
+      new: false,
+      bestseller: false,
+    });
+    setSearchTerm('');
+  };
+
+  const handleAddToComparison = (product: any) => {
+    if (comparisonItems.length < 3 && !comparisonItems.find(item => item.id === product.id)) {
+      setComparisonItems([...comparisonItems, product]);
+    }
+  };
+
+  const handleRemoveFromComparison = (productId: number) => {
+    setComparisonItems(comparisonItems.filter(item => item.id !== productId));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Cargando productos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in-up">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4">
-            ✨ Nuestra Colección
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            🛍️ Nuestros Productos
           </h1>
-          <p className="text-xl text-gray-600">
-            Descubre la moda que define tu estilo único
+          <p className="text-gray-600 text-lg">
+            Descubre nuestra colección de moda exclusiva
           </p>
         </div>
 
-        {/* Filters and Search */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 animate-fade-in-up">
+        {error && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
+            <p className="font-medium">⚠️ {error}</p>
+          </div>
+        )}
+
+        {/* Search and Controls */}
+        <div className="mb-8 space-y-4">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search */}
+            {/* Search Bar */}
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="🔍 Buscar productos..."
+                placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-30 focus:border-purple-500 transition-all duration-300"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-400">🔍</span>
+              </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map(category => (
+            {/* Controls */}
+            <div className="flex gap-4 items-center">
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="name">Nombre A-Z</option>
+                <option value="price-low">Precio: Menor a Mayor</option>
+                <option value="price-high">Precio: Mayor a Menor</option>
+                <option value="rating">Mejor Calificados</option>
+                <option value="newest">Más Nuevos</option>
+              </select>
+
+              {/* View Mode */}
+              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                 <button
-                  key={category.value}
-                  onClick={() => setSelectedCategory(category.value)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
-                    selectedCategory === category.value
-                      ? 'bg-gradient-primary text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  onClick={() => setViewMode('grid')}
+                  className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-purple-600 text-white' : 'bg-white text-gray-600'}`}
                 >
-                  {category.label}
+                  ⊞
                 </button>
-              ))}
-            </div>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-3 py-2 ${viewMode === 'list' ? 'bg-purple-600 text-white' : 'bg-white text-gray-600'}`}
+                >
+                  ☰
+                </button>
+              </div>
 
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-30 focus:border-purple-500 transition-all duration-300"
-            >
-              <option value="name">📝 Ordenar por Nombre</option>
-              <option value="price-low">💰 Precio: Menor a Mayor</option>
-              <option value="price-high">💎 Precio: Mayor a Menor</option>
-            </select>
+              {/* Filters Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                🎛️ Filtros
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6 text-center">
-          <p className="text-gray-600">
-            Mostrando <span className="font-bold text-purple-600">{filteredProducts.length}</span> productos
-            {selectedCategory !== 'all' && (
-              <span> en <span className="font-bold text-purple-600">
-                {categories.find(c => c.value === selectedCategory)?.label}
-              </span></span>
-            )}
-          </p>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map((product, index) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden card-hover animate-fade-in-up"
-              style={{animationDelay: `${index * 0.1}s`}}
-            >
-              <div className="relative overflow-hidden group">
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                <div className="absolute top-4 right-4">
-                  <span className="bg-gradient-secondary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-                    ⭐ Nuevo
-                  </span>
-                </div>
-                <Link
-                  to={`/products/${product.id}`}
-                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
-                >
-                  <span className="bg-white text-purple-600 px-6 py-2 rounded-full font-semibold transform scale-90 group-hover:scale-100 transition-transform duration-300 shadow-lg">
-                    👁️ Ver Detalles
-                  </span>
-                </Link>
-              </div>
-              
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 mb-4 text-sm leading-relaxed line-clamp-2">
-                  {product.description}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-purple-600">
-                    ${product.price}
-                  </span>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="bg-gradient-primary text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 btn-modern"
-                  >
-                    🛒 Agregar
-                  </button>
-                </div>
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          {showFilters && (
+            <div className="w-80 flex-shrink-0">
+              {/* TODO: Implementar ProductFilters component */}
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold mb-4">Filtros</h3>
+                <p className="text-gray-500">Filtros en desarrollo...</p>
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Products Grid/List */}
+          <div className="flex-1">
+            {/* Results Count */}
+            <div className="mb-6">
+              <p className="text-gray-600">
+                Mostrando <span className="font-bold text-purple-600">{filteredProducts.length}</span> productos
+                {searchTerm && (
+                  <span> para "<span className="font-bold">{searchTerm}</span>"
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Products */}
+            {filteredProducts.length > 0 ? (
+              <div className={viewMode === 'grid' 
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                : "space-y-4"
+              }>
+                {filteredProducts.map((product: any) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onQuickView={() => setQuickViewProduct(product)}
+                    onAddToComparison={() => handleAddToComparison(product)}
+                    isInComparison={comparisonItems.some(item => item.id === product.id)}
+                    viewMode={viewMode}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">😢</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  No se encontraron productos
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Intenta cambiar los filtros o el término de búsqueda
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors"
+                >
+                  🔄 Limpiar Filtros
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Empty State */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16 animate-fade-in-up">
-            <div className="text-6xl mb-4">😢</div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
-              No se encontraron productos
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Intenta cambiar los filtros o el término de búsqueda
-            </p>
-            <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setSearchTerm('');
-                setSortBy('name');
-              }}
-              className="bg-gradient-primary text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 btn-modern"
-            >
-              🔄 Limpiar Filtros
-            </button>
+        {/* Comparison Bar */}
+        {comparisonItems.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-40">
+            <div className="container mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="font-semibold">Comparar productos ({comparisonItems.length}/3):</span>
+                <div className="flex gap-2">
+                  {comparisonItems.map(item => (
+                    <div key={item.id} className="flex items-center bg-purple-100 px-3 py-1 rounded-full">
+                      <span className="text-sm">{item.name}</span>
+                      <button
+                        onClick={() => handleRemoveFromComparison(item.id)}
+                        className="ml-2 text-purple-600 hover:text-purple-800"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                onClick={() => {
+                  // Mostrar modal de comparación
+                  setShowComparison(true);
+                }}
+              >
+                Comparar
+              </button>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <ProductQuickView
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+        />
+      )}
+
+      {/* Comparison Modal */}
+      {showComparison && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Comparar Productos ({comparisonItems.length})
+                </h2>
+                <button
+                  onClick={() => setShowComparison(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {comparisonItems.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">⚖️</div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">No hay productos para comparar</h3>
+                  <p className="text-gray-600">Agrega productos usando el botón de comparación</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-4 font-semibold">Característica</th>
+                        {comparisonItems.map((product) => (
+                          <th key={product.id} className="text-center p-4 min-w-[200px]">
+                            <img
+                              src={product.imageUrl}
+                              alt={product.name}
+                              className="w-20 h-20 object-cover rounded-lg mx-auto mb-2"
+                            />
+                            <h4 className="font-semibold text-sm">{product.name}</h4>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="p-4 font-medium">Precio</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">
+                            <span className="text-xl font-bold text-purple-600">${product.price}</span>
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-4 font-medium">Marca</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">{product.brand || 'N/A'}</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-4 font-medium">Categoría</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">{product.category}</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-4 font-medium">Stock</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">
+                            <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
+                              {product.stock > 0 ? `${product.stock} disponibles` : 'Sin stock'}
+                            </span>
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="p-4 font-medium">Calificación</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">
+                            <div className="flex justify-center items-center gap-1">
+                              <span className="text-yellow-400">★</span>
+                              <span>{product.rating || 'N/A'}</span>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <td className="p-4 font-medium">Acciones</td>
+                        {comparisonItems.map((product) => (
+                          <td key={product.id} className="text-center p-4">
+                            <div className="flex flex-col gap-2">
+                              <button
+                                onClick={() => navigate(`/product/${product.id}`)}
+                                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                              >
+                                Ver Detalles
+                              </button>
+                              <button
+                                onClick={() => handleRemoveFromComparison(product.id)}
+                                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
+                              >
+                                Quitar
+                              </button>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default Products;

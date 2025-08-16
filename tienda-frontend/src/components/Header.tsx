@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import ThemeToggle from './ThemeToggle';
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -45,19 +46,21 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link 
-              to="/carrito" 
-              className="relative group"
+              to="/cart"
+              className="relative bg-white/20 hover:bg-white/30 p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg backdrop-blur-sm"
             >
-              <div className="flex items-center space-x-2 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
-                <span className="text-xl">🛒</span>
-                <span className="hidden sm:inline font-medium">Carrito</span>
-                {totalItems > 0 && (
-                  <span className="cart-badge bg-gradient-secondary text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-lg">
-                    {totalItems}
-                  </span>
-                )}
-              </div>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h9a2 2 0 002-2v-.5" />
+              </svg>
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-pulse">
+                  {totalItems}
+                </span>
+              )}
             </Link>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Auth Section */}
             {isAuthenticated ? (
@@ -71,6 +74,13 @@ const Header = () => {
                 
                 {/* Profile & Admin Links */}
                 <div className="flex items-center space-x-2">
+                  <Link 
+                    to="/dashboard"
+                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                  >
+                    📊 Dashboard
+                  </Link>
+                  
                   <Link 
                     to="/profile"
                     className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"

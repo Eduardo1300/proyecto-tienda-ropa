@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Query, Param, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DashboardQueryDto, OrderHistoryQueryDto } from './dto/dashboard.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -35,5 +36,43 @@ export class UsersController {
       message: 'Contenido exclusivo para administradores',
       user,
     };
+  }
+
+  // Dashboard del usuario - obtener datos completos del dashboard
+  @UseGuards(JwtAuthGuard)
+  @Get('dashboard')
+  async getDashboard(@GetUser() user: RequestUser, @Query() query: DashboardQueryDto) {
+    return this.usersService.getDashboard(user.id);
+  }
+
+  // Historial de órdenes con paginación
+  @UseGuards(JwtAuthGuard)
+  @Get('orders')
+  async getOrderHistory(
+    @GetUser() user: RequestUser,
+    @Query() query: OrderHistoryQueryDto
+  ) {
+    const { page = 1, limit = 10 } = query;
+    return this.usersService.getOrderHistory(user.id, page, limit);
+  }
+
+  // Dashboard de usuario específico (solo admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get(':userId/dashboard')
+  async getUserDashboard(@Param('userId', ParseIntPipe) userId: number) {
+    return this.usersService.getDashboard(userId);
+  }
+
+  // Historial de órdenes de usuario específico (solo admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get(':userId/orders')
+  async getUserOrderHistory(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() query: OrderHistoryQueryDto
+  ) {
+    const { page = 1, limit = 10 } = query;
+    return this.usersService.getOrderHistory(userId, page, limit);
   }
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { CartItem } from '../../carrito/entities/cart-item.entity';
 import { Order } from '../../ordenes/entities/order.entity';
 
@@ -31,9 +31,27 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   passwordResetToken: string | null;
 
+  @Column({ nullable: true })
+  avatarUrl: string;
+
+  @Column({ default: 0 })
+  loyaltyPoints: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @OneToMany(() => CartItem, (item) => item.user)
   cart: CartItem[];
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  // Product-related relations (lazy-loaded to avoid circular imports)
+  wishlist: any[];
+  comparisons: any[];
+  reviews: any[];
+  recentlyViewed: any[];
 }

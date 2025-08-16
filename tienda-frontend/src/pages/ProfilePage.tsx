@@ -98,7 +98,7 @@ const ProfilePage: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsEditing(false);
       alert('✅ Perfil actualizado correctamente');
-    } catch (error) {
+    } catch (error: unknown) {
       alert('❌ Error al actualizar el perfil');
     } finally {
       setLoading(false);
@@ -125,6 +125,31 @@ const ProfilePage: React.FC = () => {
       cancelled: '❌ Cancelado'
     };
     return texts[status];
+  };
+
+  // Handlers para las acciones de órdenes
+  const handleViewOrderDetails = (order: Order) => {
+    // Navegar a página de detalles de orden o mostrar modal
+    navigate(`/orders/${order.id}`);
+  };
+
+  const handleRateOrder = (order: Order) => {
+    // Mostrar modal de calificación o navegar a página de reseña
+    alert(`🌟 Función de calificación para orden ${order.orderNumber}\n\nEsta funcionalidad permitirá:\n- Calificar productos comprados\n- Escribir reseñas\n- Subir fotos del producto`);
+  };
+
+  const handleTrackOrder = (order: Order) => {
+    if (order.trackingNumber) {
+      // Mostrar información de rastreo o navegar a página de tracking
+      alert(`🚚 Rastreando orden ${order.orderNumber}\n\nCódigo: ${order.trackingNumber}\n\nEsta funcionalidad mostrará:\n- Estado actual del envío\n- Ubicación en tiempo real\n- Historial de movimientos\n- Fecha estimada de entrega`);
+    } else {
+      alert('⚠️ Esta orden aún no tiene código de seguimiento asignado.');
+    }
+  };
+
+  const handleAddAddress = () => {
+    // Mostrar modal o navegar a formulario de nueva dirección
+    alert(`📍 Agregar Nueva Dirección\n\nEsta funcionalidad permitirá:\n- Guardar direcciones de envío\n- Establecer dirección predeterminada\n- Gestionar múltiples direcciones\n- Validación de códigos postales`);
   };
 
   if (!user) {
@@ -400,16 +425,25 @@ const ProfilePage: React.FC = () => {
 
                         {/* Actions */}
                         <div className="flex space-x-3">
-                          <button className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                          <button 
+                            onClick={() => handleViewOrderDetails(order)}
+                            className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-sm hover:shadow-lg transform hover:scale-105"
+                          >
                             📋 Ver Detalles
                           </button>
                           {order.status === 'delivered' && (
-                            <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                            <button 
+                              onClick={() => handleRateOrder(order)}
+                              className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm hover:shadow-lg transform hover:scale-105"
+                            >
                               ⭐ Calificar
                             </button>
                           )}
                           {order.status === 'shipped' && (
-                            <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                            <button 
+                              onClick={() => handleTrackOrder(order)}
+                              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm hover:shadow-lg transform hover:scale-105"
+                            >
                               🚚 Rastrear
                             </button>
                           )}
@@ -426,7 +460,10 @@ const ProfilePage: React.FC = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">📍 Mis Direcciones</h2>
-                  <button className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors font-semibold">
+                  <button 
+                    onClick={handleAddAddress}
+                    className="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors font-semibold hover:shadow-lg transform hover:scale-105"
+                  >
                     ➕ Agregar Dirección
                   </button>
                 </div>

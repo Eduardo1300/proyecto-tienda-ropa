@@ -24,15 +24,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('access_token');
+    const savedToken = localStorage.getItem('token') || localStorage.getItem('access_token');
+    
+    console.log('AuthContext - Checking localStorage:', { savedUser, savedToken });
     
     if (savedUser && savedToken) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        console.log('AuthContext - Setting user:', parsedUser);
+        setUser(parsedUser);
       } catch (error) {
         console.error('Error parsing saved user:', error);
         localStorage.removeItem('user');
         localStorage.removeItem('access_token');
+        localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
       }
     }
@@ -54,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Guardar tokens
         localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('token', data.access_token); // También guardar como 'token' para compatibilidad
         localStorage.setItem('refresh_token', data.refresh_token);
         
         // Obtener datos del usuario
@@ -140,6 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
       localStorage.removeItem('user');
       localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
       localStorage.removeItem('refresh_token');
     }
   };

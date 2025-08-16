@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { SearchProductsDto } from './dto/search-products.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -18,6 +20,11 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Get('search')
+  searchProducts(@Query() searchDto: SearchProductsDto) {
+    return this.productsService.searchProducts(searchDto);
   }
 
   @Get()
