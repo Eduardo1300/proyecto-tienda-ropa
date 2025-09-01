@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, RegisterData } from '../types';
+import { API_BASE_URL } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3002/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('refresh_token', data.refresh_token);
         
         // Obtener datos del usuario
-        const profileResponse = await fetch('http://localhost:3002/auth/profile', {
+        const profileResponse = await fetch(`${API_BASE_URL}/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${data.access_token}`,
           },
@@ -91,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       console.log('Sending registration request:', userData);
-      const response = await fetch('http://localhost:3002/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const token = localStorage.getItem('access_token');
       if (token) {
-        await fetch('http://localhost:3002/auth/logout', {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

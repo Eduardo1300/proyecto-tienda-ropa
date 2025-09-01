@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Trash2 } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../services/api';
 
 interface Product {
   id: number;
@@ -57,12 +59,12 @@ const Wishlist: React.FC = () => {
       // Intentar con diferentes endpoints posibles
       let response;
       try {
-        response = await axios.get('http://localhost:3000/api/wishlist', {
+        response = await axios.get(`${API_BASE_URL}/wishlist`, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } catch (error: any) {
         if (error.response?.status === 404) {
-          response = await axios.get('http://localhost:3000/api/products/wishlist', {
+          response = await axios.get(`${API_BASE_URL}/products/wishlist`, {
             headers: { Authorization: `Bearer ${token}` }
           });
         } else {
@@ -77,73 +79,22 @@ const Wishlist: React.FC = () => {
         setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         navigate('/login');
       } else {
-        setError('Error al cargar favoritos. Mostrando datos de ejemplo.');
-        // Mock data for demonstration
-        setWishlistItems([
-          {
-            id: 1,
-            product: {
-              id: 1,
-              name: 'Vestido Elegante',
-              description: 'Vestido elegante para ocasiones especiales',
-              price: 89.99,
-              compareAtPrice: 120.00,
-              image: '/images/dress1.jpg',
-              imageUrl: '/images/dress1.jpg',
-              category: 'Vestidos',
-              brand: 'Elegance',
-              sku: 'VEST001',
-              stock: 5,
-              isActive: true,
-              isFeatured: true,
-              isNew: false,
-              isBestseller: true,
-              averageRating: 4.8,
-              reviewCount: 24,
-              tags: ['elegante', 'formal']
-            },
-            addedAt: '2024-12-10T10:30:00Z',
-            isActive: true
-          },
-          {
-            id: 2,
-            product: {
-              id: 2,
-              name: 'Camisa Casual',
-              description: 'Camisa cómoda para uso diario',
-              price: 39.99,
-              image: '/images/shirt1.jpg',
-              imageUrl: '/images/shirt1.jpg',
-              category: 'Camisas',
-              brand: 'Casual',
-              sku: 'CAM001',
-              stock: 12,
-              isActive: true,
-              isFeatured: false,
-              isNew: true,
-              isBestseller: false,
-              averageRating: 4.2,
-              reviewCount: 15,
-              tags: ['casual', 'cómoda']
-            },
-            addedAt: '2024-12-09T15:20:00Z',
-            isActive: true
-          }
-        ]);
+        setError('Error al cargar favoritos. Por favor, intenta de nuevo más tarde.');
+        setWishlistItems([]);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const removeFromWishlist = async (itemId: number) => {
+  const removeFromWishlist = async (productId: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/api/wishlist/${itemId}`, {
+      await axios.delete(`${API_BASE_URL}/wishlist/product/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      setWishlistItems(prev => prev.filter(item => item.id !== itemId));
+      setWishlistItems(prev => prev.filter(item => (item.product?.id || item.id) !== productId));
       alert('✅ Producto eliminado de favoritos');
     } catch (error) {
       console.error('Error removing from wishlist:', error);
@@ -223,14 +174,12 @@ const Wishlist: React.FC = () => {
                   alt={item.product.name}
                   className="w-full h-64 object-cover"
                 />
-                <button
-                  onClick={() => removeFromWishlist(item.id)}
-                  className="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                                  <button
+                    onClick={() => removeFromWishlist(item.product?.id || item.id)}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-full"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
               </div>
               
               <div className="p-6">

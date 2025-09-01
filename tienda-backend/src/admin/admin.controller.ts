@@ -4,11 +4,14 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { RequestUser } from '../common/types/user.types';
+import { OrderService } from '../ordenes/order.service';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminController {
+  constructor(private readonly orderService: OrderService) {}
+
   @Get('dashboard')
   getDashboard(@GetUser() user: RequestUser) {
     return {
@@ -19,5 +22,10 @@ export class AdminController {
         role: user.role,
       },
     };
+  }
+
+  @Get('orders')
+  async getAllOrders() {
+    return this.orderService.findAllOrders();
   }
 }

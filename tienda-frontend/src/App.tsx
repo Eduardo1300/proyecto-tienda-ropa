@@ -16,6 +16,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmation from './pages/OrderConfirmation';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanel from './pages/AdminPanel';
+import OrderDetail from './pages/OrderDetail';
+import OrderManagement from './pages/OrderManagement';
 import OrderTracking from './pages/OrderTracking';
 import Wishlist from './pages/Wishlist';
 import DashboardPage from './pages/DashboardPage';
@@ -44,6 +46,8 @@ function App() {
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/orders" element={<OrderManagement />} />
+                <Route path="/orders/:orderId" element={<OrderDetail />} />
                 <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/favoritos" element={<Wishlist />} />

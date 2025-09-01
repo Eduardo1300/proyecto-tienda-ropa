@@ -1,35 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { ordersAPI, API_BASE_URL } from '../services/api';
+import type { Order } from '../types';
 
-interface Order {
-  id: number;
-  orderNumber: string;
-  status: string;
-  total: number;
-  createdAt: string;
+// Extend the Order type with additional properties needed for UI
+interface ExtendedOrder extends Order {
   canBeCancelled: boolean;
   canBeReturned: boolean;
-  items: Array<{
-    id: number;
-    quantity: number;
-    price: number;
-    product: {
-      id: number;
-      name: string;
-      imageUrl?: string;
-    };
-  }>;
 }
 
 const OrderManagement: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<ExtendedOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancellingOrder, setCancellingOrder] = useState<number | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<ExtendedOrder | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -37,12 +25,49 @@ const OrderManagement: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/orders', {
-        headers: { Authorization: `Bearer ${token}` }
+      console.log('=== FETCHING ORDERS ===');
+      const response = await ordersAPI.getAll();
+      console.log('Orders API response:', response);
+      
+      const ordersData = response.data;
+      console.log('Orders data:', ordersData);
+      
+      // Log detailed order structure
+      ordersData.forEach((order: any, index: number) => {
+        console.log(`Order ${index}:`, {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          total: order.total,
+          status: order.status,
+          userId: order.userId,
+          itemsCount: order.items?.length || 0,
+          items: order.items?.map((item: any) => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            productId: item.productId,
+            product: item.product ? {
+              id: item.product.id,
+              name: item.product.name,
+              imageUrl: item.product.imageUrl,
+              price: item.product.price
+            } : 'NO_PRODUCT'
+          }))
+        });
       });
-      setOrders(response.data);
+      
+      // Transform orders to add UI-specific properties
+      const extendedOrders: ExtendedOrder[] = ordersData.map((order: Order) => ({
+        ...order,
+        canBeCancelled: order.status === 'pending' || order.status === 'processing',
+        canBeReturned: order.status === 'delivered'
+      }));
+      
+      console.log('Extended orders:', extendedOrders);
+      setOrders(extendedOrders);
     } catch (err: any) {
+      console.error('Error fetching orders:', err);
+      console.error('Error details:', err.response?.data);
       setError(err.response?.data?.message || 'Error fetching orders');
     } finally {
       setLoading(false);
@@ -55,7 +80,7 @@ const OrderManagement: React.FC = () => {
     setCancellingOrder(selectedOrder.id);
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/orders/${selectedOrder.id}/cancel`, {
+      await axios.put(`${API_BASE_URL}/orders/${selectedOrder.id}/cancel`, {
         reason: cancelReason,
         notes: 'Cancelled by customer'
       }, {
@@ -77,7 +102,7 @@ const OrderManagement: React.FC = () => {
   const downloadInvoice = async (orderId: number, orderNumber: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/orders/${orderId}/invoice`, {
+      const response = await axios.get(`${API_BASE_URL}/orders/${orderId}/invoice`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
@@ -183,7 +208,7 @@ const OrderManagement: React.FC = () => {
                         {getStatusDisplayName(order.status)}
                       </span>
                       <span className="text-lg font-bold text-gray-900">
-                        ${order.total.toFixed(2)}
+                        ${Number(order.total).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -209,7 +234,7 @@ const OrderManagement: React.FC = () => {
                               {item.product.name}
                             </p>
                             <p className="text-sm text-gray-600">
-                              Cantidad: {item.quantity} × ${item.price.toFixed(2)}
+                              Cantidad: {item.quantity} × ${Number(item.price).toFixed(2)}
                             </p>
                           </div>
                         </div>
@@ -227,7 +252,7 @@ const OrderManagement: React.FC = () => {
                         🔍 Rastrear
                       </Link>
                       <button
-                        onClick={() => downloadInvoice(order.id, order.orderNumber)}
+                        onClick={() => downloadInvoice(order.id, order.orderNumber || `ORD-${order.id}`)}
                         className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                       >
                         📄 Factura

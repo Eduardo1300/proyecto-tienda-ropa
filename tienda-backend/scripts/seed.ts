@@ -2,12 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ProductsService } from '../src/products/products.service';
 import { UsersService } from '../src/users/users.service';
+import { OrderService } from '../src/ordenes/order.service';
+import { ReviewsService } from '../src/reviews/reviews.service';
+import { WishlistService } from '../src/products/services/wishlist.service';
 import * as bcrypt from 'bcrypt';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const productsService = app.get(ProductsService);
   const usersService = app.get(UsersService);
+  const ordersService = app.get(OrderService);
+  const reviewsService = app.get(ReviewsService);
+  const wishlistService = app.get(WishlistService);
 
   console.log('🌱 Starting database seeding...');
 
@@ -61,7 +67,7 @@ async function seed() {
           price: 29.99,
           stock: 50,
           category: 'hombre',
-          imageUrl: 'https://via.placeholder.com/400x400/6366f1/ffffff?text=Camiseta',
+          imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -70,7 +76,7 @@ async function seed() {
           price: 89.99,
           stock: 25,
           category: 'mujer',
-          imageUrl: 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Vestido',
+          imageUrl: 'https://images.unsplash.com/photo-1566479179817-c0cede0c15b6?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -79,7 +85,7 @@ async function seed() {
           price: 59.99,
           stock: 30,
           category: 'hombre',
-          imageUrl: 'https://via.placeholder.com/400x400/3b82f6/ffffff?text=Jeans',
+          imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -88,7 +94,7 @@ async function seed() {
           price: 45.99,
           stock: 20,
           category: 'mujer',
-          imageUrl: 'https://via.placeholder.com/400x400/f59e0b/ffffff?text=Blusa',
+          imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -97,7 +103,7 @@ async function seed() {
           price: 79.99,
           stock: 40,
           category: 'zapatos',
-          imageUrl: 'https://via.placeholder.com/400x400/10b981/ffffff?text=Zapatillas',
+          imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -106,7 +112,7 @@ async function seed() {
           price: 129.99,
           stock: 15,
           category: 'accesorios',
-          imageUrl: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Bolso',
+          imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -115,7 +121,7 @@ async function seed() {
           price: 69.99,
           stock: 35,
           category: 'hombre',
-          imageUrl: 'https://via.placeholder.com/400x400/6366f1/ffffff?text=Chaqueta',
+          imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop&crop=center',
           isActive: true
         },
         {
@@ -124,7 +130,7 @@ async function seed() {
           price: 39.99,
           stock: 28,
           category: 'mujer',
-          imageUrl: 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Falda',
+          imageUrl: 'https://images.unsplash.com/photo-1583496661160-fb5886a13d44?w=400&h=400&fit=crop&crop=center',
           isActive: true
         }
       ];
@@ -138,6 +144,102 @@ async function seed() {
       console.log(`📊 Total products created: ${mockProducts.length}`);
     } else {
       console.log(`📦 Found ${existingProducts.length} products already in database`);
+    }
+
+    // Crear órdenes de ejemplo
+    console.log('🛒 Creating orders...');
+    
+    // Obtener IDs reales de los usuarios creados
+    const adminUser = await usersService.findByEmail('admin@example.com');
+    const testUser = await usersService.findByEmail('user@example.com');
+    
+    console.log('Admin user ID:', adminUser?.id);
+    console.log('Test user ID:', testUser?.id);
+    
+    const mockOrders = [
+      {
+        orderNumber: 'ORD001',
+        status: 'pending',
+        total: 159.97,
+        userId: testUser?.id || 2, // user@example.com
+        createdAt: new Date(),
+        items: [
+          { productId: 1, quantity: 2, price: 29.99 },
+          { productId: 2, quantity: 1, price: 89.99 },
+        ],
+        shippingAddress: '123 Main St, City, Country',
+        billingAddress: '123 Main St, City, Country',
+        shippingCost: 5.99,
+      },
+      {
+        orderNumber: 'ORD002',
+        status: 'shipped',
+        total: 89.99,
+        userId: adminUser?.id || 1, // admin@example.com
+        createdAt: new Date(),
+        items: [
+          { productId: 3, quantity: 1, price: 59.99 },
+        ],
+        shippingAddress: '456 Elm St, City, Country',
+        billingAddress: '456 Elm St, City, Country',
+        shippingCost: 7.49,
+      },
+    ];
+
+    for (const orderData of mockOrders) {
+      await ordersService.createOrder(orderData);
+      console.log(`✅ Created order: ${orderData.orderNumber}`);
+    }
+
+    // Crear reseñas de ejemplo
+    console.log('⭐ Creating reviews...');
+    const mockReviews = [
+      {
+        rating: 5,
+        comment: 'Excelente producto, muy recomendado.',
+        title: 'Gran calidad',
+        userId: testUser?.id || 2, // user@example.com
+        productId: 1, // Camiseta Básica Blanca
+        createdAt: new Date(),
+      },
+      {
+        rating: 4,
+        comment: 'Buena calidad, pero el envío fue lento.',
+        title: 'Satisfecho',
+        userId: adminUser?.id || 1, // admin@example.com
+        productId: 2, // Vestido Elegante Negro
+        createdAt: new Date(),
+      },
+    ];
+
+    for (const reviewData of mockReviews) {
+      const existingReview = await reviewsService.findByUserAndProduct(reviewData.userId, reviewData.productId);
+      if (!existingReview) {
+        await reviewsService.create(reviewData.userId, reviewData);
+        console.log(`✅ Created review for product ID: ${reviewData.productId}`);
+      } else {
+        console.log(`⚠️ Review already exists for user ID: ${reviewData.userId} and product ID: ${reviewData.productId}`);
+      }
+    }
+
+    // Crear listas de deseos de ejemplo
+    console.log('💖 Creating wishlists...');
+    const mockWishlists = [
+      {
+        userId: testUser?.id || 2, // user@example.com
+        productId: 3, // Jeans Clásicos
+        createdAt: new Date(),
+      },
+      {
+        userId: adminUser?.id || 1, // admin@example.com
+        productId: 4, // Blusa Floral
+        createdAt: new Date(),
+      },
+    ];
+
+    for (const wishlistData of mockWishlists) {
+      await wishlistService.addToWishlist(wishlistData.userId, wishlistData);
+      console.log(`✅ Added product ID: ${wishlistData.productId} to wishlist for user ID: ${wishlistData.userId}`);
     }
 
     console.log('🎉 Database seeding completed successfully!');

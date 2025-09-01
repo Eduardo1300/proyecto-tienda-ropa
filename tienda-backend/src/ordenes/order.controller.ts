@@ -29,13 +29,59 @@ export class OrderController {
 
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto, @Request() req) {
+    console.log('🚀 ORDER CREATION STARTED');
+    console.log('User:', req.user);
+    console.log('Original DTO:', createOrderDto);
+    
     createOrderDto.userId = req.user.id;
-    return this.orderService.createOrder(createOrderDto);
+    
+    console.log('Modified DTO:', createOrderDto);
+    
+    try {
+      const result = await this.orderService.createOrder(createOrderDto);
+      console.log('✅ ORDER CREATED SUCCESSFULLY:', {
+        id: result.id,
+        orderNumber: result.orderNumber,
+        user: result.user ? result.user.id : 'no user'
+      });
+      return result;
+    } catch (error) {
+      console.error('❌ ORDER CREATION FAILED:', error);
+      throw error;
+    }
   }
 
   @Get()
   async findUserOrders(@Request() req) {
-    return this.orderService.findOrdersByUser(req.user.id);
+    console.log('🔍 Finding orders for user:', req.user.id, 'Role:', req.user.role);
+    
+    let orders;
+    
+    if (req.user.role === 'admin') {
+      // Admins see ALL orders in the system
+      console.log('👑 Admin user - fetching ALL orders');
+      orders = await this.orderService.findAllOrders();
+    } else {
+      // Regular users see only their own orders
+      console.log('👤 Regular user - fetching personal orders only');
+      orders = await this.orderService.findOrdersByUser(req.user.id);
+    }
+    
+    console.log('📋 Found orders:', orders.length);
+    console.log('📋 First order sample:', orders[0] ? {
+      id: orders[0].id,
+      orderNumber: orders[0].orderNumber,
+      user: orders[0].user ? { id: orders[0].user.id, username: orders[0].user.username } : 'no user'
+    } : 'no orders');
+    
+    return orders;
+  }
+
+  @Get('all')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  async findAllOrders() {
+    return this.orderService.findAllOrders();
   }
 
   @Get(':id')

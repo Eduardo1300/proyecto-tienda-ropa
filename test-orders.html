@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Orders</title>
+</head>
+<body>
+    <h1>Test API Orders</h1>
+    <div id="login-section">
+        <h2>1. Login First</h2>
+        <button onclick="loginAsAdmin()">Login as Admin</button>
+        <div id="login-result"></div>
+    </div>
+    
+    <div id="orders-section">
+        <h2>2. Test Orders API</h2>
+        <button onclick="testOrdersAPI()">Get Orders</button>
+        <div id="orders-result"></div>
+    </div>
+    
+    <script>
+        let currentToken = null;
+        
+        // Login as admin to get token
+        async function loginAsAdmin() {
+            try {
+                const response = await fetch('http://localhost:3002/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                
+                console.log('Login response status:', response.status);
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.success && data.data?.access_token) {
+                    currentToken = data.data.access_token;
+                    document.getElementById('login-result').innerHTML = `
+                        <div style="color: green;">✅ Login successful! Token: ${currentToken.substring(0, 20)}...</div>
+                    `;
+                } else {
+                    document.getElementById('login-result').innerHTML = `
+                        <div style="color: red;">❌ Login failed: ${JSON.stringify(data)}</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('login-result').innerHTML = `
+                    <div style="color: red;">❌ Login error: ${error.message}</div>
+                `;
+            }
+        }
+        
+        // Test orders API with token
+        async function testOrdersAPI() {
+            if (!currentToken) {
+                document.getElementById('orders-result').innerHTML = `
+                    <div style="color: orange;">⚠️ Please login first!</div>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3002/orders', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                console.log('Orders response status:', response.status);
+                const data = await response.json();
+                console.log('Orders response data:', data);
+                
+                if (response.ok) {
+                    document.getElementById('orders-result').innerHTML = `
+                        <h3>Orders API Response (${response.status}):</h3>
+                        <div style="color: green;">✅ Found ${data.length} orders</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    document.getElementById('orders-result').innerHTML = `
+                        <h3>Orders API Error (${response.status}):</h3>
+                        <div style="color: red;">❌ ${JSON.stringify(data)}</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Orders API error:', error);
+                document.getElementById('orders-result').innerHTML = `
+                    <div style="color: red;">❌ Orders API error: ${error.message}</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

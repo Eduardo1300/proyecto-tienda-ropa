@@ -70,10 +70,20 @@ export class ReviewsService {
 
     const savedReview = await this.reviewRepository.save(review);
 
+    // Cargar relaciones necesarias
+    const fullReview = await this.reviewRepository.findOne({
+      where: { id: savedReview.id },
+      relations: ['user', 'product', 'product.images'],
+    });
+
+    if (!fullReview) {
+      throw new NotFoundException('La reseña no se pudo cargar después de ser creada.');
+    }
+
     // Actualizar las estadísticas del producto
     await this.updateProductRatingStats(createReviewDto.productId);
 
-    return this.formatReviewResponse(savedReview);
+    return this.formatReviewResponse(fullReview);
   }
 
   async findAll(filters: ReviewFilterDto): Promise<ReviewsListResponse> {
@@ -236,6 +246,12 @@ export class ReviewsService {
 
     const updatedReview = await this.reviewRepository.save(review);
     return this.formatReviewResponse(updatedReview);
+  }
+
+  async findByUserAndProduct(userId: number, productId: number): Promise<Review | null> {
+    return this.reviewRepository.findOne({
+      where: { userId, productId },
+    });
   }
 
   private async updateProductRatingStats(productId: number): Promise<void> {

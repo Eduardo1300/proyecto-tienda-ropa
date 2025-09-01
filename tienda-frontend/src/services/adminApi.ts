@@ -20,9 +20,10 @@ const getAuthHeaders = () => {
 };
 
 // Helper function for API calls
-const apiCall = async <T>(endpoint: string): Promise<T> => {
+const apiCall = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: getAuthHeaders(),
+    ...options,
   });
 
   if (!response.ok) {
@@ -74,5 +75,24 @@ export const adminApi = {
   getOrdersStats: async (page: number = 1, limit: number = 10, status?: string): Promise<OrdersStat> => {
     const statusParam = status ? `&status=${status}` : '';
     return apiCall<OrdersStat>(`/admin/dashboard/orders?page=${page}&limit=${limit}${statusParam}`);
+  },
+
+  // Orders Management
+  getAllOrders: async (): Promise<any[]> => {
+    return apiCall<any[]>('/admin/orders');
+  },
+
+  updateOrderStatus: async (orderId: number, status: string): Promise<any> => {
+    console.log(`📡 Enviando petición PUT a /orders/${orderId}/status con status:`, status);
+    const result = await apiCall<any>(`/orders/${orderId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+    console.log(`📡 Respuesta recibida:`, result);
+    return result;
+  },
+
+  getOrderById: async (orderId: number): Promise<any> => {
+    return apiCall<any>(`/orders/${orderId}`);
   },
 };

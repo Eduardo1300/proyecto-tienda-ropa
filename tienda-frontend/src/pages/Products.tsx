@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { productsAPI } from '../services/api';
 import ProductCard from '../components/ProductCard';
 import ProductQuickView from '../components/ProductQuickView';
+import ProductFilters from '../components/ProductFilters';
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
@@ -30,88 +31,27 @@ const Products: React.FC = () => {
     bestseller: false,
   });
 
-  // Filter options for the ProductFilters component (unused for now)
-  // const filterOptions = {
-  //   categories: ['dresses', 'shirts', 'pants', 'jackets', 'skirts', 'sweaters'],
-  //   brands: ['Elegance', 'Casual Co', 'Denim Pro', 'Leather Works', 'Nike', 'Adidas', 'Zara', 'H&M'],
-  //   colors: ['Negro', 'Blanco', 'Azul', 'Rojo', 'Verde', 'Gris', 'Marrón', 'Rosa'],
-  //   sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36'],
-  //   priceRange: [0, 1000] as [number, number],
-  // };
+  // Generate filter options dynamically from products
+  const filterOptions = useMemo(() => {
+    const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
+    const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)));
+    const colors = Array.from(new Set(products.flatMap(p => p.colors || []).filter(Boolean)));
+    const sizes = Array.from(new Set(products.flatMap(p => p.sizes || []).filter(Boolean)));
+    const prices = products.map(p => p.price).filter(p => p > 0);
+    const priceRange: [number, number] = prices.length > 0 
+      ? [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))]
+      : [0, 1000];
 
-  // Mock data fallback
-  const mockProducts = [
-    {
-      id: 1,
-      name: "Vestido Elegante Negro",
-      description: "Vestido negro elegante perfecto para ocasiones especiales y eventos formales",
-      price: 89.99,
-      stock: 15,
-      imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=400&h=500&fit=crop",
-      category: "dresses",
-      brand: "Elegance",
-      colors: ["Negro"],
-      sizes: ["S", "M", "L", "XL"],
-      rating: 4.5,
-      isNew: true,
-      isFeatured: false,
-      isOnSale: false,
-      isBestseller: false
-    },
-    {
-      id: 2,
-      name: "Camisa Casual Blanca",
-      description: "Camisa de algodón cómoda y fresca para el día a día",
-      price: 45.50,
-      stock: 25,
-      imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop",
-      category: "shirts",
-      brand: "Casual Co",
-      colors: ["Blanco"],
-      sizes: ["XS", "S", "M", "L", "XL"],
-      rating: 4.2,
-      isNew: false,
-      isFeatured: true,
-      isOnSale: true,
-      isBestseller: true
-    },
-    {
-      id: 3,
-      name: "Jeans Premium Azul",
-      description: "Jeans de alta calidad con corte moderno y cómodo",
-      price: 79.99,
-      stock: 20,
-      imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop",
-      category: "pants",
-      brand: "Denim Pro",
-      colors: ["Azul"],
-      sizes: ["28", "30", "32", "34", "36"],
-      rating: 4.7,
-      isNew: false,
-      isFeatured: false,
-      isOnSale: false,
-      isBestseller: true
-    },
-    {
-      id: 4,
-      name: "Chaqueta de Cuero",
-      description: "Chaqueta de cuero genuino estilo motociclista",
-      price: 199.99,
-      stock: 8,
-      imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop",
-      category: "jackets",
-      brand: "Leather Works",
-      colors: ["Negro", "Marrón"],
-      sizes: ["S", "M", "L", "XL"],
-      rating: 4.8,
-      isNew: true,
-      isFeatured: true,
-      isOnSale: false,
-      isBestseller: false
-    }
-  ];
+    return {
+      categories: categories.length > 0 ? categories : ['dresses', 'shirts', 'pants', 'jackets', 'skirts', 'sweaters'],
+      brands: brands.length > 0 ? brands : ['Elegance', 'Casual Co', 'Denim Pro', 'Leather Works', 'Nike', 'Adidas', 'Zara', 'H&M'],
+      colors: colors.length > 0 ? colors : ['Negro', 'Blanco', 'Azul', 'Rojo', 'Verde', 'Gris', 'Marrón', 'Rosa'],
+      sizes: sizes.length > 0 ? sizes : ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36'],
+      priceRange,
+    };
+  }, [products]);
 
-  // Fetch products from API
+  // Función para cargar productos
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -139,13 +79,14 @@ const Products: React.FC = () => {
         
         setProducts(cleanedProducts);
       } else {
-        console.warn('API response invalid, using mock data');
-        setProducts(mockProducts);
+        console.error('API response invalid');
+        setProducts([]);
+        setError('No se pudieron cargar los productos.');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Error al cargar productos. Mostrando datos de ejemplo.');
-      setProducts(mockProducts);
+      setError('Error al cargar productos. Por favor, intenta de nuevo.');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -240,15 +181,30 @@ const Products: React.FC = () => {
     fetchProducts();
   }, []);
 
+  // Update price range when products are loaded
+  useEffect(() => {
+    if (products.length > 0 && filters.priceRange[0] === 0 && filters.priceRange[1] === 1000) {
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        priceRange: filterOptions.priceRange,
+      }));
+    }
+  }, [products, filterOptions.priceRange]);
+
   // const handleFiltersChange = (newFilters: any) => {
   //   setFilters(newFilters);
   // };
 
+  const handleFiltersChange = (newFilters: any) => {
+    setFilters(newFilters);
+  };
+
   const clearFilters = () => {
+    const newPriceRange = filterOptions.priceRange;
     setFilters({
       category: '',
       brand: '',
-      priceRange: [0, 1000],
+      priceRange: newPriceRange,
       colors: [],
       sizes: [],
       rating: 0,
@@ -259,6 +215,24 @@ const Products: React.FC = () => {
       bestseller: false,
     });
     setSearchTerm('');
+  };
+
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (filters.category) count++;
+    if (filters.brand) count++;
+    if (filters.colors.length > 0) count++;
+    if (filters.sizes.length > 0) count++;
+    if (filters.rating > 0) count++;
+    if (!filters.inStock) count++; // Not in stock is considered an active filter
+    if (filters.onSale) count++;
+    if (filters.featured) count++;
+    if (filters.new) count++;
+    if (filters.bestseller) count++;
+    // Check if price range is different from default
+    if (filters.priceRange[0] !== filterOptions.priceRange[0] || 
+        filters.priceRange[1] !== filterOptions.priceRange[1]) count++;
+    return count;
   };
 
   const handleAddToComparison = (product: any) => {
@@ -304,71 +278,277 @@ const Products: React.FC = () => {
         {/* Search and Controls */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search Bar */}
+            {/* Enhanced Search Bar */}
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="Buscar productos..."
+                placeholder="Buscar productos, marcas, categorías..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-400">🔍</span>
+              
+              {/* Search Icon */}
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <span className="text-purple-500 text-lg">🔍</span>
               </div>
+              
+              {/* Clear Button */}
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <span className="text-lg">✕</span>
+                </button>
+              )}
+              
+              {/* Search Suggestions Hint */}
+              {searchTerm.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 text-xs text-gray-500 px-4">
+                  Busca por nombre, descripción o marca
+                </div>
+              )}
             </div>
 
-            {/* Controls */}
-            <div className="flex gap-4 items-center">
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              >
-                <option value="name">Nombre A-Z</option>
-                <option value="price-low">Precio: Menor a Mayor</option>
-                <option value="price-high">Precio: Mayor a Menor</option>
-                <option value="rating">Mejor Calificados</option>
-                <option value="newest">Más Nuevos</option>
-              </select>
+            {/* Enhanced Controls */}
+            <div className="flex gap-3 items-center flex-wrap">
+              {/* Sort Dropdown */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white shadow-sm hover:shadow-md transition-all appearance-none pr-8"
+                >
+                  <option value="name">📝 Nombre A-Z</option>
+                  <option value="price-low">💰 Precio: Menor a Mayor</option>
+                  <option value="price-high">💎 Precio: Mayor a Menor</option>
+                  <option value="rating">⭐ Mejor Calificados</option>
+                  <option value="newest">🆕 Más Nuevos</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <span className="text-gray-400">▼</span>
+                </div>
+              </div>
 
-              {/* View Mode */}
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              {/* View Mode Buttons */}
+              <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-purple-600 text-white' : 'bg-white text-gray-600'}`}
+                  className={`px-4 py-2 transition-all ${
+                    viewMode === 'grid' 
+                      ? 'bg-purple-600 text-white shadow-inner' 
+                      : 'bg-white text-gray-600 hover:bg-purple-50'
+                  }`}
+                  title="Vista en cuadrícula"
                 >
-                  ⊞
+                  <span className="text-lg">⊞</span>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-2 ${viewMode === 'list' ? 'bg-purple-600 text-white' : 'bg-white text-gray-600'}`}
+                  className={`px-4 py-2 transition-all ${
+                    viewMode === 'list' 
+                      ? 'bg-purple-600 text-white shadow-inner' 
+                      : 'bg-white text-gray-600 hover:bg-purple-50'
+                  }`}
+                  title="Vista en lista"
                 >
-                  ☰
+                  <span className="text-lg">☰</span>
                 </button>
               </div>
 
               {/* Filters Toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className={`px-4 py-2 rounded-lg font-medium transition-all shadow-sm hover:shadow-md ${
+                  showFilters
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-white text-purple-600 border border-purple-200 hover:bg-purple-50'
+                }`}
               >
-                🎛️ Filtros
+                <span className="flex items-center gap-2">
+                  🎛️ Filtros
+                  {getActiveFiltersCount() > 0 && (
+                    <span className="bg-white/20 text-xs px-2 py-1 rounded-full">
+                      {getActiveFiltersCount()}
+                    </span>
+                  )}
+                </span>
               </button>
+
+              {/* Quick Filter Buttons */}
+              <div className="hidden lg:flex gap-2">
+                {/* Sale Items */}
+                <button
+                  onClick={() => setFilters(prev => ({ ...prev, onSale: !prev.onSale }))}
+                  className={`px-3 py-2 rounded-full text-sm transition-all ${
+                    filters.onSale
+                      ? 'bg-red-500 text-white shadow-md'
+                      : 'bg-red-100 text-red-700 hover:bg-red-200'
+                  }`}
+                >
+                  🏷️ Oferta
+                </button>
+
+                {/* New Items */}
+                <button
+                  onClick={() => setFilters(prev => ({ ...prev, new: !prev.new }))}
+                  className={`px-3 py-2 rounded-full text-sm transition-all ${
+                    filters.new
+                      ? 'bg-green-500 text-white shadow-md'
+                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  }`}
+                >
+                  � Nuevo
+                </button>
+
+                {/* Featured Items */}
+                <button
+                  onClick={() => setFilters(prev => ({ ...prev, featured: !prev.featured }))}
+                  className={`px-3 py-2 rounded-full text-sm transition-all ${
+                    filters.featured
+                      ? 'bg-yellow-500 text-white shadow-md'
+                      : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                  }`}
+                >
+                  ⭐ Destacado
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Active Filters Bar */}
+          {getActiveFiltersCount() > 0 && (
+            <div className="flex items-center gap-2 flex-wrap p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <span className="text-sm font-medium text-purple-700">Filtros activos:</span>
+              
+              {/* Active Category */}
+              {filters.category && (
+                <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  📂 {filters.category}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, category: '' }))}
+                    className="ml-1 hover:text-purple-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {/* Active Brand */}
+              {filters.brand && (
+                <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  🏷️ {filters.brand}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, brand: '' }))}
+                    className="ml-1 hover:text-purple-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {/* Active Colors */}
+              {filters.colors.map(color => (
+                <span key={color} className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  🎨 {color}
+                  <button
+                    onClick={() => setFilters(prev => ({ 
+                      ...prev, 
+                      colors: prev.colors.filter(c => c !== color) 
+                    }))}
+                    className="ml-1 hover:text-purple-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+
+              {/* Active Sizes */}
+              {filters.sizes.map(size => (
+                <span key={size} className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  📏 {size}
+                  <button
+                    onClick={() => setFilters(prev => ({ 
+                      ...prev, 
+                      sizes: prev.sizes.filter(s => s !== size) 
+                    }))}
+                    className="ml-1 hover:text-purple-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+
+              {/* Active Special Filters */}
+              {filters.onSale && (
+                <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+                  🏷️ En oferta
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, onSale: false }))}
+                    className="ml-1 hover:text-red-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {filters.new && (
+                <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                  🆕 Nuevo
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, new: false }))}
+                    className="ml-1 hover:text-green-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {filters.featured && (
+                <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+                  ⭐ Destacado
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, featured: false }))}
+                    className="ml-1 hover:text-yellow-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {filters.bestseller && (
+                <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                  🔥 Bestseller
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, bestseller: false }))}
+                    className="ml-1 hover:text-orange-600"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {/* Clear All Button */}
+              <button
+                onClick={clearFilters}
+                className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-full text-sm hover:bg-purple-700 transition-colors"
+              >
+                Limpiar todo
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-8">
           {/* Filters Sidebar */}
           {showFilters && (
             <div className="w-80 flex-shrink-0">
-              {/* TODO: Implementar ProductFilters component */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold mb-4">Filtros</h3>
-                <p className="text-gray-500">Filtros en desarrollo...</p>
-              </div>
+              <ProductFilters
+                filters={filters}
+                filterOptions={filterOptions}
+                onFiltersChange={handleFiltersChange}
+              />
             </div>
           )}
 

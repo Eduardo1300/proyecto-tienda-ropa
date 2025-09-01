@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../services/api';
 
 interface UserInfo {
   id: number;
@@ -73,7 +74,7 @@ const Dashboard: React.FC = () => {
       if (!token) return;
 
       try {
-        const response = await fetch(`http://localhost:3002/users/${user.id}/dashboard`, {
+        const response = await fetch(`${API_BASE_URL}/users/${user.id}/dashboard`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

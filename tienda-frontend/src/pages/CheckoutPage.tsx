@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { ordersAPI } from '../services/api';
 
 interface ShippingInfo {
   firstName: string;
@@ -120,28 +121,35 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handlePlaceOrder = async () => {
+    console.log('🚀 BUTTON CLICKED - handlePlaceOrder called');
     setLoading(true);
     setError('');
 
     try {
-      // Simular procesamiento de orden
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('=== STARTING ORDER CREATION ===');
+      console.log('User:', user);
+      console.log('Cart:', cart);
+      console.log('Total:', total);
 
-      // En el futuro, aquí se puede crear la orden real:
-      // const orderData = {
-      //   userId: user.id,
-      //   items: cart.map(item => ({
-      //     productId: item.id,
-      //     quantity: item.quantity,
-      //     price: item.price
-      //   })),
-      //   total: total,
-      //   shippingInfo,
-      //   paymentInfo: {
-      //     method: paymentInfo.method
-      //   }
-      // };
-      // await ordersAPI.create(orderData);
+      // Crear la orden real en el backend
+      const orderData = {
+        userId: user?.id || 0,
+        items: cart.map(item => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        shippingAddress: `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.zipCode}`,
+        billingAddress: `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.zipCode}`,
+        notes: `Order placed by ${shippingInfo.firstName} ${shippingInfo.lastName}`,
+        shippingCost: 0,
+        tax: 0
+      };
+      
+      console.log('Order data to send:', orderData);
+      
+      const response = await ordersAPI.create(orderData as any);
+      console.log('Order creation response:', response);
       
       // Limpiar carrito
       clearCart();
@@ -149,13 +157,15 @@ const CheckoutPage: React.FC = () => {
       // Redirigir a página de confirmación
       navigate('/order-confirmation', { 
         state: { 
-          orderNumber: `ORD-${Date.now()}`,
+          orderNumber: response.data.orderNumber || `ORD-${response.data.id}`,
           total: total,
           shippingInfo
         }
       });
 
     } catch (err: any) {
+      console.error('Error creating order:', err);
+      console.error('Error details:', err.response?.data);
       setError(err.response?.data?.message || 'Error al procesar la orden');
     } finally {
       setLoading(false);

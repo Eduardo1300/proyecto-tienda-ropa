@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ordersAPI } from '../services/api';
 
 interface Order {
   id: string;
@@ -52,43 +53,37 @@ const ProfilePage: React.FC = () => {
   }, [user]);
 
   const loadOrders = async () => {
-    // Simular carga de órdenes
-    const mockOrders: Order[] = [
-      {
-        id: '1',
-        orderNumber: 'ORD-2024-001',
-        date: '2024-08-08',
-        status: 'delivered',
-        total: 89.90,
-        items: [
-          { id: 1, name: 'Camiseta Premium', quantity: 2, price: 29.95, imageUrl: 'https://via.placeholder.com/80x80' },
-          { id: 2, name: 'Jeans Clásicos', quantity: 1, price: 59.90, imageUrl: 'https://via.placeholder.com/80x80' }
-        ],
-        trackingNumber: 'TRK123456789'
-      },
-      {
-        id: '2',
-        orderNumber: 'ORD-2024-002',
-        date: '2024-08-05',
-        status: 'shipped',
-        total: 45.50,
-        items: [
-          { id: 3, name: 'Zapatos Deportivos', quantity: 1, price: 45.50, imageUrl: 'https://via.placeholder.com/80x80' }
-        ],
-        trackingNumber: 'TRK987654321'
-      },
-      {
-        id: '3',
-        orderNumber: 'ORD-2024-003',
-        date: '2024-08-03',
-        status: 'processing',
-        total: 125.00,
-        items: [
-          { id: 4, name: 'Chaqueta Elegante', quantity: 1, price: 125.00, imageUrl: 'https://via.placeholder.com/80x80' }
-        ]
+    try {
+      const response = await ordersAPI.getAll();
+      
+      if (response?.data && Array.isArray(response.data)) {
+        // Transform backend data to match frontend interface
+        const transformedOrders = response.data.map((order: any) => ({
+          id: order.id?.toString() || '',
+          orderNumber: order.orderNumber || `ORD-${order.id}`,
+          date: new Date(order.createdAt).toISOString().split('T')[0],
+          status: order.status || 'pending',
+          total: typeof order.total === 'number' ? order.total : parseFloat(order.total || '0'),
+          items: order.items?.map((item: any) => ({
+            id: item.id,
+            name: item.product?.name || `Producto ${item.productId}`,
+            quantity: item.quantity,
+            price: typeof item.price === 'number' ? item.price : parseFloat(item.price || '0'),
+            imageUrl: item.product?.imageUrl || item.product?.image || 'https://via.placeholder.com/80x80'
+          })) || [],
+          trackingNumber: order.trackingCode || order.trackingNumber
+        }));
+        
+        setOrders(transformedOrders);
+        console.log('✅ Órdenes cargadas desde la API:', transformedOrders);
+      } else {
+        console.warn('⚠️ Respuesta de API inválida');
+        setOrders([]);
       }
-    ];
-    setOrders(mockOrders);
+    } catch (error) {
+      console.error('❌ Error cargando pedidos:', error);
+      setOrders([]);
+    }
   };
 
   const handleSaveProfile = async () => {

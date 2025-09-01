@@ -96,7 +96,7 @@ export const cartAPI = {
   getByUserId: (userId: number) => api.get<ApiResponse<CartItem[]>>(`/cart/${userId}`),
   
   // Agregar item al carrito
-  addItem: (item: Omit<CartItem, 'id' | 'product'>) => api.post<ApiResponse<CartItem>>('/cart', item),
+  addItem: (item: { productId: number; quantity: number; userId: number }) => api.post<ApiResponse<CartItem>>('/cart', item),
   
   // Eliminar item del carrito
   removeItem: (id: number) => api.delete<ApiResponse<void>>(`/cart/${id}`),
@@ -104,8 +104,14 @@ export const cartAPI = {
 
 // Funciones para órdenes
 export const ordersAPI = {
+  // Get user's orders
+  getAll: () => api.get<Order[]>('/orders'),
   // Crear una nueva orden
-  create: (order: Omit<Order, 'id' | 'createdAt'>) => api.post<ApiResponse<Order>>('/orders', order),
+  create: (order: Omit<Order, 'id' | 'createdAt'>) => api.post<Order>('/orders', order),
+  // Get order by ID
+  getById: (id: number) => api.get<Order>(`/orders/${id}`),
+  // Update order status (admin only)
+  updateStatus: (id: number, status: string) => api.put<Order>(`/orders/${id}/status`, { status }),
 };
 
 // Funciones para autenticación
@@ -128,5 +134,8 @@ export const authAPI = {
   // Resetear contraseña
   resetPassword: (token: string, newPassword: string) => api.post<ApiResponse<{ message: string }>>('/auth/reset-password', { token, newPassword }),
 };
+
+// Exportar API_BASE_URL explícitamente
+export { API_BASE_URL };
 
 export default api;

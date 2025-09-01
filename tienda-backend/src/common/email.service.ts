@@ -117,6 +117,9 @@ export class EmailService {
       )
       .join('');
 
+    const shippingCost = typeof order.shippingCost === 'number' ? order.shippingCost : 0;
+    const tax = typeof order.tax === 'number' ? order.tax : 0;
+
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #333;">¡Gracias por tu pedido!</h1>
@@ -138,9 +141,9 @@ export class EmailService {
         </table>
         
         <div style="text-align: right; margin: 20px 0;">
-          <p><strong>Subtotal: $${(order.total - order.shippingCost - order.tax).toFixed(2)}</strong></p>
-          <p><strong>Envío: $${order.shippingCost.toFixed(2)}</strong></p>
-          <p><strong>Impuestos: $${order.tax.toFixed(2)}</strong></p>
+          <p><strong>Subtotal: $${(order.total - shippingCost - tax).toFixed(2)}</strong></p>
+          <p><strong>Envío: $${shippingCost.toFixed(2)}</strong></p>
+          <p><strong>Impuestos: $${tax.toFixed(2)}</strong></p>
           <p style="font-size: 18px;"><strong>Total: $${order.total.toFixed(2)}</strong></p>
         </div>
         

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../services/api';
 
 interface OrderItem {
   id: number;
@@ -47,7 +48,7 @@ const ReturnRequest: React.FC = () => {
   const fetchOrder = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/orders/${orderId}`, {
+      const response = await axios.get(`${API_BASE_URL}/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrder(response.data);
@@ -117,7 +118,7 @@ const ReturnRequest: React.FC = () => {
         items: Array.from(selectedItems.values())
       };
 
-      await axios.post(`http://localhost:3000/orders/${orderId}/returns`, returnData, {
+      await axios.post(`${API_BASE_URL}/orders/${orderId}/returns`, returnData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

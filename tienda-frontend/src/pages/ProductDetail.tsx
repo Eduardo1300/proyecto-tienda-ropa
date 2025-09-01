@@ -21,74 +21,6 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Mock product data
-  const mockProducts: { [key: string]: ExtendedProduct } = {
-    '1': {
-      id: 1,
-      name: "Vestido Elegante Negro",
-      description: "Vestido negro elegante perfecto para ocasiones especiales y eventos formales. Confeccionado en tela de alta calidad con un corte que realza la figura.",
-      price: 89.99,
-      imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=600&h=800&fit=crop",
-      category: "dresses",
-      stock: 15,
-      features: [
-        "Material: 95% Poliéster, 5% Elastano",
-        "Corte ajustado que realza la figura",
-        "Cremallera trasera invisible",
-        "Forro interior para mayor comodidad",
-        "Lavado en seco recomendado"
-      ]
-    },
-    '2': {
-      id: 2,
-      name: "Camisa Casual Blanca",
-      description: "Camisa de algodón premium, cómoda y fresca para el día a día. Perfecta para looks casuales o semi-formales.",
-      price: 45.50,
-      imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=600&h=800&fit=crop",
-      category: "shirts",
-      stock: 25,
-      features: [
-        "100% Algodón orgánico",
-        "Corte clásico unisex",
-        "Botones de alta calidad",
-        "Cuello tipo polo",
-        "Lavable en máquina"
-      ]
-    },
-    '3': {
-      id: 3,
-      name: "Jeans Premium Azul",
-      description: "Jeans de mezclilla premium con corte moderno y cómodo. Diseñados para durar y mantener su forma.",
-      price: 79.99,
-      imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=800&fit=crop",
-      category: "pants",
-      stock: 18,
-      features: [
-        "98% Algodón, 2% Elastano",
-        "Corte slim fit",
-        "5 bolsillos funcionales",
-        "Costura reforzada",
-        "Pre-lavado para evitar encogimiento"
-      ]
-    },
-    '4': {
-      id: 4,
-      name: "Chaqueta de Cuero Genuino",
-      description: "Chaqueta de cuero genuino estilo motociclista. Un clásico atemporal que nunca pasa de moda.",
-      price: 199.99,
-      imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=800&fit=crop",
-      category: "jackets",
-      stock: 8,
-      features: [
-        "100% Cuero genuino",
-        "Forro interior acolchado",
-        "Cremalleras YKK",
-        "Bolsillos con cierre",
-        "Tratamiento resistente al agua"
-      ]
-    }
-  };
-
   const productImages = [
     product?.imageUrl,
     "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop",
@@ -133,15 +65,10 @@ const ProductDetail = () => {
         setError(null);
       } catch (err) {
         console.error('❌ Error fetching product details:', err);
-        setError('Error al cargar los detalles del producto');
+        setError('Error al cargar los detalles del producto. Redirigiendo...');
         
-        // Fallback a datos mock si falla la API
-        if (id && mockProducts[id]) {
-          setProduct(mockProducts[id]);
-        } else {
-          // Si no hay datos mock, redirigir
-          setTimeout(() => navigate('/products'), 2000);
-        }
+        // Redirigir a la página de productos después de 2 segundos
+        setTimeout(() => navigate('/products'), 2000);
       } finally {
         setLoading(false);
       }
@@ -273,7 +200,7 @@ const ProductDetail = () => {
               </h1>
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-3xl font-bold text-purple-600">
-                  S/ {product.price.toFixed(2)}
+                  S/ {Number(product.price).toFixed(2)}
                 </span>
                 <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                   ✅ En stock ({product.stock || 0} disponibles)
@@ -341,7 +268,7 @@ const ProductDetail = () => {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    🛒 Agregar al carrito (S/ {(product.price * quantity).toFixed(2)})
+                    🛒 Agregar al carrito (S/ {(Number(product.price) * quantity).toFixed(2)})
                   </span>
                 )}
               </button>

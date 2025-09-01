@@ -112,8 +112,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       // Procesar items del carrito local
       for (const localItem of cart) {
-        if (!localItem.product?.id) continue; // Skip items without valid product
-        
         const productId = localItem.product.id;
         
         if (!mergedItems.has(productId)) {
@@ -167,7 +165,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       
       // Buscar si el producto ya existe en el carrito
-      const existingItem = cart.find(item => item.product?.id === product.id);
+      const existingItem = cart.find(item => item.product.id === product.id);
       
       if (existingItem) {
         // Si existe, actualizar cantidad
@@ -187,9 +185,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         if (user) {
           try {
             const backendCartItem = {
-              productId: product.id,
+              name: product.name,
+              price: product.price,
               quantity,
-              userId: user.id
+              imageUrl: product.image,
+              productId: product.id
             };
             await cartAPI.addItem(backendCartItem);
             console.log('✅ Item added to backend cart');
@@ -212,10 +212,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       
       // Encontrar el item en el carrito
-      const itemToRemove = cart.find(item => item.product?.id === productId);
+      const itemToRemove = cart.find(item => item.product.id === productId);
       
       // Actualizar estado local primero
-      setCart(prevCart => prevCart.filter(item => item.product?.id !== productId));
+      setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
       
       // Si hay usuario y el item existe, remover del backend
       if (user && itemToRemove && typeof itemToRemove.id === 'number') {
@@ -247,7 +247,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       // Actualizar estado local primero
       setCart(prevCart => 
         prevCart.map(item => 
-          item.product?.id === productId 
+          item.product.id === productId 
             ? { ...item, quantity } 
             : item
         )

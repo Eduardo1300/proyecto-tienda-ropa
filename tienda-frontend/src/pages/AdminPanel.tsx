@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { productsAPI } from '../services/api';
+import { adminApi } from '../services/adminApi';
 import axios from 'axios';
 import type { Product } from '../types';
 
@@ -80,44 +81,11 @@ const AdminPanel: React.FC = () => {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get('/api/orders/admin/all', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setOrders(response.data.data || response.data);
+      const ordersData = await adminApi.getAllOrders();
+      setOrders(ordersData || []);
     } catch (error) {
       console.error('Error loading orders:', error);
-      // Mock data for demonstration
-      setOrders([
-        {
-          id: 1,
-          orderNumber: 'ORD-20241210-001',
-          userId: 2,
-          user: { username: 'cliente1', email: 'cliente1@email.com' },
-          status: 'pending',
-          total: 129.98,
-          createdAt: '2024-12-10T10:30:00Z',
-          items: [
-            { id: 1, productId: 1, product: { name: 'Vestido Elegante', imageUrl: '/images/dress1.jpg' }, quantity: 1, price: 89.99 },
-            { id: 2, productId: 2, product: { name: 'Camisa Casual', imageUrl: '/images/shirt1.jpg' }, quantity: 1, price: 39.99 }
-          ],
-          shippingAddress: 'Av. Principal 123, Lima, Perú'
-        },
-        {
-          id: 2,
-          orderNumber: 'ORD-20241210-002',
-          userId: 3,
-          user: { username: 'cliente2', email: 'cliente2@email.com' },
-          status: 'processing',
-          total: 79.99,
-          createdAt: '2024-12-10T11:15:00Z',
-          items: [
-            { id: 3, productId: 3, product: { name: 'Jeans Premium', imageUrl: '/images/jeans1.jpg' }, quantity: 1, price: 79.99 }
-          ],
-          shippingAddress: 'Jr. Los Olivos 456, Arequipa, Perú',
-          trackingNumber: 'TRK123456789'
-        }
-      ]);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -130,36 +98,12 @@ const AdminPanel: React.FC = () => {
       const response = await axios.get('/api/users/admin/all', {
         headers: { Authorization: `Bearer ${token}` }
       });
+      // Agregar log para depurar la respuesta de la API en loadUsers
+      console.log('Respuesta de la API /api/users/admin/all:', response.data);
       setUsers(response.data.data || response.data);
     } catch (error) {
       console.error('Error loading users:', error);
-      // Mock data for demonstration
-      setUsers([
-        {
-          id: 1,
-          username: 'admin',
-          email: 'admin@tienda.com',
-          role: 'admin',
-          createdAt: '2024-01-01T00:00:00Z',
-          isActive: true
-        },
-        {
-          id: 2,
-          username: 'cliente1',
-          email: 'cliente1@email.com',
-          role: 'user',
-          createdAt: '2024-11-15T10:30:00Z',
-          isActive: true
-        },
-        {
-          id: 3,
-          username: 'cliente2',
-          email: 'cliente2@email.com',
-          role: 'user',
-          createdAt: '2024-12-01T14:20:00Z',
-          isActive: true
-        }
-      ]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -561,11 +505,9 @@ const OrdersManagement: React.FC<{
 
   const updateOrderStatus = async (orderId: number, newStatus: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/orders/${orderId}/status`, 
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      console.log(`Actualizando orden ${orderId} a estado: ${newStatus}`);
+      await adminApi.updateOrderStatus(orderId, newStatus);
+      console.log(`✅ Orden ${orderId} actualizada exitosamente a: ${getStatusText(newStatus)}`);
       // Reload orders after update
       // onReload();
       alert(`Estado de orden actualizado a: ${getStatusText(newStatus)}`);
@@ -574,6 +516,18 @@ const OrdersManagement: React.FC<{
       alert('Error al actualizar el estado de la orden');
     }
   };
+
+  // Validar que orders sea un arreglo antes de usar .map
+  if (!Array.isArray(orders)) {
+    console.error('El valor de orders no es un arreglo:', orders);
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">📋</div>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Error al cargar órdenes</h3>
+        <p className="text-gray-500">El formato de los datos no es válido.</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -624,7 +578,9 @@ const OrdersManagement: React.FC<{
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                     {getStatusText(order.status)}
                   </span>
-                  <p className="text-lg font-bold text-purple-600 mt-2">${order.total.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-purple-600 mt-2">
+                    ${typeof order.total === 'number' ? order.total.toFixed(2) : parseFloat(order.total || '0').toFixed(2)}
+                  </p>
                 </div>
               </div>
 
@@ -636,7 +592,7 @@ const OrdersManagement: React.FC<{
                       {order.items.map((item) => (
                         <div key={item.id} className="flex justify-between text-sm">
                           <span>{item.product?.name || `Producto ${item.productId}`} x{item.quantity}</span>
-                          <span>${(item.price * item.quantity).toFixed(2)}</span>
+                          <span>${(typeof item.price === 'number' ? item.price * item.quantity : parseFloat(item.price || '0') * item.quantity).toFixed(2)}</span>
                         </div>
                       ))}
                     </div>
@@ -718,7 +674,7 @@ const OrdersManagement: React.FC<{
                           <p className="font-medium">{item.product?.name || `Producto ${item.productId}`}</p>
                           <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
                         </div>
-                        <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="font-semibold">${(typeof item.price === 'number' ? item.price * item.quantity : parseFloat(item.price || '0') * item.quantity).toFixed(2)}</p>
                       </div>
                     ))}
                   </div>
@@ -727,7 +683,7 @@ const OrdersManagement: React.FC<{
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center text-lg font-bold">
                     <span>Total:</span>
-                    <span className="text-purple-600">${selectedOrder.total.toFixed(2)}</span>
+                    <span className="text-purple-600">${typeof selectedOrder.total === 'number' ? selectedOrder.total.toFixed(2) : parseFloat(selectedOrder.total || '0').toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -747,6 +703,18 @@ const UsersManagement: React.FC<{
 }> = ({ users, loading, onReload: _onReload }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
+
+  // Validar que users sea un arreglo antes de usar .filter
+  if (!Array.isArray(users)) {
+    console.error('El valor de users no es un arreglo:', users);
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">👥</div>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Error al cargar usuarios</h3>
+        <p className="text-gray-500">El formato de los datos no es válido.</p>
+      </div>
+    );
+  }
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||

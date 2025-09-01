@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useNotifications } from '../context/NotificationContext';
 import axios from 'axios';
+import { API_BASE_URL } from '../services/api';
+import ProductImage from './ProductImage';
 
 interface Product {
   id: number;
@@ -62,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       
       // Intentar con diferentes endpoints posibles
       try {
-        await axios.post('http://localhost:3000/api/wishlist', {
+        await axios.post(`${API_BASE_URL}/wishlist`, {
           productId: product.id
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -70,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       } catch (error: any) {
         // Si falla, intentar con endpoint alternativo
         if (error.response?.status === 404) {
-          await axios.post('http://localhost:3000/api/products/wishlist', {
+          await axios.post(`${API_BASE_URL}/products/wishlist`, {
             productId: product.id
           }, {
             headers: { Authorization: `Bearer ${token}` }
@@ -149,7 +151,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        await axios.post('/api/products/track-view', {
+        // Cambiar la URL relativa a la base del backend
+        await axios.post(`${API_BASE_URL}/api/products/track-view`, {
           productId: product.id
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -188,12 +191,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (viewMode === 'list') {
     return (
       <div className="bg-white shadow-md rounded-lg p-4 flex gap-4 hover:shadow-lg transition-shadow">
-        <div className="relative w-32 h-32 flex-shrink-0">
-          <img 
-            src={product.imageUrl || product.image} 
-            alt={product.name} 
-            className="w-full h-full object-cover rounded-lg"
-            onClick={() => { trackView(); onQuickView(); }}
+        <div className="relative w-32 h-32 flex-shrink-0 cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
+          <ProductImage
+            src={product.imageUrl || product.image}
+            alt={product.name}
+            className="w-full h-full rounded-lg"
+            loading="lazy"
           />
           
           {/* Badges */}
@@ -279,12 +282,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Grid view
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
-      <div className="relative">
-        <img 
-          src={product.imageUrl || product.image} 
-          alt={product.name} 
-          className="w-full h-48 object-cover cursor-pointer"
-          onClick={() => { trackView(); onQuickView(); }}
+      <div className="relative cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
+        <ProductImage
+          src={product.imageUrl || product.image}
+          alt={product.name}
+          className="w-full h-48"
+          loading="lazy"
         />
         
         {/* Badges */}

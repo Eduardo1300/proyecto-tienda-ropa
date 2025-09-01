@@ -60,7 +60,7 @@ export class OrderService {
       subtotal += itemDto.price * itemDto.quantity;
     }
 
-    const shippingCost = dto.shippingCost || 0;
+    const shippingCost = typeof dto.shippingCost === 'number' ? dto.shippingCost : 0;
     const tax = dto.tax || 0;
     const total = subtotal + shippingCost + tax;
 
@@ -109,11 +109,30 @@ export class OrderService {
   }
 
   async findOrdersByUser(userId: number): Promise<Order[]> {
-    return this.orderRepo.find({
+    const orders = await this.orderRepo.find({
       where: { user: { id: userId } },
-      relations: ['items', 'items.product'],
+      relations: ['user', 'items', 'items.product'],
       order: { createdAt: 'DESC' },
     });
+
+    // Ensure user information is properly included
+    return orders.map(order => ({
+      ...order,
+      userId: order.user?.id,
+    })) as Order[];
+  }
+
+  async findAllOrders(): Promise<Order[]> {
+    const orders = await this.orderRepo.find({
+      relations: ['user', 'items', 'items.product', 'statusHistory'],
+      order: { createdAt: 'DESC' },
+    });
+
+    // Ensure user information is properly included
+    return orders.map(order => ({
+      ...order,
+      userId: order.user?.id,
+    })) as Order[];
   }
 
   async updateOrderStatus(orderId: number, dto: UpdateOrderStatusDto, changedBy: User): Promise<Order> {

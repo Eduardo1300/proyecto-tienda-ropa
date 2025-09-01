@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../services/api';
 
 interface OrderTrackingInfo {
   orderNumber: string;
@@ -35,7 +36,7 @@ const OrderTracking: React.FC = () => {
   const fetchTrackingInfo = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/orders/${orderId}/tracking`, {
+      const response = await axios.get(`${API_BASE_URL}/orders/${orderId}/tracking`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTrackingInfo(response.data);

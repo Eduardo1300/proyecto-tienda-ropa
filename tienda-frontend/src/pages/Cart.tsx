@@ -6,8 +6,8 @@ const Cart = () => {
   const { cart, removeFromCart, clearCart } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const total = cart.reduce((sum, product) => sum + product.price * product.quantity, 0);
-  const totalItems = cart.reduce((sum, product) => sum + product.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
@@ -64,31 +64,31 @@ const Cart = () => {
                 </h2>
                 
                 <div className="space-y-4">
-                  {cart.map((product, index) => (
+                  {cart.map((item, index) => (
                     <div
-                      key={product.id}
+                      key={item.id}
                       className="flex items-center justify-between bg-gray-50 rounded-xl p-4 hover:shadow-md transition-all duration-300"
                       style={{animationDelay: `${index * 0.1}s`}}
                     >
                       <div className="flex items-center gap-4">
                         <img
-                          src={product.imageUrl}
-                          alt={product.name}
+                          src={item.product?.image || '/placeholder.jpg'}
+                          alt={item.product?.name || 'Producto'}
                           className="w-20 h-20 object-cover rounded-lg shadow-md"
                         />
                         <div>
                           <h3 className="text-lg font-bold text-gray-800">
-                            {product.name}
+                            {item.product?.name || 'Producto sin nombre'}
                           </h3>
                           <p className="text-sm text-gray-600 mb-2">
-                            {product.description}
+                            Producto de calidad
                           </p>
                           <div className="flex items-center gap-4">
                             <span className="text-lg font-bold text-purple-600">
-                              ${product.price}
+                              ${item.product?.price || 0}
                             </span>
                             <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                              Cantidad: {product.quantity}
+                              Cantidad: {item.quantity}
                             </span>
                           </div>
                         </div>
@@ -96,10 +96,10 @@ const Cart = () => {
                       
                       <div className="flex flex-col items-end gap-2">
                         <span className="text-xl font-bold text-gray-800">
-                          ${(product.price * product.quantity).toFixed(2)}
+                          ${((item.product?.price || 0) * item.quantity).toFixed(2)}
                         </span>
                         <button
-                          onClick={() => removeFromCart(product.id)}
+                          onClick={() => removeFromCart(item.product?.id || item.id)}
                           className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
                         >
                           🗑️ Eliminar
