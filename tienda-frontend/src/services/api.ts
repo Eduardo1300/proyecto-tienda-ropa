@@ -135,6 +135,36 @@ export const authAPI = {
   resetPassword: (token: string, newPassword: string) => api.post<ApiResponse<{ message: string }>>('/auth/reset-password', { token, newPassword }),
 };
 
+// Funciones para reviews
+export const reviewsAPI = {
+  // Crear nueva review
+  create: (reviewData: any) => api.post<any>('/reviews', reviewData),
+  
+  // Obtener todas las reviews
+  getAll: (filters?: any) => api.get<any>('/reviews', { params: filters }),
+  
+  // Obtener reviews de un producto específico
+  getByProduct: (productId: number, filters?: any) => api.get<any>(`/reviews/product/${productId}`, { params: filters }),
+  
+  // Obtener reviews de un usuario específico
+  getByUser: (userId: number, filters?: any) => api.get<any>(`/reviews/user/${userId}`, { params: filters }),
+  
+  // Obtener una review específica
+  getById: (id: number) => api.get<any>(`/reviews/${id}`),
+  
+  // Actualizar una review
+  update: (id: number, reviewData: any) => api.patch<any>(`/reviews/${id}`, reviewData),
+  
+  // Eliminar una review
+  delete: (id: number) => api.delete<any>(`/reviews/${id}`),
+  
+  // Votar una review (útil/no útil)
+  vote: (id: number, helpful: boolean) => api.post<any>(`/reviews/${id}/vote`, { helpful }),
+  
+  // Responder como admin
+  adminResponse: (id: number, response: string) => api.post<any>(`/reviews/${id}/admin-response`, { response }),
+};
+
 // Exportar API_BASE_URL explícitamente
 export { API_BASE_URL };
 

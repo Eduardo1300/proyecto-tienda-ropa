@@ -21,6 +21,7 @@ import OrderManagement from './pages/OrderManagement';
 import OrderTracking from './pages/OrderTracking';
 import Wishlist from './pages/Wishlist';
 import DashboardPage from './pages/DashboardPage';
+import ProductImageManager from './pages/ProductImageManager';
 import './App.css';
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/favoritos" element={<Wishlist />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/admin/product-images" element={<ProductImageManager />} />
               </Routes>
                 </main>
                 <NotificationContainer />

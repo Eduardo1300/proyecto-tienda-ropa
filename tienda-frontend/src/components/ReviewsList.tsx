@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ReviewCard } from './ReviewCard';
 import { ReviewForm } from './ReviewForm';
+import { reviewsAPI } from '../services/api';
 import type { Review, ReviewsListResponse, ReviewFilterDto, CreateReviewDto, UpdateReviewDto } from '../types/review.types';
 
 interface ReviewsListProps {
@@ -35,11 +36,22 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
   const loadReviews = async () => {
     try {
       setLoading(true);
-      // Aquí iría la llamada a la API
-      // const response = await reviewService.getReviews(filters);
-      // setReviewsData(response.data);
+      console.log('🔄 Loading reviews for product:', productId, 'with filters:', filters);
       
-      // Mock data por ahora
+      const response = await reviewsAPI.getByProduct(productId, {
+        page: filters.page || 1,
+        limit: filters.limit || 10,
+        sortBy: filters.sortBy || 'date',
+        order: filters.order || 'DESC',
+        rating: filters.rating
+      });
+      
+      console.log('✅ Reviews loaded:', response.data);
+      setReviewsData(response.data);
+    } catch (error) {
+      console.error('❌ Error loading reviews:', error);
+      
+      // En caso de error, usar datos mock vacíos para evitar crashes
       const mockData: ReviewsListResponse = {
         reviews: [],
         total: 0,
@@ -49,8 +61,6 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
       };
       setReviewsData(mockData);
-    } catch (error) {
-      console.error('Error loading reviews:', error);
     } finally {
       setLoading(false);
     }
@@ -58,13 +68,19 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
 
   const handleCreateReview = async (data: CreateReviewDto) => {
     try {
-      // const response = await reviewService.createReview(data);
-      console.log('Creating review:', data);
+      console.log('🔄 Creating review:', data);
+      
+      const response = await reviewsAPI.create({
+        ...data,
+        productId: productId // Asegurar que el productId esté incluido
+      });
+      
+      console.log('✅ Review created:', response.data);
       setShowForm(false);
       loadReviews();
       onReviewAdded?.();
     } catch (error) {
-      console.error('Error creating review:', error);
+      console.error('❌ Error creating review:', error);
       throw error;
     }
   };
@@ -73,12 +89,15 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
     if (!editingReview) return;
     
     try {
-      // const response = await reviewService.updateReview(editingReview.id, data);
-      console.log('Updating review:', editingReview.id, data);
+      console.log('🔄 Updating review:', editingReview.id, data);
+      
+      const response = await reviewsAPI.update(editingReview.id, data);
+      
+      console.log('✅ Review updated:', response.data);
       setEditingReview(null);
       loadReviews();
     } catch (error) {
-      console.error('Error updating review:', error);
+      console.error('❌ Error updating review:', error);
       throw error;
     }
   };
@@ -89,21 +108,27 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
     }
 
     try {
-      // await reviewService.deleteReview(reviewId);
-      console.log('Deleting review:', reviewId);
+      console.log('🔄 Deleting review:', reviewId);
+      
+      await reviewsAPI.delete(reviewId);
+      
+      console.log('✅ Review deleted');
       loadReviews();
     } catch (error) {
-      console.error('Error deleting review:', error);
+      console.error('❌ Error deleting review:', error);
     }
   };
 
   const handleVoteReview = async (reviewId: number, helpful: boolean) => {
     try {
-      // await reviewService.voteReview(reviewId, { helpful });
-      console.log('Voting review:', reviewId, helpful);
+      console.log('🔄 Voting review:', reviewId, helpful);
+      
+      await reviewsAPI.vote(reviewId, helpful);
+      
+      console.log('✅ Review voted');
       loadReviews();
     } catch (error) {
-      console.error('Error voting review:', error);
+      console.error('❌ Error voting review:', error);
     }
   };
 

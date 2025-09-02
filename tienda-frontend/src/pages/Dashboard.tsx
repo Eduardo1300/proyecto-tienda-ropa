@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../services/api';
 import { Button, Card, Badge } from '../components/ui';
+import { getProductImage } from '../utils/productImages';
 
 interface UserInfo {
   id: number;
@@ -350,7 +351,7 @@ const Dashboard: React.FC = () => {
                     <div className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative">
                       {item.imageUrl ? (
                         <img
-                          src={item.imageUrl}
+                          src={getProductImage(item.name, (item as any).category || '', item.imageUrl)}
                           alt={item.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -402,7 +403,7 @@ const Dashboard: React.FC = () => {
                     <div className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative">
                       {product.imageUrl ? (
                         <img
-                          src={product.imageUrl}
+                          src={getProductImage(product.name, (product as any).category || '', product.imageUrl)}
                           alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />

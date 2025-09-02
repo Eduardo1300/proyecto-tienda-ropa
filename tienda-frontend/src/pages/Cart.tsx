@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Button, Card, Badge } from "../components/ui";
+import { getProductImage } from "../utils/productImages";
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
@@ -105,7 +106,7 @@ const Cart = () => {
                       <div className="flex items-center gap-6">
                         <div className="relative">
                           <img
-                            src={item.product?.imageUrl || '/placeholder.jpg'}
+                            src={getProductImage(item.product?.name || 'Producto', item.product?.category || '', item.product?.imageUrl || '/placeholder.jpg')}
                             alt={item.product?.name || 'Producto'}
                             className="w-24 h-24 object-cover rounded-xl shadow-md"
                           />

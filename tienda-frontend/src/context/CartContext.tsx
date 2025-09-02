@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { cartAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 import type { Product } from '../types';
+import { getProductImage } from '../utils/productImages';
 
 interface CartItem {
   id: string | number;
@@ -33,7 +34,7 @@ const normalizeProduct = (product: any): Product => {
     description: product.description || '',
     price: typeof product.price === 'number' ? product.price : 0,
     category: product.category || '',
-    imageUrl: product.imageUrl || product.image || '/placeholder.jpg'
+    imageUrl: getProductImage(product.name || 'Producto sin nombre', product.category || '', product.imageUrl || product.image || '/placeholder.jpg')
   };
 };
 
@@ -110,7 +111,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           description: item.description || '',
           price: item.price || 0,
           category: item.category || '',
-          imageUrl: item.imageUrl || item.image || ''
+          imageUrl: getProductImage(item.name || 'Producto', item.category || '', item.imageUrl || item.image || '')
         };
         
         mergedItems.set(productId, {

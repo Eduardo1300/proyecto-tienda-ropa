@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { productsAPI } from '../services/api';
 import { ReviewsList } from '../components/ReviewsList';
+import { getProductImage, getProductImages } from '../utils/productImages';
 import type { Product } from '../types';
 
 interface ExtendedProduct extends Product {
@@ -19,13 +21,11 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const productImages = [
-    product?.imageUrl,
-    "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop",
-    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=800&fit=crop"
-  ];
+  // Generar galería de imágenes apropiadas para el producto
+  const productImages = product ? getProductImages(product.name, product.category, 4) : [];
 
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -51,7 +51,7 @@ const ProductDetail = () => {
           price: backendProduct.price || 0,
           category: backendProduct.category || 'general',
           stock: backendProduct.stock || 0,
-          imageUrl: backendProduct.imageUrl || `https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=600&h=800&fit=crop&sig=${backendProduct.id}`,
+          imageUrl: getProductImage(backendProduct.name, backendProduct.category, backendProduct.imageUrl),
           features: (backendProduct as any).features || [
             "Material de alta calidad",
             "Diseño moderno y elegante",
@@ -314,13 +314,11 @@ const ProductDetail = () => {
             <ReviewsList
               productId={product.id}
               productName={product.name}
-              currentUserId={1} // Mock user ID, debería venir del contexto de autenticación
+              currentUserId={user?.id}
               onReviewAdded={() => {
-                // Recargar el producto para actualizar el conteo de reviews
-                if (id) {
-                  // Simple reload usando window.location
-                  window.location.reload();
-                }
+                // No necesitamos recargar la página, el componente ReviewsList
+                // ya se encarga de recargar las reviews automáticamente
+                console.log('✅ Review agregada, la lista se actualizará automáticamente');
               }}
             />
           </div>

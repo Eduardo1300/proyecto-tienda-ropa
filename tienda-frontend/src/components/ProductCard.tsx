@@ -7,6 +7,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../services/api';
 import ProductImage from './ProductImage';
 import { Button, Card, Badge } from './ui';
+import { getProductImage } from '../utils/productImages';
 
 interface Product {
   id: number;
@@ -194,7 +195,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <Card className="flex gap-4 hover:shadow-xl transition-all duration-300" padding="md">
         <div className="relative w-32 h-32 flex-shrink-0 cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
           <ProductImage
-            src={product.imageUrl || product.image}
+            src={getProductImage(product.name, product.category, product.imageUrl || product.image)}
             alt={product.name}
             className="w-full h-full rounded-lg"
             loading="lazy"
@@ -291,7 +292,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" padding="none">
       <div className="relative cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
         <ProductImage
-          src={product.imageUrl || product.image}
+          src={getProductImage(product.name, product.category, product.imageUrl || product.image)}
           alt={product.name}
           className="w-full h-48 group-hover:scale-105 transition-transform duration-300"
           loading="lazy"

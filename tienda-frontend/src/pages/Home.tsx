@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { productsAPI } from "../services/api";
 import { Button, Card, Badge } from "../components/ui";
 import ProductImage from "../components/ProductImage";
+import { getProductImage } from "../utils/productImages";
 import type { Product } from "../types";
 
 const Home = () => {
@@ -21,44 +22,15 @@ const Home = () => {
         const response = await productsAPI.getAll();
         console.log('✅ Products fetched:', response.data);
         
-        // Procesar y limpiar datos del backend
-        const backendProducts: any[] = response.data.data || response.data;
+        // Procesar productos del backend
+        const backendProducts: Product[] = response.data.data || response.data || [];
         
-        // Filtrar duplicados por ID y limpiar datos
-        const displayProducts: Product[] = backendProducts.length > 0 ? backendProducts : [
-          {
-            id: 1,
-            name: "Vestido Elegante Negro",
-            description: "Vestido negro elegante perfecto para ocasiones especiales",
-            price: 89.99,
-            imageUrl: "https://images.unsplash.com/photo-1566479179817-05b6f6baefb8?w=300&h=400&fit=crop",
-            stock: 15,
-            category: "vestidos"
-          },
-          {
-            id: 2,
-            name: "Camisa Casual Blanca",
-            description: "Camisa de algodón cómoda y fresca para el día a día",
-            price: 45.50,
-            imageUrl: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=400&fit=crop",
-            stock: 25,
-            category: "camisas"
-          },
-          {
-            id: 3,
-            name: "Jeans Premium Azul",
-            description: "Jeans de alta calidad con corte moderno y cómodo",
-            price: 79.99,
-            imageUrl: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=400&fit=crop",
-            stock: 20,
-            category: "pantalones"
-          }
-        ];
-        
-        setProducts(displayProducts);
+        setProducts(backendProducts);
       } catch (error) {
         console.error('❌ Error fetching products:', error);
         setError('Error al cargar productos');
+        // No usar productos mock, mejor mostrar mensaje de error
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -230,7 +202,7 @@ const Home = () => {
                   >
                     <div className="relative">
                       <ProductImage
-                        src={product.imageUrl || 'https://via.placeholder.com/400x500'}
+                        src={getProductImage(product.name, product.category, product.imageUrl)}
                         alt={product.name}
                         className="w-full h-64 group-hover:scale-110 transition-transform duration-500"
                         loading="lazy"

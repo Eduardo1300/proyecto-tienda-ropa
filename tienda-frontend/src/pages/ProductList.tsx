@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import type { Product } from '../types';
 import { productsAPI } from '../services/api';
+import { getProductImage } from '../utils/productImages';
 
 const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -144,7 +145,7 @@ const ProductList = () => {
                 <Link to={`/product/${product.id}`} className="block">
                   <div className="relative">
                     <img 
-                      src={product.imageUrl} 
+                      src={getProductImage(product.name, product.category, product.imageUrl)} 
                       alt={product.name} 
                       className="w-full h-64 object-cover"
                     />
