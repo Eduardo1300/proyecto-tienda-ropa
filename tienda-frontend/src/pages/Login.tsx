@@ -145,11 +145,15 @@ const Login: React.FC = () => {
             {/* Demo credentials */}
             <div className="bg-purple-500 bg-opacity-20 rounded-2xl p-4 text-center">
               <p className="text-sm text-purple-100 mb-2">
-                💡 <strong>Demo:</strong> Usa cualquier email y contraseña para probar
+                💡 <strong>Credenciales de prueba:</strong>
               </p>
-              <div className="flex flex-col gap-1 text-xs text-purple-200">
-                <span>📧 demo@ejemplo.com</span>
-                <span>🔒 contraseña123</span>
+              <div className="flex flex-col gap-2 text-xs text-purple-200">
+                <div>
+                  <strong>Usuario:</strong> 📧 prueba@gmail.com 🔒 123456
+                </div>
+                <div>
+                  <strong>Admin:</strong> � admin@gmail.com 🔒 password123
+                </div>
               </div>
             </div>
           </form>

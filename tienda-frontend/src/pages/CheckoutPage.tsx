@@ -135,9 +135,9 @@ const CheckoutPage: React.FC = () => {
       const orderData = {
         userId: user?.id || 0,
         items: cart.map(item => ({
-          productId: item.id,
+          productId: item.product?.id || item.id,
           quantity: item.quantity,
-          price: item.price
+          price: item.product?.price || 0
         })),
         shippingAddress: `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.zipCode}`,
         billingAddress: `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.zipCode}`,
@@ -479,10 +479,10 @@ const CheckoutPage: React.FC = () => {
                         {cart.map((item) => (
                           <div key={item.id} className="flex justify-between items-center">
                             <div>
-                              <span className="font-medium">{item.name}</span>
+                              <span className="font-medium">{item.product?.name || 'Producto'}</span>
                               <span className="text-gray-500 ml-2">x{item.quantity}</span>
                             </div>
-                            <span className="font-semibold">S/ {(item.price * item.quantity).toFixed(2)}</span>
+                            <span className="font-semibold">S/ {((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
@@ -558,12 +558,12 @@ const CheckoutPage: React.FC = () => {
                 {cart.slice(0, 3).map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
                     <img
-                      src={item.imageUrl || 'https://via.placeholder.com/60x60'}
-                      alt={item.name}
+                      src={item.product?.imageUrl || 'https://via.placeholder.com/60x60'}
+                      alt={item.product?.name || 'Producto'}
                       className="w-12 h-12 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
+                      <p className="text-sm font-medium text-gray-800 truncate">{item.product?.name || 'Producto'}</p>
                       <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
                     </div>
                   </div>

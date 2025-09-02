@@ -1,13 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { cartAPI } from '../services/api';
 import { useAuth } from './AuthContext';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
+import type { Product } from '../types';
 
 interface CartItem {
   id: string | number;
@@ -18,7 +12,7 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   loading: boolean;
-  addToCart: (product: Product, quantity?: number) => Promise<void>;
+  addToCart: (product: any, quantity?: number) => Promise<void>;
   removeFromCart: (productId: number | string) => Promise<void>;
   updateQuantity: (productId: number | string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -28,6 +22,20 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export { CartContext };
+
+// Función helper para normalizar el formato del producto
+const normalizeProduct = (product: any): Product => {
+  return {
+    id: product.id,
+    name: product.name || 'Producto sin nombre',
+    description: product.description || '',
+    price: typeof product.price === 'number' ? product.price : 0,
+    category: product.category || '',
+    imageUrl: product.imageUrl || product.image || '/placeholder.jpg'
+  };
+};
 
 export const useCart = () => {
   const context = useContext(CartContext);
@@ -99,8 +107,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         const product = item.product || {
           id: productId,
           name: item.name || 'Producto',
+          description: item.description || '',
           price: item.price || 0,
-          image: item.imageUrl || item.image || ''
+          category: item.category || '',
+          imageUrl: item.imageUrl || item.image || ''
         };
         
         mergedItems.set(productId, {
@@ -120,13 +130,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           // Item solo existe local, agregarlo al backend
           console.log('➕ Adding local item to backend:', localItem);
           try {
-            // Crear el objeto que espera la API (usando el tipo CartItem del backend)
+            // Crear el objeto que espera la API (solo los campos necesarios)
             const backendCartItem = {
-              name: localItem.product.name,
-              price: localItem.product.price,
+              productId: localItem.product.id,
               quantity: localItem.quantity,
-              imageUrl: localItem.product.image,
-              productId: localItem.product.id
+              userId: user.id
             };
             await cartAPI.addItem(backendCartItem);
             
@@ -162,32 +170,38 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const addToCart = async (product: Product, quantity: number = 1) => {
+  const addToCart = async (product: any, quantity: number = 1) => {
     try {
       setLoading(true);
       
+      // Normalizar el producto para asegurar formato correcto
+      const normalizedProduct = normalizeProduct(product);
+      
       // Buscar si el producto ya existe en el carrito
-      const existingItem = cart.find(item => item.product?.id === product.id);
+      const existingItem = cart.find(item => item.product?.id === normalizedProduct.id);
       
       if (existingItem) {
         // Si existe, actualizar cantidad
-        await updateQuantity(product.id, existingItem.quantity + quantity);
+        await updateQuantity(normalizedProduct.id, existingItem.quantity + quantity);
       } else {
         // Si no existe, crear nuevo item
         const newItem: CartItem = {
-          id: `temp-${Date.now()}-${product.id}`,
-          product,
+          id: `temp-${Date.now()}-${normalizedProduct.id}`,
+          product: normalizedProduct,
           quantity
         };
         
         // Actualizar estado local primero
         setCart(prevCart => [...prevCart, newItem]);
         
+        console.log('🔍 New item added to cart:', newItem);
+        console.log('🔍 Product object:', normalizedProduct);
+        
         // Si hay usuario, sincronizar con backend
         if (user) {
           try {
             const backendCartItem = {
-              productId: product.id,
+              productId: normalizedProduct.id,
               quantity,
               userId: user.id
             };
@@ -199,7 +213,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       }
       
-      console.log('🛒 Product added to cart:', product.name);
+      console.log('🛒 Product added to cart:', normalizedProduct.name);
     } catch (error) {
       console.error('Error adding product to cart:', error);
     } finally {

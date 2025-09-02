@@ -118,13 +118,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           // Item solo existe local, agregarlo al backend
           console.log('➕ Adding local item to backend:', localItem);
           try {
-            // Crear el objeto que espera la API (usando el tipo CartItem del backend)
+            // Crear el objeto que espera la API (solo productId, quantity, userId)
             const backendCartItem = {
-              name: localItem.product.name,
-              price: localItem.product.price,
+              productId: localItem.product.id,
               quantity: localItem.quantity,
-              imageUrl: localItem.product.image,
-              productId: localItem.product.id
+              userId: user.id
             };
             await cartAPI.addItem(backendCartItem);
             
@@ -185,11 +183,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         if (user) {
           try {
             const backendCartItem = {
-              name: product.name,
-              price: product.price,
+              productId: product.id,
               quantity,
-              imageUrl: product.image,
-              productId: product.id
+              userId: user.id
             };
             await cartAPI.addItem(backendCartItem);
             console.log('✅ Item added to backend cart');

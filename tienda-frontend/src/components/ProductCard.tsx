@@ -6,6 +6,7 @@ import { useNotifications } from '../context/NotificationContext';
 import axios from 'axios';
 import { API_BASE_URL } from '../services/api';
 import ProductImage from './ProductImage';
+import { Button, Card, Badge } from './ui';
 
 interface Product {
   id: number;
@@ -190,7 +191,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   if (viewMode === 'list') {
     return (
-      <div className="bg-white shadow-md rounded-lg p-4 flex gap-4 hover:shadow-lg transition-shadow">
+      <Card className="flex gap-4 hover:shadow-xl transition-all duration-300" padding="md">
         <div className="relative w-32 h-32 flex-shrink-0 cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
           <ProductImage
             src={product.imageUrl || product.image}
@@ -201,15 +202,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
-            {product.isNew && (
-              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Nuevo</span>
-            )}
-            {product.isBestseller && (
-              <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Bestseller</span>
-            )}
-            {discountPercentage > 0 && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">-{discountPercentage}%</span>
-            )}
+            {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
+            {product.isBestseller && <Badge variant="warning" size="sm" icon="🔥">Bestseller</Badge>}
+            {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
           </div>
         </div>
 
@@ -217,7 +212,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                <h3 className="text-lg font-semibold text-gray-900 hover:text-purple-600 cursor-pointer transition-colors"
                     onClick={() => { trackView(); navigate(`/product/${product.id}`); }}>
                   {product.name}
                 </h3>
@@ -227,14 +222,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
               
               <div className="flex flex-col items-end gap-2">
                 <button
-                  onClick={addToWishlist}
-                  className={`p-2 rounded-full ${isInWishlist ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                  onClick={(e) => { e?.stopPropagation(); addToWishlist(); }}
+                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                    isInWishlist 
+                      ? 'text-red-500 bg-red-50' 
+                      : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                  }`}
                 >
                   {isInWishlist ? '❤️' : '🤍'}
                 </button>
                 <button
-                  onClick={onAddToComparison}
-                  className={`p-2 rounded-full ${isInComparison ? 'text-blue-500' : 'text-gray-400 hover:text-blue-500'}`}
+                  onClick={(e) => { e?.stopPropagation(); onAddToComparison(); }}
+                  className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
+                    isInComparison 
+                      ? 'text-blue-500 bg-blue-50' 
+                      : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                  }`}
                   title="Comparar"
                 >
                   ⚖️
@@ -252,102 +255,120 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+              <span className="text-xl font-bold text-gray-900">S/ {product.price.toFixed(2)}</span>
               {product.compareAtPrice && (
-                <span className="text-sm text-gray-500 line-through">${product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-sm text-gray-500 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
               )}
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={onQuickView}
-                className="bg-gray-100 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-200 text-sm"
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={(e) => { e?.stopPropagation(); onQuickView(); }}
+                icon="👁️"
               >
-                👀 Vista Rápida
-              </button>
-              <button
-                onClick={addToCart}
+                Vista Rápida
+              </Button>
+              <Button
+                onClick={(e) => { e?.stopPropagation(); addToCart(); }}
                 disabled={isAddingToCart || product.stock <= 0}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                loading={isAddingToCart}
+                size="sm"
+                icon="🛒"
               >
-                {isAddingToCart ? 'Agregando...' : product.stock <= 0 ? 'Sin Stock' : 'Agregar al Carrito'}
-              </button>
+                {product.stock <= 0 ? 'Sin Stock' : 'Agregar'}
+              </Button>
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Grid view
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
+    <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" padding="none">
       <div className="relative cursor-pointer" onClick={() => { trackView(); onQuickView(); }}>
         <ProductImage
           src={product.imageUrl || product.image}
           alt={product.name}
-          className="w-full h-48"
+          className="w-full h-48 group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
         
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {product.isNew && (
-            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Nuevo</span>
-          )}
-          {product.isFeatured && (
-            <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full">Destacado</span>
-          )}
-          {product.isBestseller && (
-            <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Bestseller</span>
-          )}
-          {discountPercentage > 0 && (
-            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">-{discountPercentage}%</span>
-          )}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
+          {product.isFeatured && <Badge variant="primary" size="sm" icon="⭐">Destacado</Badge>}
+          {product.isBestseller && <Badge variant="warning" size="sm" icon="🔥">Bestseller</Badge>}
+          {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
         </div>
 
         {/* Action buttons */}
-        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
           <button
-            onClick={addToWishlist}
-            className={`p-2 rounded-full bg-white shadow-md ${isInWishlist ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+            onClick={(e) => { e.stopPropagation(); addToWishlist(); }}
+            className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-110 ${
+              isInWishlist 
+                ? 'bg-red-500 text-white shadow-red-500/25' 
+                : 'bg-white/80 text-gray-600 hover:bg-red-50 hover:text-red-500'
+            }`}
           >
             {isInWishlist ? '❤️' : '🤍'}
           </button>
           <button
-            onClick={onAddToComparison}
-            className={`p-2 rounded-full bg-white shadow-md ${isInComparison ? 'text-blue-500' : 'text-gray-400 hover:text-blue-500'}`}
+            onClick={(e) => { e.stopPropagation(); onAddToComparison(); }}
+            className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-110 ${
+              isInComparison 
+                ? 'bg-blue-500 text-white shadow-blue-500/25' 
+                : 'bg-white/80 text-gray-600 hover:bg-blue-50 hover:text-blue-500'
+            }`}
             title="Comparar"
           >
             ⚖️
           </button>
           <button
-            onClick={onQuickView}
-            className="p-2 rounded-full bg-white shadow-md text-gray-400 hover:text-gray-600"
+            onClick={(e) => { e.stopPropagation(); onQuickView(); }}
+            className="p-3 rounded-full bg-white/80 backdrop-blur-md text-gray-600 hover:bg-purple-50 hover:text-purple-500 shadow-lg transition-all duration-200 hover:scale-110"
             title="Vista Rápida"
           >
-            👀
+            �️
           </button>
         </div>
 
         {/* Stock indicator */}
         {product.stock <= 0 && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-              Sin Stock
-            </span>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <Badge variant="danger" size="lg" icon="⚠️">Sin Stock</Badge>
           </div>
         )}
+
+        {/* Quick add to cart overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+          <Button
+            onClick={(e) => { e?.stopPropagation(); addToCart(); }}
+            disabled={isAddingToCart || product.stock <= 0}
+            loading={isAddingToCart}
+            fullWidth
+            variant="primary"
+            size="sm"
+            icon="🛒"
+            className="bg-white/20 backdrop-blur-md border-white/30 text-white hover:bg-white/30"
+          >
+            {product.stock <= 0 ? 'Sin Stock' : 'Agregar al Carrito'}
+          </Button>
+        </div>
       </div>
 
       <div className="p-4">
-        <div className="mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer line-clamp-2"
+        <div className="mb-3">
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-purple-600 cursor-pointer line-clamp-2 transition-colors duration-200"
               onClick={() => { trackView(); navigate(`/product/${product.id}`); }}>
             {product.name}
           </h3>
           {product.brand && (
-            <p className="text-sm text-gray-500">{product.brand}</p>
+            <p className="text-sm text-purple-600 font-medium">{product.brand}</p>
           )}
         </div>
 
@@ -358,38 +379,44 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="text-sm text-gray-500">({product.reviewCount})</span>
         </div>
 
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+            <span className="text-xl font-bold text-gray-900">S/ {product.price.toFixed(2)}</span>
             {product.compareAtPrice && (
-              <span className="text-sm text-gray-500 line-through">${product.compareAtPrice.toFixed(2)}</span>
+              <span className="text-sm text-gray-500 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
             )}
           </div>
           
           {product.stock > 0 && product.stock <= 5 && (
-            <span className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
-              ¡Solo {product.stock} disponibles!
-            </span>
+            <Badge variant="warning" size="sm" icon="⚠️">
+              Solo {product.stock} disponibles
+            </Badge>
           )}
         </div>
 
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => { trackView(); navigate(`/product/${product.id}`); }}
-            className="flex-1 bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition-colors text-sm"
+            variant="outline"
+            size="sm"
+            fullWidth
+            icon="👁️"
           >
-            👁️ Ver Detalles
-          </button>
-          <button
-            onClick={addToCart}
+            Ver Detalles
+          </Button>
+          <Button
+            onClick={(e) => { e?.stopPropagation(); addToCart(); }}
             disabled={isAddingToCart || product.stock <= 0}
-            className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+            loading={isAddingToCart}
+            size="sm"
+            fullWidth
+            icon="🛒"
           >
-            {isAddingToCart ? 'Agregando...' : product.stock <= 0 ? 'Sin Stock' : '🛒 Agregar'}
-          </button>
+            {product.stock <= 0 ? 'Sin Stock' : 'Agregar'}
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
