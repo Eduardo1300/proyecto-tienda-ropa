@@ -12,8 +12,8 @@ import { AuthController } from './auth.controller';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: 'secret_jwt', // usar variable de entorno
-      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET || 'secret_jwt',
+      signOptions: { expiresIn: '24h' }, // Extender a 24 horas para evitar expiración rápida
     }),
   ],
   controllers: [AuthController],

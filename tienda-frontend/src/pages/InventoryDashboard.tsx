@@ -1,138 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-interface Product {
-  id: number;
-  name: string;
-  sku: string;
-  barcode?: string;
-  stock: number;
-  reservedStock: number;
-  minStockLevel: number;
-  maxStockLevel: number;
-  reorderPoint: number;
-  reorderQuantity: number;
-  expirationDate?: string;
-  trackExpiration: boolean;
-  autoRestock: boolean;
-  lowStockAlert: boolean;
-  price: number;
-  costPrice?: number;
-  supplier?: string;
-  location?: string;
-  isLowStock: boolean;
-  needsRestock: boolean;
-  isExpired: boolean;
-  isExpiringSoon: boolean;
-  availableStock: number;
-}
-
-interface InventoryAlert {
-  id: number;
-  type: string;
-  status: string;
-  priority: string;
-  message: string;
-  product: Product;
-  createdAt: string;
-  threshold?: number;
-  currentValue?: number;
-}
-
-interface InventoryValue {
-  totalValue: number;
-  totalCost: number;
-  products: number;
-}
+import React, { useState } from 'react';
+import { 
+  useInventoryAlerts, 
+  useInventoryReports, 
+  useStockManagement 
+} from '../hooks/useInventory';
+import { Card, Badge } from '../components/ui';
 
 const InventoryDashboard: React.FC = () => {
-  const [alerts, setAlerts] = useState<InventoryAlert[]>([]);
-  const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
-  const [expiringProducts, setExpiringProducts] = useState<Product[]>([]);
-  const [inventoryValue, setInventoryValue] = useState<InventoryValue | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  const { 
+    alerts, 
+    isLoading: alertsLoading, 
+    error: alertsError, 
+    acknowledgeAlert, 
+    resolveAlert 
+  } = useInventoryAlerts();
 
-  useEffect(() => {
-    fetchInventoryData();
-  }, []);
+  const {
+    lowStockProducts,
+    expiringProducts,
+    inventoryValue,
+    isLoading: reportsLoading,
+    error: reportsError,
+  } = useInventoryReports();
 
-  const fetchInventoryData = async () => {
+  const { updateStock } = useStockManagement();
+
+  const handleUpdateStock = async (productId: number, newQuantity: number) => {
     try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-
-      const [alertsRes, lowStockRes, expiringRes, valueRes] = await Promise.all([
-        axios.get('/api/inventory/alerts', config),
-        axios.get('/api/inventory/reports/low-stock', config),
-        axios.get('/api/inventory/reports/expiring?days=30', config),
-        axios.get('/api/inventory/reports/value', config)
-      ]);
-
-      setAlerts(alertsRes.data);
-      setLowStockProducts(lowStockRes.data);
-      setExpiringProducts(expiringRes.data);
-      setInventoryValue(valueRes.data);
-    } catch (error) {
-      console.error('Error fetching inventory data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const acknowledgeAlert = async (alertId: number) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/inventory/alerts/${alertId}/acknowledge`, {
-        notes: 'Acknowledged from dashboard'
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
+      await updateStock({
+        productId,
+        quantity: newQuantity,
+        reason: 'ADJUSTMENT',
+        type: 'ADJUSTMENT',
+        notes: 'Manual adjustment from dashboard'
       });
-      fetchInventoryData();
+      alert('Stock actualizado exitosamente');
     } catch (error) {
-      console.error('Error acknowledging alert:', error);
+      alert('Error al actualizar el stock');
     }
   };
 
-  const resolveAlert = async (alertId: number) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/inventory/alerts/${alertId}/resolve`, {
-        notes: 'Resolved from dashboard'
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchInventoryData();
-    } catch (error) {
-      console.error('Error resolving alert:', error);
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+  const getPriorityColor = (severity: string) => {
+    switch (severity) {
+      case 'CRITICAL': return 'bg-red-100 text-red-800 border-red-200';
+      case 'HIGH': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'MEDIUM': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'LOW': return 'bg-green-100 text-green-800 border-green-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'low_stock': return '🔴';
-      case 'out_of_stock': return '🚨';
-      case 'expiring_soon': return '⏰';
-      case 'expired': return '❌';
-      case 'reorder_point': return '📦';
-      case 'overstock': return '📈';
+      case 'LOW_STOCK': return '🔴';
+      case 'OUT_OF_STOCK': return '🚨';
+      case 'EXPIRING_SOON': return '⏰';
+      case 'EXPIRED': return '❌';
+      case 'REORDER_POINT': return '📦';
+      case 'OVERSTOCK': return '📈';
       default: return '⚠️';
     }
   };
 
-  if (loading) {
+  const isLoading = alertsLoading || reportsLoading;
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -140,340 +74,308 @@ const InventoryDashboard: React.FC = () => {
     );
   }
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">📦 Panel de Inventario</h1>
-        <p className="text-gray-600 mt-2">Gestión avanzada de inventario y alertas</p>
+  if (alertsError || reportsError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h2 className="text-red-800 text-lg font-semibold">Error al cargar datos de inventario</h2>
+          <p className="text-red-600">{alertsError || reportsError}</p>
+        </div>
       </div>
+    );
+  }
 
-      {/* Navigation Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          {[
-            { id: 'overview', name: 'Resumen', icon: '📊' },
-            { id: 'alerts', name: 'Alertas', icon: '🚨' },
-            { id: 'reports', name: 'Reportes', icon: '📈' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab.icon} {tab.name}
-            </button>
-          ))}
-        </nav>
+  return (
+    <div className="container mx-auto px-4 py-8 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">📦 Gestión de Inventario</h1>
+          <p className="text-gray-600">
+            Monitorea y administra el stock de productos
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <select 
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="overview">Resumen</option>
+            <option value="alerts">Alertas</option>
+            <option value="reports">Reportes</option>
+          </select>
+        </div>
       </div>
 
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">💰</span>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Valor Total</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    ${inventoryValue?.totalValue.toFixed(2) || '0.00'}
-                  </p>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">Valor Total</h2>
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
               </div>
-            </div>
+              <div className="text-2xl font-bold text-blue-600 mb-2">
+                €{inventoryValue?.totalValue?.toFixed(2) || '0.00'}
+              </div>
+              <p className="text-sm text-gray-600">
+                Valor del inventario
+              </p>
+            </Card>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">📦</span>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Productos</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {inventoryValue?.products || 0}
-                  </p>
-                </div>
+            <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">Productos</h2>
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
               </div>
-            </div>
+              <div className="text-2xl font-bold text-green-600 mb-2">
+                {inventoryValue?.products || 0}
+              </div>
+              <p className="text-sm text-gray-600">
+                En inventario
+              </p>
+            </Card>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-red-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">⚠️</span>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Alertas Activas</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {alerts.filter(a => a.status === 'active').length}
-                  </p>
-                </div>
+            <Card className="p-6 bg-gradient-to-br from-red-50 to-rose-50">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">Alertas Activas</h2>
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
               </div>
-            </div>
+              <div className="text-2xl font-bold text-red-600 mb-2">
+                {alerts.filter(a => a.status === 'ACTIVE').length}
+              </div>
+              <p className="text-sm text-gray-600">
+                Requieren atención
+              </p>
+            </Card>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm">📉</span>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Stock Bajo</p>
-                  <p className="text-2xl font-semibold text-gray-900">
-                    {lowStockProducts.length}
-                  </p>
-                </div>
+            <Card className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-gray-700">Stock Bajo</h2>
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                </svg>
               </div>
-            </div>
+              <div className="text-2xl font-bold text-yellow-600 mb-2">
+                {lowStockProducts.length}
+              </div>
+              <p className="text-sm text-gray-600">
+                Productos bajo mínimo
+              </p>
+            </Card>
           </div>
 
           {/* Recent Alerts */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">🚨 Alertas Recientes</h3>
-            </div>
-            <div className="p-6">
-              {alerts.slice(0, 5).length > 0 ? (
-                <div className="space-y-4">
-                  {alerts.slice(0, 5).map((alert) => (
-                    <div key={alert.id} className={`p-4 rounded-lg border ${getPriorityColor(alert.priority)}`}>
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          <span className="text-lg">{getAlertIcon(alert.type)}</span>
-                          <div>
-                            <p className="font-medium">{alert.message}</p>
-                            <p className="text-sm opacity-75">
-                              {alert.product.name} (SKU: {alert.product.sku})
-                            </p>
-                            <p className="text-xs opacity-60 mt-1">
-                              {new Date(alert.createdAt).toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => acknowledgeAlert(alert.id)}
-                            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Reconocer
-                          </button>
-                          <button
-                            onClick={() => resolveAlert(alert.id)}
-                            className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
-                          >
-                            Resolver
-                          </button>
+          {alerts && alerts.length > 0 && (
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Alertas Recientes</h2>
+              <div className="space-y-3">
+                {alerts.slice(0, 5).map((alert) => (
+                  <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${getPriorityColor(alert.priority)}`}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{getAlertIcon(alert.type)}</span>
+                      <div>
+                        <div className="font-medium">{alert.message}</div>
+                        <div className="text-sm text-gray-600">
+                          {alert.product?.name || 'Producto'} - {new Date(alert.createdAt).toLocaleDateString('es-ES')}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-center py-8">No hay alertas activas</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Alerts Tab */}
-      {activeTab === 'alerts' && (
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">🚨 Todas las Alertas</h3>
-          </div>
-          <div className="p-6">
-            {alerts.length > 0 ? (
-              <div className="space-y-4">
-                {alerts.map((alert) => (
-                  <div key={alert.id} className={`p-4 rounded-lg border ${getPriorityColor(alert.priority)}`}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        <span className="text-lg">{getAlertIcon(alert.type)}</span>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <p className="font-medium">{alert.message}</p>
-                            <span className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(alert.priority)}`}>
-                              {alert.priority.toUpperCase()}
-                            </span>
-                          </div>
-                          <p className="text-sm opacity-75 mt-1">
-                            {alert.product.name} (SKU: {alert.product.sku})
-                          </p>
-                          {alert.currentValue !== undefined && alert.threshold !== undefined && (
-                            <p className="text-sm opacity-60 mt-1">
-                              Actual: {alert.currentValue} | Umbral: {alert.threshold}
-                            </p>
-                          )}
-                          <p className="text-xs opacity-60 mt-1">
-                            {new Date(alert.createdAt).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                      {alert.status === 'active' && (
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => acknowledgeAlert(alert.id)}
-                            className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Reconocer
-                          </button>
-                          <button
-                            onClick={() => resolveAlert(alert.id)}
-                            className="px-3 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
-                          >
-                            Resolver
-                          </button>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getPriorityColor(alert.priority)}>
+                        {alert.priority}
+                      </Badge>
+                      {alert.status === 'ACTIVE' && (
+                        <button 
+                          onClick={() => resolveAlert(alert.id)}
+                          className="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
+                        >
+                          Resolver
+                        </button>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Alerts Tab */}
+      {activeTab === 'alerts' && (
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Todas las Alertas</h2>
+          <div className="space-y-3">
+            {alerts && alerts.length > 0 ? (
+              alerts.map((alert) => (
+                <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${getPriorityColor(alert.priority)}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{getAlertIcon(alert.type)}</span>
+                    <div>
+                      <div className="font-medium">{alert.message}</div>
+                      <div className="text-sm text-gray-600">
+                        {alert.product?.name || 'Producto'} - {new Date(alert.createdAt).toLocaleDateString('es-ES')}
+                      </div>
+                      {alert.currentValue !== undefined && alert.threshold !== undefined && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          Actual: {alert.currentValue} | Umbral: {alert.threshold}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className={getPriorityColor(alert.priority)}>
+                      {alert.priority}
+                    </Badge>
+                    <Badge className={
+                      alert.status === 'ACTIVE' ? 'bg-red-100 text-red-800' :
+                      alert.status === 'ACKNOWLEDGED' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-green-100 text-green-800'
+                    }>
+                      {alert.status}
+                    </Badge>
+                    {alert.status === 'ACTIVE' && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => acknowledgeAlert(alert.id)}
+                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          Reconocer
+                        </button>
+                        <button 
+                          onClick={() => resolveAlert(alert.id)}
+                          className="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
+                        >
+                          Resolver
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
             ) : (
-              <p className="text-gray-500 text-center py-8">No hay alertas</p>
+              <p className="text-center text-gray-500 py-8">
+                No hay alertas disponibles
+              </p>
             )}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Reports Tab */}
       {activeTab === 'reports' && (
         <div className="space-y-6">
           {/* Low Stock Products */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">📉 Productos con Stock Bajo</h3>
-            </div>
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Productos con Stock Bajo</h2>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Producto
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      SKU
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock Actual
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock Mínimo
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estado
-                    </th>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold">Producto</th>
+                    <th className="text-left py-3 px-4 font-semibold">SKU</th>
+                    <th className="text-right py-3 px-4 font-semibold">Stock Actual</th>
+                    <th className="text-right py-3 px-4 font-semibold">Stock Mínimo</th>
+                    <th className="text-center py-3 px-4 font-semibold">Estado</th>
+                    <th className="text-center py-3 px-4 font-semibold">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {lowStockProducts.map((product) => (
-                    <tr key={product.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{product.sku}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{product.availableStock}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{product.minStockLevel}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                          Stock Bajo
-                        </span>
+                <tbody>
+                  {lowStockProducts && lowStockProducts.length > 0 ? (
+                    lowStockProducts.map((product, index) => (
+                      <tr key={product.id || index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4 font-medium">{product.name || 'Sin nombre'}</td>
+                        <td className="py-3 px-4 text-gray-600">{product.sku || 'Sin SKU'}</td>
+                        <td className="py-3 px-4 text-right">{product.stock || product.availableStock || 0}</td>
+                        <td className="py-3 px-4 text-right">{product.minStockLevel || 0}</td>
+                        <td className="py-3 px-4 text-center">
+                          <Badge className="bg-red-100 text-red-800">
+                            Stock Bajo
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            onClick={() => {
+                              const newStock = prompt('Nuevo stock:', (product.stock || 0).toString());
+                              if (newStock && !isNaN(Number(newStock))) {
+                                handleUpdateStock(product.id, Number(newStock));
+                              }
+                            }}
+                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          >
+                            Actualizar
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="py-8 text-center text-gray-500">
+                        No hay productos con stock bajo
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
-              {lowStockProducts.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No hay productos con stock bajo
-                </div>
-              )}
             </div>
-          </div>
+          </Card>
 
           {/* Expiring Products */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">⏰ Productos por Vencer (30 días)</h3>
-            </div>
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Productos por Vencer</h2>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Producto
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      SKU
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fecha de Vencimiento
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estado
-                    </th>
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold">Producto</th>
+                    <th className="text-left py-3 px-4 font-semibold">SKU</th>
+                    <th className="text-right py-3 px-4 font-semibold">Stock</th>
+                    <th className="text-center py-3 px-4 font-semibold">Fecha Vencimiento</th>
+                    <th className="text-center py-3 px-4 font-semibold">Estado</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {expiringProducts.map((product) => (
-                    <tr key={product.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{product.sku}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{product.availableStock}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {product.expirationDate ? new Date(product.expirationDate).toLocaleDateString() : 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          product.isExpired 
-                            ? 'bg-red-100 text-red-800' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {product.isExpired ? 'Vencido' : 'Por Vencer'}
-                        </span>
+                <tbody>
+                  {expiringProducts && expiringProducts.length > 0 ? (
+                    expiringProducts.map((product, index) => (
+                      <tr key={product.id || index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4 font-medium">{product.name || 'Sin nombre'}</td>
+                        <td className="py-3 px-4 text-gray-600">{product.sku || 'Sin SKU'}</td>
+                        <td className="py-3 px-4 text-right">{product.stock || product.availableStock || 0}</td>
+                        <td className="py-3 px-4 text-center">
+                          {product.expirationDate ? new Date(product.expirationDate).toLocaleDateString('es-ES') : 'N/A'}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <Badge className={
+                            product.isExpired 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }>
+                            {product.isExpired ? 'Vencido' : 'Por Vencer'}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                        No hay productos por vencer
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
-              {expiringProducts.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No hay productos por vencer en los próximos 30 días
-                </div>
-              )}
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

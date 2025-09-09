@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoyaltyProgram, LoyaltyTier } from '../entities/loyalty-program.entity';
 import { LoyaltyTransaction, TransactionType, TransactionReason } from '../entities/loyalty-transaction.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class LoyaltyService {
@@ -11,6 +12,8 @@ export class LoyaltyService {
     private loyaltyRepository: Repository<LoyaltyProgram>,
     @InjectRepository(LoyaltyTransaction)
     private transactionRepository: Repository<LoyaltyTransaction>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async createProgram(userId: number): Promise<LoyaltyProgram> {
@@ -163,7 +166,10 @@ export class LoyaltyService {
     limit: number = 50,
     offset: number = 0
   ): Promise<{ transactions: LoyaltyTransaction[]; total: number }> {
+    console.log(`📋 Getting transaction history for user ${userId}`);
+    
     const program = await this.getProgram(userId);
+    console.log(`📋 Found loyalty program ${program.id} for user ${userId}`);
 
     const [transactions, total] = await this.transactionRepository.findAndCount({
       where: { loyaltyProgramId: program.id },
@@ -171,6 +177,8 @@ export class LoyaltyService {
       take: limit,
       skip: offset
     });
+
+    console.log(`📋 Found ${transactions.length} transactions (total: ${total}) for program ${program.id}`);
 
     return { transactions, total };
   }
@@ -259,12 +267,22 @@ export class LoyaltyService {
     }
   }
 
-  async getLeaderboard(limit: number = 10): Promise<LoyaltyProgram[]> {
-    return await this.loyaltyRepository.find({
+  async getLeaderboard(limit: number = 10): Promise<any[]> {
+    const programs = await this.loyaltyRepository.find({
       order: { totalPoints: 'DESC' },
       take: limit,
       where: { isActive: true }
     });
+
+    // Formatear para el leaderboard
+    return programs.map((program, index) => ({
+      position: index + 1,
+      userId: program.userId,
+      userName: `Usuario ${program.userId}`,
+      currentPoints: program.totalPoints,
+      currentTier: program.currentTier,
+      totalPointsEarned: program.totalPoints
+    }));
   }
 
   private calculateExpirationDate(): Date {
@@ -309,5 +327,60 @@ export class LoyaltyService {
     await this.loyaltyRepository.save(program);
 
     return savedTransaction;
+  }
+
+  // Método temporal para obtener usuarios (para debugging)
+  async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.find({
+      select: ['id', 'email', 'firstName', 'lastName']
+    });
+  }
+
+  // Método temporal para crear usuario de prueba (para debugging)
+  async createTestUser(): Promise<User> {
+    // Verificar si ya existe un usuario de prueba
+    let testUser = await this.userRepository.findOne({
+      where: { email: 'test@loyalty.com' }
+    });
+
+    if (testUser) {
+      return testUser;
+    }
+
+    // Crear usuario de prueba
+    testUser = this.userRepository.create({
+      email: 'test@loyalty.com',
+      password: '$2b$10$hashedpassword', // password hasheado
+      firstName: 'Usuario',
+      lastName: 'Prueba',
+      role: 'user'
+    });
+
+    return await this.userRepository.save(testUser);
+  }
+
+  // Método temporal para obtener usuario por ID (para debugging)
+  async getUserById(userId: number): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { id: userId }
+    });
+  }
+
+  // Método temporal para generar token (para debugging)
+  async generateTokenForUser(user: User): Promise<string> {
+    const jwt = require('jsonwebtoken');
+    
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName
+    };
+
+    const secret = process.env.JWT_SECRET || 'tu-clave-secreta-muy-segura';
+    const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
+
+    return jwt.sign(payload, secret, { expiresIn });
   }
 }

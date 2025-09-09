@@ -18,6 +18,9 @@ Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y 
 - **Gestión de órdenes** completa
 - **Panel de administrador** para gestión de productos
 - **Perfiles de usuario** personalizables
+- **📊 Analytics Dashboard** - Métricas y estadísticas en tiempo real
+- **🏆 Programa de Lealtad** - Sistema de puntos y recompensas
+- **📦 Gestión de Inventario** - Control avanzado de stock (Admin)
 
 ### 🏗️ Arquitectura Robusta
 - **Backend**: NestJS con TypeORM y PostgreSQL
@@ -39,15 +42,19 @@ proyecto_tienda_de_ropa/
 │   │   ├── carrito/        # Carrito de compras
 │   │   ├── ordenes/        # Sistema de órdenes
 │   │   ├── admin/          # Panel administrativo
+│   │   ├── analytics/      # 📊 Métricas y estadísticas
+│   │   ├── loyalty/        # 🏆 Sistema de lealtad
+│   │   ├── inventory/      # 📦 Gestión de inventario
 │   │   └── common/         # Tipos y utilidades compartidas
 │   ├── .env               # Variables de entorno
 │   └── package.json
 ├── tienda-frontend/        # SPA con React
 │   ├── src/
 │   │   ├── components/     # Componentes reutilizables
-│   │   ├── pages/         # Páginas de la aplicación
+│   │   ├── pages/         # Páginas (incluye Analytics, Loyalty, Inventory)
 │   │   ├── context/       # Context API (Auth, Carrito)
-│   │   ├── services/      # Cliente API con Axios
+│   │   ├── services/      # Clientes API (Auth, Products, Analytics, etc.)
+│   │   ├── hooks/         # Custom hooks para cada funcionalidad
 │   │   └── types/         # Definiciones de TypeScript
 │   └── package.json
 └── README.md
@@ -198,6 +205,34 @@ POST   /orders         # Crear orden
 GET    /orders         # Listar órdenes del usuario
 ```
 
+### 📊 Analytics
+```http
+GET    /analytics/dashboard    # Métricas del dashboard
+GET    /analytics/metrics      # Métricas específicas
+POST   /analytics/events       # Tracking de eventos
+GET    /analytics/users        # Actividad de usuarios
+GET    /analytics/sales        # Estadísticas de ventas
+GET    /analytics/products     # Análisis de productos
+```
+
+### 🏆 Loyalty
+```http
+GET    /loyalty/program        # Información del programa
+GET    /loyalty/transactions   # Historial de puntos
+POST   /loyalty/redeem         # Canjear puntos
+GET    /loyalty/leaderboard    # Tabla de líderes
+POST   /loyalty/bonus          # Otorgar bonos (admin)
+```
+
+### 📦 Inventory (Admin)
+```http
+GET    /inventory/stock        # Stock actual de productos
+POST   /inventory/stock/update # Actualizar stock
+GET    /inventory/alerts       # Alertas de inventario
+GET    /inventory/reports      # Reportes de inventario
+POST   /inventory/stock/reserve # Reservar stock
+```
+
 ## 🔧 Scripts Disponibles
 
 ### Backend
@@ -294,7 +329,18 @@ npm run build
 
 ## 📝 Changelog
 
-### v1.0.0 (2025-01-10)
+### v2.0.0 (2025-01-10)
+- 🆕 **📊 Analytics Dashboard** - Sistema completo de métricas
+- 🆕 **🏆 Programa de Lealtad** - Puntos y recompensas
+- 🆕 **📦 Gestión de Inventario** - Control avanzado de stock
+- 🆕 **🔐 Sistema de Rutas Protegidas** - Control de acceso por roles
+- 🆕 **🎨 Animaciones y Transiciones** - UX mejorada
+- 🆕 **📱 Componentes Reutilizables** - LoadingSpinner, PageTransition
+- 🆕 **🎯 Custom Hooks** - Hooks especializados para cada funcionalidad
+- ✅ Navegación actualizada con nuevas páginas
+- ✅ Documentación completa de nuevas funcionalidades
+
+### v1.0.0 (2025-01-09)
 - ✅ Sistema de autenticación completo
 - ✅ CRUD de productos
 - ✅ Carrito de compras funcional

@@ -120,8 +120,8 @@ export class AuthService {
     };
 
     const access_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+      secret: process.env.JWT_SECRET || 'clave_secreta_acceso',
+      expiresIn: process.env.JWT_EXPIRES_IN || '24h',
     });
 
     const refresh_token = this.jwtService.sign(payload, {

@@ -22,6 +22,10 @@ import OrderTracking from './pages/OrderTracking';
 import Wishlist from './pages/Wishlist';
 import DashboardPage from './pages/DashboardPage';
 import ProductImageManager from './pages/ProductImageManager';
+import AnalyticsDashboardMock from './pages/AnalyticsDashboardMock';
+import LoyaltyDashboard from './pages/LoyaltyDashboard';
+import InventoryDashboard from './pages/InventoryDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -53,6 +57,37 @@ function App() {
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/favoritos" element={<Wishlist />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                
+                {/* Analytics Dashboard - Protected Route */}
+                <Route 
+                  path="/analytics" 
+                  element={
+                    <ProtectedRoute>
+                      <AnalyticsDashboardMock />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                {/* Loyalty Dashboard - Protected Route */}
+                <Route 
+                  path="/loyalty" 
+                  element={
+                    <ProtectedRoute>
+                      <LoyaltyDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                {/* Inventory Dashboard - Admin Only */}
+                <Route 
+                  path="/inventory" 
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <InventoryDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                
                 <Route path="/admin/product-images" element={<ProductImageManager />} />
               </Routes>
                 </main>

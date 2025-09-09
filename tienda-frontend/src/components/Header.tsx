@@ -27,19 +27,47 @@ const Header = () => {
           </Link>
           
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-6">
             <Link 
               to="/" 
-              className="relative py-2 px-4 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+              className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
             >
-              <span className="relative z-10">🏠 Inicio</span>
+              <span className="relative z-10 text-sm">🏠 Inicio</span>
             </Link>
             <Link 
               to="/products" 
-              className="relative py-2 px-4 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+              className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
             >
-              <span className="relative z-10">👕 Productos</span>
+              <span className="relative z-10 text-sm">👕 Productos</span>
             </Link>
+            {isAuthenticated && (
+              <>
+                <Link 
+                  to="/analytics" 
+                  className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+                  title="Ver estadísticas y métricas"
+                >
+                  <span className="relative z-10 text-sm">📊 Analytics</span>
+                </Link>
+                <Link 
+                  to="/loyalty" 
+                  className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+                  title="Programa de lealtad y puntos"
+                >
+                  <span className="relative z-10 text-sm">🏆 Lealtad</span>
+                </Link>
+                {user?.role === 'admin' && (
+                  <Link 
+                    to="/inventory" 
+                    className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group border border-yellow-300 bg-yellow-500 bg-opacity-20"
+                    title="Solo administradores - Gestión de inventario"
+                  >
+                    <span className="relative z-10 text-sm">📦 Inventario</span>
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                  </Link>
+                )}
+              </>
+            )}
           </nav>
 
           {/* Actions */}
