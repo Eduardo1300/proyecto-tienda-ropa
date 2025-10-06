@@ -11,7 +11,7 @@
     "start": "dotenv -e .env node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+   "start:prod": "node dist/src/main.js",
     "seed": "ts-node scripts/seed.ts",
     "seed:loyalty": "ts-node scripts/seed-loyalty.ts",
     "lint": "echo 'Linting temporarily disabled'",
