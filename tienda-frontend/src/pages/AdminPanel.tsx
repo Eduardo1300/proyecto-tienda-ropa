@@ -247,7 +247,7 @@ const AdminPanel: React.FC = () => {
           {/* Tab Content */}
           <div className="p-8">
             {activeTab === 'dashboard' && (
-              <DashboardView stats={stats} loading={loading} />
+              <DashboardView stats={stats} loading={loading} setActiveTab={setActiveTab} />
             )}
             
             {activeTab === 'products' && (
@@ -300,7 +300,7 @@ const AdminPanel: React.FC = () => {
 };
 
 // Dashboard Component
-const DashboardView: React.FC<{ stats: DashboardStats; loading: boolean }> = ({ stats, loading }) => {
+const DashboardView: React.FC<{ stats: DashboardStats; loading: boolean; setActiveTab: (tab: 'dashboard' | 'products' | 'orders' | 'users') => void }> = ({ stats, loading, setActiveTab }) => {
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -384,16 +384,16 @@ const DashboardView: React.FC<{ stats: DashboardStats; loading: boolean }> = ({ 
       <Card gradient>
         <h3 className="text-2xl font-bold text-gray-800 mb-6">⚡ Acciones Rápidas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Button variant="primary" fullWidth icon="➕">
+          <Button variant="primary" fullWidth icon="➕" onClick={() => setActiveTab('products')}>
             Agregar Producto
           </Button>
-          <Button variant="success" fullWidth icon="📋">
+          <Button variant="success" fullWidth icon="📋" onClick={() => setActiveTab('orders')}>
             Ver Órdenes
           </Button>
-          <Button variant="outline" fullWidth icon="👥">
+          <Button variant="outline" fullWidth icon="👥" onClick={() => setActiveTab('users')}>
             Gestionar Usuarios
           </Button>
-          <Button variant="secondary" fullWidth icon="📊">
+          <Button variant="secondary" fullWidth icon="📊" onClick={() => setActiveTab('dashboard')}>
             Reportes
           </Button>
         </div>

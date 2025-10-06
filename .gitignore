@@ -12,3 +12,13 @@ build/
 # Mac/Windows/Linux
 .DS_Store
 Thumbs.db
+# Bases de datos locales y dumps
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.sql
+*.bak
+*.dump
+backup.sql
+database_schema.sql

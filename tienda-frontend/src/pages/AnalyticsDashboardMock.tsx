@@ -125,138 +125,122 @@ const AnalyticsDashboardMock: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-        <p className="text-gray-600">
-          Panel de análisis de la tienda (Usando datos mock + API real)
-        </p>
-        
-        {/* Connection Status */}
-        <div className="mt-4 flex justify-center gap-2">
-          {connectionTest ? (
-            <Badge className="bg-green-100 text-green-800">
-              ✅ API Conectada - {connectionTest.message}
-            </Badge>
-          ) : (
-            <Badge className="bg-red-100 text-red-800">
-              ❌ API No disponible
-            </Badge>
-          )}
-          
-          {error && (
-            <Badge className="bg-yellow-100 text-yellow-800">
-              ⚠️ {error}
-            </Badge>
-          )}
-        </div>
-      </div>
-
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-600">Visitas Totales</h3>
-            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {mockDashboard.overview.totalPageViews.toLocaleString()}
-          </div>
-          <p className="text-sm text-gray-600">Páginas vistas</p>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-teal-50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-600">Visitantes Únicos</h3>
-            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {mockDashboard.overview.uniqueVisitors.toLocaleString()}
-          </div>
-          <p className="text-sm text-gray-600">Usuarios únicos</p>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-600">Ventas Totales</h3>
-            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            €{mockDashboard.overview.totalRevenue.toLocaleString()}
-          </div>
-          <p className="text-sm text-gray-600">{mockDashboard.overview.totalPurchases} órdenes</p>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-600">Tasa de Conversión</h3>
-            <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">
-            {mockDashboard.overview.conversionRate.toFixed(1)}%
-          </div>
-          <p className="text-sm text-gray-600">Conversión de visitas</p>
-        </Card>
-      </div>
-
-      {/* Revenue Chart */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Ingresos por Día</h2>
-        <div className="space-y-3">
-          {mockDashboard.revenue.map((day, index) => (
-            <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100">
-              <div className="text-sm font-medium">{day.date}</div>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">{day.orders} órdenes</span>
-                <span className="text-lg font-semibold">€{day.revenue.toFixed(2)}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Top Products */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Productos Más Vendidos</h2>
-        <div className="space-y-3">
-          {mockDashboard.topProducts.map((product, index) => (
-            <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        {/* Header Mejorado */}
+        <Card className="mb-10 overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white" padding="lg">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-5xl shadow-lg">📈</div>
               <div>
-                <div className="text-sm font-medium">Producto #{product.productId}</div>
-                <div className="text-xs text-gray-500">{product.views} vistas</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">{product.purchases} ventas</span>
-                <span className="text-lg font-semibold">€{product.revenue.toFixed(2)}</span>
+                <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
+                <p className="text-purple-100 text-lg">Panel de análisis de la tienda (Mock + API)</p>
               </div>
             </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Debug Information */}
-      {connectionTest && (
-        <Card className="p-6 bg-gray-50">
-          <h3 className="text-lg font-semibold mb-2">Información de Conexión</h3>
-          <div className="space-y-2 text-sm">
-            <div><strong>Usuario:</strong> {user?.email} ({user?.role})</div>
-            <div><strong>Token:</strong> {token ? 'Presente' : 'Ausente'}</div>
-            <div><strong>API Test:</strong> {connectionTest.message}</div>
-            <div><strong>Timestamp:</strong> {connectionTest.timestamp}</div>
-            {error && <div className="text-red-600"><strong>Error:</strong> {error}</div>}
+            <div className="flex flex-col items-end gap-2">
+              {connectionTest ? (
+                <Badge className="bg-green-500/20 text-green-100 text-base px-4 py-2 rounded-full">
+                  ✅ API Conectada - {connectionTest.message}
+                </Badge>
+              ) : (
+                <Badge className="bg-red-500/20 text-red-100 text-base px-4 py-2 rounded-full">
+                  ❌ API No disponible
+                </Badge>
+              )}
+              {error && (
+                <Badge className="bg-yellow-500/20 text-yellow-100 text-base px-4 py-2 rounded-full">
+                  ⚠️ {error}
+                </Badge>
+              )}
+            </div>
           </div>
         </Card>
-      )}
+
+        {/* Estadísticas principales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <Card className="p-8 bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">👁️</div>
+              <h3 className="text-lg font-semibold">Visitas Totales</h3>
+            </div>
+            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.totalPageViews.toLocaleString()}</div>
+            <p className="text-base text-blue-100">Páginas vistas</p>
+          </Card>
+          <Card className="p-8 bg-gradient-to-br from-green-500 to-teal-500 text-white shadow-xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">🧑‍🤝‍🧑</div>
+              <h3 className="text-lg font-semibold">Visitantes Únicos</h3>
+            </div>
+            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.uniqueVisitors.toLocaleString()}</div>
+            <p className="text-base text-green-100">Usuarios únicos</p>
+          </Card>
+          <Card className="p-8 bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">💸</div>
+              <h3 className="text-lg font-semibold">Ventas Totales</h3>
+            </div>
+            <div className="text-4xl font-bold mb-2">S/ {mockDashboard.overview.totalRevenue.toLocaleString()}</div>
+            <p className="text-base text-pink-100">{mockDashboard.overview.totalPurchases} órdenes</p>
+          </Card>
+          <Card className="p-8 bg-gradient-to-br from-yellow-500 to-orange-500 text-white shadow-xl">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">📊</div>
+              <h3 className="text-lg font-semibold">Tasa de Conversión</h3>
+            </div>
+            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.conversionRate.toFixed(1)}%</div>
+            <p className="text-base text-yellow-100">Conversión de visitas</p>
+          </Card>
+        </div>
+
+        {/* Ingresos por Día */}
+        <Card className="p-8 mb-10 bg-white/80 shadow-lg">
+          <h2 className="text-2xl font-bold mb-6 text-indigo-700 flex items-center gap-2">💰 Ingresos por Día</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {mockDashboard.revenue.map((day, index) => (
+              <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow">
+                <div className="text-lg font-semibold text-indigo-700">{day.date}</div>
+                <div className="flex items-center gap-6">
+                  <span className="text-base text-gray-600">{day.orders} órdenes</span>
+                  <span className="text-2xl font-bold text-indigo-900">S/ {day.revenue.toFixed(2)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Productos Más Vendidos */}
+        <Card className="p-8 mb-10 bg-white/80 shadow-lg">
+          <h2 className="text-2xl font-bold mb-6 text-pink-700 flex items-center gap-2">🏆 Productos Más Vendidos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {mockDashboard.topProducts.map((product, index) => (
+              <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl shadow">
+                <div>
+                  <div className="text-lg font-semibold text-pink-700">Producto #{product.productId}</div>
+                  <div className="text-xs text-gray-500">{product.views} vistas</div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-base text-gray-600">{product.purchases} ventas</span>
+                  <span className="text-2xl font-bold text-pink-900">S/ {product.revenue.toFixed(2)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Debug Información de Conexión */}
+        {connectionTest && (
+          <Card className="p-8 bg-gradient-to-r from-gray-50 to-purple-50">
+            <h3 className="text-xl font-bold mb-4 text-indigo-700 flex items-center gap-2">🔎 Información de Conexión</h3>
+            <div className="space-y-2 text-base">
+              <div><strong>Usuario:</strong> {user?.email} ({user?.role})</div>
+              <div><strong>Token:</strong> {token ? 'Presente' : 'Ausente'}</div>
+              <div><strong>API Test:</strong> {connectionTest.message}</div>
+              <div><strong>Timestamp:</strong> {connectionTest.timestamp}</div>
+              {error && <div className="text-red-600"><strong>Error:</strong> {error}</div>}
+            </div>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

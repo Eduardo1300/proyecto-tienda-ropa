@@ -461,9 +461,9 @@ const ProfilePage: React.FC = () => {
                             variant="outline"
                             size="sm"
                             icon="📋"
-                          >
-                            Ver Detalles
-                          </Button>
+                            onClick={() => navigate(`/orders/${order.id}`)}>
+                              Ver Detalles
+                            </Button>
                           {order.status === 'delivered' && (
                             <Button
                               variant="success"
@@ -486,6 +486,7 @@ const ProfilePage: React.FC = () => {
                             variant="secondary"
                             size="sm"
                             icon="🔄"
+                            onClick={() => navigate('/products')}
                           >
                             Comprar de Nuevo
                           </Button>

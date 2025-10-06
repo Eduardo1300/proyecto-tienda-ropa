@@ -187,7 +187,7 @@ const Login: React.FC = () => {
                 </div>
                 <div className="bg-white/10 rounded-lg p-3 flex items-center justify-between">
                   <div>
-                    <span className="font-semibold text-white">Admin:</span> admin@gmail.com
+                    <span className="font-semibold text-white">Admin:</span> admin@example.com
                   </div>
                   <div>
                     <span className="font-semibold text-white">Pass:</span> password123
