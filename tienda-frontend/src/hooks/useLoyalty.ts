@@ -94,7 +94,7 @@ export const useLoyaltyTransactions = (filters?: { type?: string; startDate?: st
   const fetchTransactions = async () => {
     await executeWithErrorHandling(
       () => loyaltyAPI.getTransactions(filters),
-      setTransactions
+      (data) => setTransactions(data)
     );
   };
 
