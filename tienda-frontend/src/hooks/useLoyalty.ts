@@ -94,7 +94,14 @@ export const useLoyaltyTransactions = (filters?: { type?: string; startDate?: st
   const fetchTransactions = async () => {
     await executeWithErrorHandling(
       () => loyaltyAPI.getTransactions(filters),
-      (data) => setTransactions(data)
+      (data) => {
+        setTransactions({
+          transactions: data.transactions,
+          total: data.total,
+          page: (filters?.page ?? 1),
+          totalPages: Math.ceil((data.total ?? 0) / (filters?.limit ?? 10)),
+        });
+      }
     );
   };
 
