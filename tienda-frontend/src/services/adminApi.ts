@@ -8,7 +8,7 @@ import type {
   OrdersStat 
 } from '../types/admin.types';
 
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
