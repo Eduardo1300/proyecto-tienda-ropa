@@ -44,4 +44,7 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    allowedHosts: ['tienda-frontend-6mrw.onrender.com']
+  }
 })
