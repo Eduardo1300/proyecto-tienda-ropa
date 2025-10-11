@@ -16,6 +16,7 @@ async function bootstrap() {
       'http://127.0.0.1:5173',
       'http://127.0.0.1:5174',
       'https://proyecto-tienda-ropa.vercel.app',
+      'https://tienda-frontend-6mrw.onrender.com',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
