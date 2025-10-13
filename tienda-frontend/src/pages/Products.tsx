@@ -96,7 +96,7 @@ const Products: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Error al cargar productos. Por favor, intenta de nuevo.');
+  setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
       setProducts([]);
     } finally {
       setLoading(false);
