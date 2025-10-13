@@ -28,7 +28,7 @@ const Home = () => {
         setProducts(backendProducts);
       } catch (error) {
         console.error('❌ Error fetching products:', error);
-        setError('Error al cargar productos');
+  setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
         // No usar productos mock, mejor mostrar mensaje de error
         setProducts([]);
       } finally {
@@ -58,9 +58,9 @@ const Home = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center">
         <Card className="text-center max-w-md">
-          <div className="text-6xl mb-4">😔</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">¡Oops!</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <div className="text-6xl mb-4">⏳</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Conectando con el backend</h2>
+          <p className="text-gray-600 mb-6">Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.</p>
           <Button onClick={() => window.location.reload()} variant="primary" icon="🔄">
             Reintentar
           </Button>

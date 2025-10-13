@@ -92,7 +92,7 @@ const Products: React.FC = () => {
       } else {
         console.error('API response invalid');
         setProducts([]);
-        setError('No se pudieron cargar los productos.');
+  setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
