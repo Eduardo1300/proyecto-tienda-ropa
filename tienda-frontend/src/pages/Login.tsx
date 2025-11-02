@@ -56,9 +56,7 @@ const Login: React.FC = () => {
           {/* Enhanced logo/icon with gradient */}
           <div className="relative mb-6">
             <div className="text-7xl mb-4 relative">
-              <span className="bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                �️
-              </span>
+              <span className="text-7xl mb-4 relative">👤</span>
             </div>
             <div className="absolute -top-2 -right-2 text-2xl animate-spin-slow">✨</div>
           </div>
@@ -73,6 +71,26 @@ const Login: React.FC = () => {
 
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in-up hover:shadow-3xl transition-all duration-500">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Enhanced Demo credentials - ahora arriba del email */}
+            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-400/30 mb-4 shadow-xl max-w-lg mx-auto">
+              <p className="text-sm text-center text-purple-100/90 mb-2 font-bold flex items-center justify-center gap-2">
+                <span className="text-xl">🔑</span>
+                <span className="text-base">Credenciales de prueba</span>
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm text-white bg-white/10 rounded-lg px-3 py-2">
+                  <span className="flex items-center gap-2"><span className="text-base">👤</span> Usuario:</span>
+                  <span className="font-mono">prueba@gmail.com</span>
+                  <span className="font-mono ml-2">123456</span>
+                </div>
+                <div className="flex items-center justify-between text-sm text-white bg-white/10 rounded-lg px-3 py-2">
+                  <span className="flex items-center gap-2"><span className="text-base">🛡️</span> Admin:</span>
+                  <span className="font-mono">admin@example.com</span>
+                  <span className="font-mono ml-2">password123</span>
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-purple-100 text-center">Usa las credenciales según el rol que quieras probar.</div>
+            </div>
             {error && (
               <div className="bg-red-500/20 backdrop-blur-sm border border-red-400/30 text-red-100 px-4 py-3 rounded-2xl animate-fade-in-up shadow-lg">
                 <div className="flex items-center gap-3">
@@ -171,30 +189,7 @@ const Login: React.FC = () => {
             </div>
 
             {/* Enhanced Demo credentials */}
-            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-5 border border-purple-400/20">
-              <p className="text-sm text-center text-purple-100/90 mb-3 font-semibold flex items-center justify-center gap-2">
-                <span className="text-lg">💡</span>
-                Credenciales de prueba
-              </p>
-              <div className="space-y-2 text-xs text-purple-200/80">
-                <div className="bg-white/10 rounded-lg p-3 flex items-center justify-between">
-                  <div>
-                    <span className="font-semibold text-white">Usuario:</span> prueba@gmail.com
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white">Pass:</span> 123456
-                  </div>
-                </div>
-                <div className="bg-white/10 rounded-lg p-3 flex items-center justify-between">
-                  <div>
-                    <span className="font-semibold text-white">Admin:</span> admin@example.com
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white">Pass:</span> password123
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Eliminado: bloque duplicado de credenciales de prueba */}
           </form>
         </div>
 
