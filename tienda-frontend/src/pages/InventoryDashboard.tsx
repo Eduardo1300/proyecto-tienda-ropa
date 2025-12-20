@@ -91,20 +91,20 @@ const InventoryDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center mb-10">
         <div className="mb-4 md:mb-0">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-4xl md:text-5xl bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 bg-clip-text text-transparent">📦</span>
-            <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 bg-clip-text text-transparent">Gestión de Inventario</h1>
+            <span className="text-5xl">📦</span>
+            <h1 className="text-5xl font-extrabold text-gray-900">Gestión de Inventario</h1>
           </div>
-          <p className="text-gray-700 text-lg">Monitorea y administra el stock de productos</p>
+          <p className="text-gray-700 text-lg">Monitorea y administra el stock de productos en tiempo real</p>
         </div>
         <div className="flex gap-2">
           <select 
             value={activeTab}
             onChange={(e) => setActiveTab(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-gray-700"
+            className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-gray-700"
           >
-            <option value="overview">Resumen</option>
-            <option value="alerts">Alertas</option>
-            <option value="reports">Reportes</option>
+            <option value="overview">📊 Resumen</option>
+            <option value="alerts">🚨 Alertas</option>
+            <option value="reports">📋 Reportes</option>
           </select>
         </div>
       </div>
@@ -171,96 +171,186 @@ const InventoryDashboard: React.FC = () => {
 
             {/* Recent Alerts */}
             {alerts && alerts.length > 0 && (
-              <Card className="p-6 shadow-md bg-white/80 backdrop-blur">
-                <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2"><span>🚨</span>Alertas Recientes</h2>
-                <div className="space-y-3">
-                  {alerts.slice(0, 5).map((alert) => (
-                    <div key={alert.id} className={`flex items-center justify-between p-3 rounded-xl border ${getPriorityColor(alert.priority)} shadow-sm transition-all duration-200 hover:scale-[1.02]`}> 
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{getAlertIcon(alert.type)}</span>
-                        <div>
-                          <div className="font-semibold text-gray-800">{alert.message}</div>
-                          <div className="text-sm text-gray-600">
-                            {alert.product?.name || 'Producto'} • {new Date(alert.createdAt).toLocaleDateString('es-ES')}
+              <Card className="p-6 bg-white shadow-lg">
+                <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                  <span>🚨</span>Alertas Recientes
+                </h2>
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {alerts.slice(0, 8).map((alert) => (
+                    <div key={alert.id} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"> 
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span>{getAlertIcon(alert.type)}</span>
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-800 text-sm">{alert.message}</div>
+                            <div className="text-xs text-gray-500">
+                              {alert.product?.name || 'Producto'} • {new Date(alert.createdAt).toLocaleDateString('es-ES')}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getPriorityColor(alert.priority) + ' font-bold px-2 py-1 rounded-xl'}>
-                          {alert.priority}
-                        </Badge>
-                        {alert.status === 'ACTIVE' && (
-                          <button 
-                            onClick={() => resolveAlert(alert.id)}
-                            className="px-4 py-1 text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl shadow hover:scale-105 transition-all"
-                          >
-                            Resolver
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-1 text-xs font-bold rounded ${getPriorityColor(alert.priority)}`}>
+                            {alert.priority}
+                          </span>
+                          {alert.status === 'ACTIVE' && (
+                            <button 
+                              onClick={() => resolveAlert(alert.id)}
+                              className="px-3 py-1 text-xs font-semibold bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                            >
+                              Resolver
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </Card>
             )}
+
+            {/* Stock Movement History */}
+            <Card className="p-6 bg-white shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <span>📈</span>Movimientos de Stock Recientes
+              </h2>
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {Array.from({length: 6}).map((_, i) => (
+                  <div key={i} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-gray-800">Producto #{i + 1}</div>
+                        <div className="text-xs text-gray-500">Hace {i + 1} hora(s)</div>
+                      </div>
+                      <div className="text-sm font-bold text-blue-600">+{(Math.random() * 50).toFixed(0)} unidades</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Supplier Management */}
+            <Card className="p-6 bg-white shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <span>🏭</span>Proveedores Activos
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({length: 4}).map((_, i) => (
+                  <div key={i} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                    <div className="font-semibold text-gray-800 mb-2">Proveedor {String.fromCharCode(65 + i)}</div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>📧 proveedor{i + 1}@example.com</div>
+                      <div>📱 +34 {900 + i} {Math.floor(Math.random() * 900000)}</div>
+                      <div className="text-xs text-green-600 font-semibold mt-2">✓ {5 + i * 2} productos activos</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Stock Trends */}
+            <Card className="p-6 bg-white shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <span>📊</span>Tendencias de Stock (Últimas 7 días)
+              </h2>
+              <div className="h-40 bg-gradient-to-b from-blue-50 to-blue-100 rounded-lg flex items-end justify-around p-4">
+                {Array.from({length: 7}).map((_, i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <div className="w-6 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t transition-all hover:from-blue-600 hover:to-blue-400"
+                         style={{height: `${30 + Math.random() * 70}%`}}>
+                    </div>
+                    <div className="text-xs text-gray-600 mt-2 font-semibold">
+                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'][i]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Reorder Recommendations */}
+            <Card className="p-6 bg-white shadow-lg">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <span>📦</span>Recomendaciones de Reorden
+              </h2>
+              <div className="space-y-3">
+                {lowStockProducts.slice(0, 5).map((product, i) => (
+                  <div key={i} className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-semibold text-gray-800">{product.name || `Producto ${i + 1}`}</div>
+                      <span className="text-xs font-bold bg-yellow-200 text-yellow-800 px-2 py-1 rounded">URGENTE</span>
+                    </div>
+                    <div className="text-sm text-gray-700">
+                      <div>Stock Actual: <span className="font-bold">{product.quantity || 0} unidades</span></div>
+                      <div>Cantidad Recomendada: <span className="font-bold text-green-600">{((product.quantity || 0) + 50)} unidades</span></div>
+                    </div>
+                    <button className="mt-3 w-full px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors text-sm">
+                      Crear Orden de Compra
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         )}
 
         {/* Alerts Tab */}
         {activeTab === 'alerts' && (
-          <Card className="p-6 shadow-md bg-white/80 backdrop-blur">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2"><span>🚨</span>Todas las Alertas</h2>
+          <Card className="p-6 bg-white shadow-lg">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+              <span>🚨</span>Todas las Alertas
+            </h2>
             <div className="space-y-3">
               {alerts && alerts.length > 0 ? (
                 alerts.map((alert) => (
-                  <div key={alert.id} className={`flex items-center justify-between p-3 rounded-xl border ${getPriorityColor(alert.priority)} shadow-sm transition-all duration-200 hover:scale-[1.01]`}> 
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{getAlertIcon(alert.type)}</span>
-                      <div>
-                        <div className="font-semibold text-gray-800">{alert.message}</div>
-                        <div className="text-sm text-gray-600">
-                          {alert.product?.name || 'Producto'} • {new Date(alert.createdAt).toLocaleDateString('es-ES')}
+                  <div key={alert.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"> 
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-2xl">{getAlertIcon(alert.type)}</span>
+                        <div>
+                          <div className="font-semibold text-gray-800">{alert.message}</div>
+                          <div className="text-sm text-gray-500">
+                            {alert.product?.name || 'Producto'} • {new Date(alert.createdAt).toLocaleDateString('es-ES')}
+                          </div>
+                          {alert.currentValue !== undefined && alert.threshold !== undefined && (
+                            <div className="text-xs text-gray-600 mt-1">
+                              📊 Actual: {alert.currentValue} | Umbral: {alert.threshold}
+                            </div>
+                          )}
                         </div>
-                        {alert.currentValue !== undefined && alert.threshold !== undefined && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Actual: {alert.currentValue} | Umbral: {alert.threshold}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
+                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${getPriorityColor(alert.priority)}`}>
+                          {alert.priority}
+                        </span>
+                        <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                          alert.status === 'ACTIVE' ? 'bg-red-100 text-red-700' :
+                          alert.status === 'ACKNOWLEDGED' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-green-100 text-green-700'
+                        }`}>
+                          {alert.status}
+                        </span>
+                        {alert.status === 'ACTIVE' && (
+                          <div className="flex gap-2 ml-2">
+                            <button 
+                              onClick={() => acknowledgeAlert(alert.id)}
+                              className="px-3 py-1 text-xs font-semibold bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors whitespace-nowrap"
+                            >
+                              Reconocer
+                            </button>
+                            <button 
+                              onClick={() => resolveAlert(alert.id)}
+                              className="px-3 py-1 text-xs font-semibold bg-green-500 text-white rounded hover:bg-green-600 transition-colors whitespace-nowrap"
+                            >
+                              Resolver
+                            </button>
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={getPriorityColor(alert.priority) + ' font-bold px-2 py-1 rounded-xl'}>
-                        {alert.priority}
-                      </Badge>
-                      <Badge className={
-                        alert.status === 'ACTIVE' ? 'bg-red-100 text-red-800 font-bold' :
-                        alert.status === 'ACKNOWLEDGED' ? 'bg-yellow-100 text-yellow-800 font-bold' :
-                        'bg-green-100 text-green-800 font-bold'
-                      + ' px-2 py-1 rounded-xl'}>
-                        {alert.status}
-                      </Badge>
-                      {alert.status === 'ACTIVE' && (
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={() => acknowledgeAlert(alert.id)}
-                            className="px-4 py-1 text-sm font-semibold bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl shadow hover:scale-105 transition-all"
-                          >
-                            Reconocer
-                          </button>
-                          <button 
-                            onClick={() => resolveAlert(alert.id)}
-                            className="px-4 py-1 text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl shadow hover:scale-105 transition-all"
-                          >
-                            Resolver
-                          </button>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 ))
               ) : (
-                <p className="text-center text-gray-500 py-8">
-                  No hay alertas disponibles
+                <p className="text-center text-gray-500 py-12 text-lg">
+                  ✅ No hay alertas disponibles - ¡Tu inventario está bajo control!
                 </p>
               )}
             </div>

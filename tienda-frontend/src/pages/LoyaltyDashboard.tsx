@@ -30,28 +30,13 @@ const LoyaltyDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Header Mejorado */}
-        <Card className="mb-10 overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-pink-600 text-white" padding="lg">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-5xl shadow-lg">🎁</div>
-              <div>
-                <h1 className="text-4xl font-bold mb-2">Programa de Lealtad</h1>
-                <p className="text-purple-100 text-lg">Gana puntos y disfruta de beneficios exclusivos</p>
-              </div>
-            </div>
-            {program && (
-              <div className="flex flex-col items-end gap-2">
-                <Badge className="bg-yellow-500/20 text-yellow-100 text-base px-4 py-2 rounded-full">
-                  ⭐ {program.currentPoints?.toLocaleString() || 0} puntos disponibles
-                </Badge>
-                <Badge className="bg-green-500/20 text-green-100 text-base px-4 py-2 rounded-full">
-                  Nivel: {program.currentTier?.name || 'Bronze'}
-                </Badge>
-              </div>
-            )}
-          </div>
-        </Card>
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+            🎁 Programa de Lealtad
+          </h1>
+          <p className="text-gray-600 text-lg">Gana puntos con cada compra y disfruta de beneficios exclusivos</p>
+        </div>
 
         {programLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

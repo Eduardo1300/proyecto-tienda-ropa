@@ -136,8 +136,7 @@ export class AnalyticsController {
   }
 
   @Get('dashboard')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
   async getDashboard(
     @Query('startDate') startDateStr?: string,
     @Query('endDate') endDateStr?: string

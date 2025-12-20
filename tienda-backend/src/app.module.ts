@@ -59,7 +59,7 @@ import { AnalyticsEvent } from './analytics/entities/analytics-event.entity';
             type: 'postgres',
             url: databaseUrl,
             autoLoadEntities: true,
-            synchronize: true,
+            synchronize: false,
             ssl: {
               rejectUnauthorized: false, // Required for Render connections
             },
@@ -102,7 +102,7 @@ import { AnalyticsEvent } from './analytics/entities/analytics-event.entity';
             AnalyticsEvent,
           ],
           synchronize: true,
-          logging: true,
+          logging: false,
         };
       },
       inject: [ConfigService],
