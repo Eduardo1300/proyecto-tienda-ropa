@@ -90,6 +90,16 @@ export class EmailService {
   }
 
   private async sendEmail(to: string, subject: string, html: string): Promise<void> {
+    // Check if email is configured
+    const smtpUser = this.configService.get('SMTP_USER');
+    const smtpPass = this.configService.get('SMTP_PASS');
+
+    if (!smtpUser || !smtpPass) {
+      console.log('⚠️ Email service disabled (SMTP credentials not configured)');
+      console.log(`📧 Would send email to: ${to} | Subject: ${subject}`);
+      return;
+    }
+
     try {
       await this.transporter.sendMail({
         from: this.configService.get('SMTP_FROM', 'noreply@tienda.com'),
