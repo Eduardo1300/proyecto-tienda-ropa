@@ -1,8 +1,26 @@
 import axios from 'axios';
 import type { Product, CartItem, Order, LoginCredentials, RegisterData, ApiResponse, User } from '../types';
 
-// URL base del backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+// URL base del backend - Detecta automáticamente
+const getApiBaseUrl = (): string => {
+  // Si está compilado con VITE_API_URL, úsalo
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && envUrl !== 'http://localhost:3002') {
+    return envUrl;
+  }
+
+  // Si está en producción (Render), detecta automáticamente
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // En Render, reemplaza el hostname del frontend con el del backend
+    const backendUrl = window.location.hostname.replace('tienda-frontend', 'tienda-backend');
+    return `${window.location.protocol}//${backendUrl}`;
+  }
+
+  // Default para desarrollo local
+  return envUrl || 'http://localhost:3002';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Configurar axios con la URL base
 const api = axios.create({
@@ -12,6 +30,11 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Log para debugging
+if (typeof window !== 'undefined') {
+  console.log('🌐 API Base URL:', API_BASE_URL);
+}
 
 // Interceptor para agregar token automáticamente
 api.interceptors.request.use(

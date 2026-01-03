@@ -74,6 +74,8 @@ export interface MovementFilters {
   startDate?: string;
   endDate?: string;
   type?: string;
+  limit?: number;
+  offset?: number;
 }
 
 // Inventory API functions
