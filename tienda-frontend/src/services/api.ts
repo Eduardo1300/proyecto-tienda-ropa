@@ -3,20 +3,30 @@ import type { Product, CartItem, Order, LoginCredentials, RegisterData, ApiRespo
 
 // URL base del backend - Detecta automáticamente
 const getApiBaseUrl = (): string => {
-  // Si está compilado con VITE_API_URL, úsalo
+  // Si está compilado con VITE_API_URL específico, úsalo
   const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl && envUrl !== 'http://localhost:3002') {
+  if (envUrl && envUrl.includes('tienda-backend')) {
     return envUrl;
   }
 
   // Si está en producción (Render), detecta automáticamente
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    // En Render, reemplaza el hostname del frontend con el del backend
-    const backendUrl = window.location.hostname.replace('tienda-frontend', 'tienda-backend');
-    return `${window.location.protocol}//${backendUrl}`;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+    
+    // Si estamos en Render (hostname contiene .onrender.com)
+    if (hostname.includes('onrender.com')) {
+      // La URL del backend en Render es tienda-backend-n67b.onrender.com
+      return `${protocol}//tienda-backend-n67b.onrender.com`;
+    }
+    
+    // Si estamos en localhost o IP local, usa localhost:3002
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
+      return 'http://localhost:3002';
+    }
   }
 
-  // Default para desarrollo local
+  // Default
   return envUrl || 'http://localhost:3002';
 };
 
