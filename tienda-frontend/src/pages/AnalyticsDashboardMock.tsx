@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Badge } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const AnalyticsDashboardMock: React.FC = () => {
   const { user } = useAuth();
   const token = localStorage.getItem('token');
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+  // Get API base URL from axios instance
+  const API_BASE_URL = api.defaults.baseURL || 'http://localhost:3002';
   
   const [connectionTest, setConnectionTest] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
