@@ -13,6 +13,7 @@ import { Public } from '../../auth/decorators/public.decorator';
 import { GetUser } from '../../auth/decorators/get-user.decorator';
 import { RequestUser } from '../../common/types/user.types';
 import { LoyaltyService } from '../services/loyalty.service';
+import { TransactionType, TransactionReason } from '../entities/loyalty-transaction.entity';
 
 // DTOs
 export class RedeemPointsDto {
@@ -245,11 +246,57 @@ export class LoyaltyController {
   async getProgram(@GetUser() user: RequestUser) {
     try {
       const program = await this.loyaltyService.getProgram(user.id);
+      
+      // Obtener estadísticas de transacciones
+      const { transactions, total } = await this.loyaltyService.getTransactionHistory(user.id, 1000, 0);
+      
+      // Calcular puntos ganados y canjeados
+      let totalPointsEarned = 0;
+      let totalPointsRedeemed = 0;
+      
+      for (const transaction of transactions) {
+        if (transaction.type === TransactionType.EARNED || transaction.type === TransactionType.BONUS) {
+          totalPointsEarned += Math.abs(transaction.points);
+        } else if (transaction.type === TransactionType.REDEEMED) {
+          totalPointsRedeemed += Math.abs(transaction.points);
+        }
+      }
+      
+      // Transformar tier a objeto con nombre y multiplicador
+      const tierRequirements = {
+        bronze: { name: 'Bronze', multiplier: 1 },
+        silver: { name: 'Silver', multiplier: 1.2 },
+        gold: { name: 'Gold', multiplier: 1.5 },
+        platinum: { name: 'Platinum', multiplier: 2 }
+      };
+      
+      const tierInfo = tierRequirements[program.currentTier] || tierRequirements.bronze;
+      
+      // Transformar estructura para que coincida con lo que el frontend espera
+      const transformedData = {
+        id: program.id,
+        currentPoints: program.availablePoints,
+        totalPointsEarned,
+        totalPointsRedeemed,
+        currentTier: tierInfo,
+        program: {
+          pointsPerDollar: 1,
+          reviewBonusPoints: 50,
+          referralBonusPoints: 100,
+          birthdayBonusPoints: 200
+        },
+        joinedAt: program.createdAt,
+        lastActivityAt: program.lastActivityAt,
+      };
+      
+      console.log(`✅ Loyalty program for user ${user.id}:`, transformedData);
+      
       return {
         success: true,
-        data: program,
+        data: transformedData,
       };
     } catch (error) {
+      console.error('❌ Error getting loyalty program:', error);
       return {
         success: false,
         message: 'Error al obtener programa de lealtad',
@@ -307,9 +354,21 @@ export class LoyaltyController {
 
       console.log(`✅ Found ${result.transactions.length} transactions for user ${user.id}`);
 
+      // Transformar transacciones al formato esperado por el frontend
+      const transformedTransactions = result.transactions.map(transaction => ({
+        id: transaction.id,
+        type: transaction.type.toUpperCase(),
+        points: transaction.points,
+        description: transaction.description || this.getTransactionDescription(transaction.type, transaction.reason),
+        createdAt: transaction.createdAt
+      }));
+
       return {
         success: true,
-        data: result,
+        data: {
+          transactions: transformedTransactions,
+          total: result.total
+        },
       };
     } catch (error) {
       console.error('❌ Error in getTransactions:', error);
@@ -320,6 +379,24 @@ export class LoyaltyController {
         error: error.message,
       };
     }
+  }
+
+  private getTransactionDescription(type: string, reason: string): string {
+    const descriptions = {
+      'earned|purchase': 'Puntos ganados por compra',
+      'earned|review_bonus': 'Puntos ganados por reseña',
+      'earned|referral_bonus': 'Puntos ganados por referido',
+      'earned|birthday_bonus': 'Bonus de cumpleaños',
+      'earned|signup_bonus': 'Puntos de bienvenida',
+      'earned|tier_upgrade_bonus': 'Bonus por upgrade de nivel',
+      'redeemed|redemption': 'Puntos canjeados',
+      'expired|expiration': 'Puntos expirados',
+      'bonus|birthday_bonus': 'Bonus de cumpleaños',
+      'bonus|review_bonus': 'Puntos por reseña'
+    };
+
+    const key = `${type}|${reason}`;
+    return descriptions[key] || `${type}: ${reason}`;
   }
 
   @Get('leaderboard')

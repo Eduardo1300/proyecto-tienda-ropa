@@ -16,6 +16,8 @@ import { CartItem } from '../carrito/entities/cart-item.entity';
 import { Product } from '../products/entities/product.entity';
 import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
+import { AnalyticsService } from '../analytics/services/analytics.service';
+import { EventType } from '../analytics/entities/analytics-event.entity';
 
 @Injectable()
 export class OrderService {
@@ -30,6 +32,7 @@ export class OrderService {
     @InjectRepository(Product) private productRepo: Repository<Product>,
     private emailService: EmailService,
     private pdfService: PdfService,
+    private analyticsService: AnalyticsService,
   ) {}
 
   async createOrder(dto: CreateOrderDto): Promise<Order> {
@@ -83,6 +86,20 @@ export class OrderService {
 
     // Create initial status history
     await this.createStatusHistory(savedOrder, null, OrderStatus.PENDING, 'Order created', user);
+
+    // Track purchase event in analytics
+    try {
+      await this.analyticsService.trackEvent({
+        eventType: EventType.PURCHASE,
+        userId: user.id,
+        orderId: savedOrder.id,
+        value: savedOrder.total,
+        currency: 'USD',
+      });
+      console.log('✅ Analytics event tracked for purchase:', savedOrder.id);
+    } catch (error) {
+      console.error('⚠️ Failed to track analytics event:', error);
+    }
 
     // Send confirmation email
     await this.emailService.sendOrderConfirmation(user.email, savedOrder);

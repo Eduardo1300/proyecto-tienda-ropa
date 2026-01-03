@@ -16,6 +16,7 @@ import { Product } from '../products/entities/product.entity';
 import { ProductVariant } from '../products/entities/product-variant.entity';
 import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
+import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PdfService } from '../common/pdf.service';
       Product,
       ProductVariant
     ]),
+    AnalyticsModule,
   ],
   controllers: [OrderController, ReturnController],
   providers: [OrderService, ReturnService, EmailService, PdfService],

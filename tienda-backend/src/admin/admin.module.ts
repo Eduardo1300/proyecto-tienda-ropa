@@ -4,7 +4,7 @@ import { AdminController } from './admin.controller';
 import { AdminDashboardController } from './admin-dashboard.controller';
 import { AdminDashboardService } from './admin-dashboard.service';
 import { AdminGuard } from './guards/admin.guard';
-import { OrderService } from '../ordenes/order.service';
+import { OrderModule } from '../ordenes/order.module';
 import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
 import { User } from '../users/entities/user.entity';
@@ -36,9 +36,10 @@ import { InventoryAlert } from '../inventory/entities/inventory-alert.entity';
       StockMovement,
       InventoryAlert,
     ]),
+    OrderModule,
   ],
   controllers: [AdminController, AdminDashboardController],
-  providers: [AdminDashboardService, AdminGuard, OrderService, EmailService, PdfService],
+  providers: [AdminDashboardService, AdminGuard, EmailService, PdfService],
   exports: [AdminDashboardService, AdminGuard],
 })
 export class AdminModule {}

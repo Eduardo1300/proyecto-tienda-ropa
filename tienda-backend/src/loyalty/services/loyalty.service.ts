@@ -268,21 +268,33 @@ export class LoyaltyService {
   }
 
   async getLeaderboard(limit: number = 10): Promise<any[]> {
+    // Obtener los programas de lealtad ordenados por puntos
     const programs = await this.loyaltyRepository.find({
       order: { totalPoints: 'DESC' },
       take: limit,
       where: { isActive: true }
     });
 
-    // Formatear para el leaderboard
-    return programs.map((program, index) => ({
-      position: index + 1,
-      userId: program.userId,
-      userName: `Usuario ${program.userId}`,
-      currentPoints: program.totalPoints,
-      currentTier: program.currentTier,
-      totalPointsEarned: program.totalPoints
-    }));
+    // Para cada programa, obtener el nombre del usuario
+    const leaderboard = await Promise.all(
+      programs.map(async (program, index) => {
+        const user = await this.userRepository.findOne({
+          where: { id: program.userId }
+        });
+
+        return {
+          position: index + 1,
+          userId: program.userId,
+          userName: user ? `${user.firstName} ${user.lastName}` : `Usuario ${program.userId}`,
+          userEmail: user?.email || '',
+          currentPoints: program.totalPoints,
+          totalPointsEarned: program.totalPoints,
+          currentTier: program.currentTier
+        };
+      })
+    );
+
+    return leaderboard;
   }
 
   private calculateExpirationDate(): Date {

@@ -52,8 +52,9 @@ export class AnalyticsService {
       .select('SUM(event.value)', 'total')
       .where('event.eventType = :eventType', { eventType: EventType.PURCHASE })
       .andWhere('event.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('event.value IS NOT NULL')
       .getRawOne();
-    const totalRevenue = parseFloat(revenueResult.total) || 0;
+    const totalRevenue = parseFloat(revenueResult?.total || 0) || 0;
 
     // Conversion rate
     const conversionRate = uniqueVisitors > 0 ? (totalPurchases / uniqueVisitors) * 100 : 0;
@@ -113,6 +114,7 @@ export class AnalyticsService {
       .addSelect('COUNT(*)', 'orders')
       .where('event.eventType = :eventType', { eventType: EventType.PURCHASE })
       .andWhere('event.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('event.value IS NOT NULL')
       .groupBy('DATE(event.createdAt)')
       .orderBy('date', 'ASC')
       .getRawMany();
@@ -127,6 +129,7 @@ export class AnalyticsService {
       .where('event.eventType = :eventType', { eventType: EventType.PURCHASE })
       .andWhere('event.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate })
       .andWhere('event.productId IS NOT NULL')
+      .andWhere('event.value IS NOT NULL')
       .groupBy('event.productId')
       .orderBy('revenue', 'DESC')
       .limit(limit)
@@ -289,8 +292,9 @@ export class AnalyticsService {
       .addSelect('COUNT(*)', 'totalOrders')
       .addSelect('AVG(event.value)', 'averageOrderValue')
       .where('event.eventType = :eventType', { eventType: EventType.PURCHASE })
+      .andWhere('event.value IS NOT NULL')
       .groupBy('event.userId')
-      .orderBy('totalValue', 'DESC')
+      .orderBy('SUM(event.value)', 'DESC')
       .limit(100)
       .getRawMany();
 

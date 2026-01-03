@@ -5,10 +5,12 @@ import { useAuth } from '../context/AuthContext';
 const AnalyticsDashboardMock: React.FC = () => {
   const { user } = useAuth();
   const token = localStorage.getItem('token');
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
   
   const [connectionTest, setConnectionTest] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -19,7 +21,7 @@ const AnalyticsDashboardMock: React.FC = () => {
   }
 
   useEffect(() => {
-    const testAnalyticsConnection = async () => {
+    const loadAnalyticsData = async () => {
       try {
         setIsLoading(true);
         setError(null);
@@ -27,47 +29,66 @@ const AnalyticsDashboardMock: React.FC = () => {
         console.log('🧪 Testing analytics API connection...');
         console.log('User:', user);
         console.log('Token:', token ? 'Present' : 'Missing');
+        console.log('API Base URL:', API_BASE_URL);
 
         // Test basic endpoint
-        const testResponse = await fetch('http://localhost:3002/analytics/test');
+        const testResponse = await fetch(`${API_BASE_URL}/analytics/test`);
         const testData = await testResponse.json();
+        
+        console.log('Test Response Status:', testResponse.status);
+        console.log('Test Data:', testData);
         
         if (testResponse.ok) {
           console.log('✅ Analytics test endpoint successful:', testData);
           setConnectionTest(testData);
           
-          // Try to create sample data
-          const sampleDataResponse = await fetch('http://localhost:3002/analytics/test/create-sample-data', {
-            method: 'POST'
-          });
-          
-          if (sampleDataResponse.ok) {
-            const sampleData = await sampleDataResponse.json();
-            console.log('✅ Sample data created:', sampleData);
-          } else {
-            console.log('⚠️ Could not create sample data:', sampleDataResponse.status);
-          }
-          
-          // Try authenticated endpoint
+          // Load dashboard data
           if (token && user?.role === 'admin') {
-            const dashboardResponse = await fetch(
-              `http://localhost:3002/analytics/dashboard?startDate=2025-08-10&endDate=2025-09-09`,
-              {
-                method: 'GET',
-                headers: headers
-              }
-            );
+            // Get last 30 days
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            
+            const startDateStr = startDate.toISOString().split('T')[0];
+            const endDateStr = endDate.toISOString().split('T')[0];
+            
+            console.log(`📅 Fetching data from ${startDateStr} to ${endDateStr}`);
+            
+            const dashboardUrl = `${API_BASE_URL}/analytics/dashboard?startDate=${startDateStr}&endDate=${endDateStr}`;
+            console.log('Dashboard URL:', dashboardUrl);
+            
+            const dashboardResponse = await fetch(dashboardUrl, {
+              method: 'GET',
+              headers: headers
+            });
 
+            console.log('Dashboard Response Status:', dashboardResponse.status);
+            
             if (dashboardResponse.ok) {
-              const dashboardData = await dashboardResponse.json();
-              console.log('✅ Dashboard data loaded:', dashboardData);
+              const response = await dashboardResponse.json();
+              console.log('✅ Dashboard response:', response);
+              
+              // Mapear la estructura correcta
+              const data = response.data || response;
+              console.log('✅ Dashboard data loaded:', data);
+              console.log('📊 Data structure:', {
+                hasOverview: !!data.overview,
+                hasRevenue: !!data.revenue,
+                hasTopProducts: !!data.topProducts,
+                overviewKeys: data.overview ? Object.keys(data.overview) : [],
+                revenueLength: data.revenue ? data.revenue.length : 0,
+                topProductsLength: data.topProducts ? data.topProducts.length : 0,
+              });
+              setDashboardData(data);
             } else {
-              console.log('❌ Dashboard failed:', dashboardResponse.status, await dashboardResponse.text());
+              const errorText = await dashboardResponse.text();
+              console.log('❌ Dashboard failed:', dashboardResponse.status, errorText);
               setError(`Dashboard endpoint failed: ${dashboardResponse.status}`);
             }
           } else {
-            console.log('⚠️ User is not admin or no token, skipping dashboard test');
-            setError('User must be admin to access analytics dashboard');
+            console.log('⚠️ User is not admin or no token');
+            console.log('Token:', token ? 'Present' : 'Missing');
+            console.log('User Role:', user?.role);
           }
         } else {
           console.log('❌ Analytics test failed:', testResponse.status);
@@ -76,18 +97,18 @@ const AnalyticsDashboardMock: React.FC = () => {
 
       } catch (err) {
         console.error('Analytics connection error:', err);
-        setError('Error connecting to analytics API');
+        setError(`Error connecting to analytics API: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (user) {
-      testAnalyticsConnection();
+      loadAnalyticsData();
     }
   }, [user, token]);
 
-  // Mock data for display
+  // Mock data for display (fallback if API fails)
   const mockDashboard = {
     overview: {
       totalPageViews: 1234,
@@ -113,6 +134,32 @@ const AnalyticsDashboardMock: React.FC = () => {
       { productId: 3, views: 156, revenue: 675.00, purchases: 9 }
     ]
   };
+
+  // Use real data if available, fallback to mock
+  const dataToDisplay = dashboardData ? {
+    overview: {
+      totalPageViews: dashboardData.overview?.totalPageViews || 0,
+      uniqueVisitors: dashboardData.overview?.uniqueVisitors || 0,
+      totalPurchases: dashboardData.overview?.totalPurchases || 0,
+      totalRevenue: dashboardData.overview?.totalRevenue || 0,
+      conversionRate: dashboardData.overview?.conversionRate || 0,
+      averageOrderValue: dashboardData.overview?.averageOrderValue || 0,
+      userRegistrations: dashboardData.overview?.userRegistrations || 0
+    },
+    revenue: (dashboardData.revenue || []).map((item: any) => ({
+      date: new Date(item.date).toISOString().split('T')[0],
+      revenue: parseFloat(item.revenue) || 0,
+      orders: parseInt(item.orders) || 0
+    })),
+    topProducts: (dashboardData.overview?.topProducts || []).map((item: any) => ({
+      productId: item.productId,
+      views: parseInt(item.views) || 0,
+      purchases: item.purchases || 0,
+      revenue: item.revenue || 0
+    }))
+  } : mockDashboard;
+  
+  const isUsingRealData = !!dashboardData;
 
   if (isLoading) {
     return (
@@ -163,7 +210,7 @@ const AnalyticsDashboardMock: React.FC = () => {
               <div className="text-5xl">👁️</div>
               <h3 className="text-lg font-semibold">Visitas Totales</h3>
             </div>
-            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.totalPageViews.toLocaleString()}</div>
+            <div className="text-4xl font-bold mb-2">{(dataToDisplay?.overview?.totalPageViews || 0).toLocaleString()}</div>
             <p className="text-base text-blue-100">Páginas vistas</p>
           </Card>
           <Card className="p-8 bg-gradient-to-br from-green-500 to-teal-500 text-white shadow-xl">
@@ -171,7 +218,7 @@ const AnalyticsDashboardMock: React.FC = () => {
               <div className="text-5xl">🧑‍🤝‍🧑</div>
               <h3 className="text-lg font-semibold">Visitantes Únicos</h3>
             </div>
-            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.uniqueVisitors.toLocaleString()}</div>
+            <div className="text-4xl font-bold mb-2">{(dataToDisplay?.overview?.uniqueVisitors || 0).toLocaleString()}</div>
             <p className="text-base text-green-100">Usuarios únicos</p>
           </Card>
           <Card className="p-8 bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl">
@@ -179,15 +226,15 @@ const AnalyticsDashboardMock: React.FC = () => {
               <div className="text-5xl">💸</div>
               <h3 className="text-lg font-semibold">Ventas Totales</h3>
             </div>
-            <div className="text-4xl font-bold mb-2">S/ {mockDashboard.overview.totalRevenue.toLocaleString()}</div>
-            <p className="text-base text-pink-100">{mockDashboard.overview.totalPurchases} órdenes</p>
+            <div className="text-4xl font-bold mb-2">S/ {(dataToDisplay?.overview?.totalRevenue || 0).toLocaleString()}</div>
+            <p className="text-base text-pink-100">{(dataToDisplay?.overview?.totalPurchases || 0)} órdenes</p>
           </Card>
           <Card className="p-8 bg-gradient-to-br from-yellow-500 to-orange-500 text-white shadow-xl">
             <div className="flex items-center gap-4 mb-4">
               <div className="text-5xl">📊</div>
               <h3 className="text-lg font-semibold">Tasa de Conversión</h3>
             </div>
-            <div className="text-4xl font-bold mb-2">{mockDashboard.overview.conversionRate.toFixed(1)}%</div>
+            <div className="text-4xl font-bold mb-2">{((dataToDisplay?.overview?.conversionRate || 0).toFixed(1))}%</div>
             <p className="text-base text-yellow-100">Conversión de visitas</p>
           </Card>
         </div>
@@ -195,36 +242,44 @@ const AnalyticsDashboardMock: React.FC = () => {
         {/* Ingresos por Día */}
         <Card className="p-8 mb-10 bg-white/80 shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-indigo-700 flex items-center gap-2">💰 Ingresos por Día</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {mockDashboard.revenue.map((day, index) => (
-              <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow">
-                <div className="text-lg font-semibold text-indigo-700">{day.date}</div>
-                <div className="flex items-center gap-6">
-                  <span className="text-base text-gray-600">{day.orders} órdenes</span>
-                  <span className="text-2xl font-bold text-indigo-900">S/ {day.revenue.toFixed(2)}</span>
+          {dataToDisplay?.revenue && dataToDisplay.revenue.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {dataToDisplay.revenue.map((day: any, index: number) => (
+                <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow">
+                  <div className="text-lg font-semibold text-indigo-700">{day.date}</div>
+                  <div className="flex items-center gap-6">
+                    <span className="text-base text-gray-600">{day.orders} órdenes</span>
+                    <span className="text-2xl font-bold text-indigo-900">S/ {(day.revenue || 0).toFixed(2)}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 py-8">No hay datos de ingresos disponibles</div>
+          )}
         </Card>
 
         {/* Productos Más Vendidos */}
         <Card className="p-8 mb-10 bg-white/80 shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-pink-700 flex items-center gap-2">🏆 Productos Más Vendidos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {mockDashboard.topProducts.map((product, index) => (
-              <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl shadow">
-                <div>
-                  <div className="text-lg font-semibold text-pink-700">Producto #{product.productId}</div>
-                  <div className="text-xs text-gray-500">{product.views} vistas</div>
+          {dataToDisplay?.topProducts && dataToDisplay.topProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {dataToDisplay.topProducts.map((product: any, index: number) => (
+                <div key={index} className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl shadow">
+                  <div>
+                    <div className="text-lg font-semibold text-pink-700">Producto #{product.productId}</div>
+                    <div className="text-xs text-gray-500">{product.views} vistas</div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <span className="text-base text-gray-600">{product.purchases} ventas</span>
+                    <span className="text-2xl font-bold text-pink-900">S/ {(product.revenue || 0).toFixed(2)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-6">
-                  <span className="text-base text-gray-600">{product.purchases} ventas</span>
-                  <span className="text-2xl font-bold text-pink-900">S/ {product.revenue.toFixed(2)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 py-8">No hay datos de productos disponibles</div>
+          )}
         </Card>
 
         {/* Debug Información de Conexión */}
@@ -234,9 +289,19 @@ const AnalyticsDashboardMock: React.FC = () => {
             <div className="space-y-2 text-base">
               <div><strong>Usuario:</strong> {user?.email} ({user?.role})</div>
               <div><strong>Token:</strong> {token ? 'Presente' : 'Ausente'}</div>
+              <div><strong>API URL:</strong> {API_BASE_URL}</div>
               <div><strong>API Test:</strong> {connectionTest.message}</div>
+              <div><strong>Dashboard Data:</strong> {dashboardData ? '✅ Cargado' : '❌ No cargado'}</div>
               <div><strong>Timestamp:</strong> {connectionTest.timestamp}</div>
               {error && <div className="text-red-600"><strong>Error:</strong> {error}</div>}
+              {dashboardData && (
+                <div className="mt-4 pt-4 border-t">
+                  <strong>Datos Cargados:</strong>
+                  <pre className="bg-white p-2 rounded mt-2 text-xs overflow-auto max-h-48">
+                    {JSON.stringify(dashboardData, null, 2)}
+                  </pre>
+                </div>
+              )}
             </div>
           </Card>
         )}
