@@ -120,6 +120,10 @@ export const inventoryAPI = {
 
   processAutoRestock: () => 
     api.post<{ message: string }>('/inventory/restock/process'),
+
+  // Supplier Management
+  getSuppliers: () => 
+    api.get<any[]>('/suppliers'),
 };
 
 export default inventoryAPI;

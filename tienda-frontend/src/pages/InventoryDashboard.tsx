@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   useInventoryAlerts, 
   useInventoryReports, 
   useStockManagement 
 } from '../hooks/useInventory';
 import { Card, Badge } from '../components/ui';
+import { inventoryAPI } from '../services/inventoryApi';
 
 const InventoryDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [stockMovements, setStockMovements] = useState<any[]>([]);
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [loadingMovements, setLoadingMovements] = useState(false);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
   
   const { 
     alerts, 
@@ -26,6 +31,38 @@ const InventoryDashboard: React.FC = () => {
   } = useInventoryReports();
 
   const { updateStock } = useStockManagement();
+
+  // Load stock movements
+  useEffect(() => {
+    const loadMovements = async () => {
+      setLoadingMovements(true);
+      try {
+        const response = await inventoryAPI.getStockMovements({ limit: 6, offset: 0 });
+        setStockMovements(response.data || []);
+      } catch (error) {
+        console.error('Error loading stock movements:', error);
+      } finally {
+        setLoadingMovements(false);
+      }
+    };
+    loadMovements();
+  }, []);
+
+  // Load suppliers
+  useEffect(() => {
+    const loadSuppliers = async () => {
+      setLoadingSuppliers(true);
+      try {
+        const response = await inventoryAPI.getSuppliers();
+        setSuppliers(response.data || []);
+      } catch (error) {
+        console.error('Error loading suppliers:', error);
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+    loadSuppliers();
+  }, []);
 
   const handleUpdateStock = async (productId: number, newQuantity: number) => {
     try {
@@ -214,17 +251,29 @@ const InventoryDashboard: React.FC = () => {
                 <span>📈</span>Movimientos de Stock Recientes
               </h2>
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                {Array.from({length: 6}).map((_, i) => (
-                  <div key={i} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-semibold text-gray-800">Producto #{i + 1}</div>
-                        <div className="text-xs text-gray-500">Hace {i + 1} hora(s)</div>
-                      </div>
-                      <div className="text-sm font-bold text-blue-600">+{(Math.random() * 50).toFixed(0)} unidades</div>
-                    </div>
+                {loadingMovements ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
-                ))}
+                ) : stockMovements && stockMovements.length > 0 ? (
+                  stockMovements.map((movement, i) => (
+                    <div key={movement.id || i} className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-gray-800">{movement.product?.name || 'Producto'}</div>
+                          <div className="text-xs text-gray-500">
+                            {movement.reason} • {new Date(movement.createdAt).toLocaleDateString('es-ES')}
+                          </div>
+                        </div>
+                        <div className={`text-sm font-bold ${movement.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
+                          {movement.type === 'IN' ? '+' : '-'}{movement.quantity} unidades
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-8">No hay movimientos de stock</p>
+                )}
               </div>
             </Card>
 
@@ -234,16 +283,29 @@ const InventoryDashboard: React.FC = () => {
                 <span>🏭</span>Proveedores Activos
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Array.from({length: 4}).map((_, i) => (
-                  <div key={i} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                    <div className="font-semibold text-gray-800 mb-2">Proveedor {String.fromCharCode(65 + i)}</div>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <div>📧 proveedor{i + 1}@example.com</div>
-                      <div>📱 +34 {900 + i} {Math.floor(Math.random() * 900000)}</div>
-                      <div className="text-xs text-green-600 font-semibold mt-2">✓ {5 + i * 2} productos activos</div>
-                    </div>
+                {loadingSuppliers ? (
+                  <div className="col-span-2 text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
-                ))}
+                ) : suppliers && suppliers.length > 0 ? (
+                  suppliers.slice(0, 4).map((supplier, i) => (
+                    <div key={supplier.id || i} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                      <div className="font-semibold text-gray-800 mb-2">{supplier.name || `Proveedor ${i + 1}`}</div>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        {supplier.email && <div>📧 {supplier.email}</div>}
+                        {supplier.phone && <div>📱 {supplier.phone}</div>}
+                        {supplier.address && <div>📍 {supplier.address}</div>}
+                        <div className="text-xs text-green-600 font-semibold mt-2">
+                          ✓ {supplier.activeProducts || 0} productos activos
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-2 text-center py-8 text-gray-500">
+                    No hay proveedores disponibles
+                  </div>
+                )}
               </div>
             </Card>
 
