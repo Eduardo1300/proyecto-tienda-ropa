@@ -45,6 +45,9 @@ export default defineConfig({
     },
   },
   preview: {
-    allowedHosts: ['tienda-frontend-6mrw.onrender.com']
+    allowedHosts: [
+      'tienda-frontend-6mrw.onrender.com',
+      'tienda.christophervaldivia.me'
+    ]
   }
 })
