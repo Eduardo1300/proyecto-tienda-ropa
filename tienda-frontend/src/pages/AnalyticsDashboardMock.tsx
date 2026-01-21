@@ -161,7 +161,6 @@ const AnalyticsDashboardMock: React.FC = () => {
     }))
   } : mockDashboard;
   
-  const isUsingRealData = !!dashboardData;
 
   if (isLoading) {
     return (
