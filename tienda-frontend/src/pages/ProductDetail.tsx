@@ -93,10 +93,10 @@ const ProductDetail = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Cargando detalles del producto...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-300">Cargando detalles del producto...</p>
         </div>
       </div>
     );
@@ -105,14 +105,14 @@ const ProductDetail = () => {
   // Error state
   if (error && !product) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="text-6xl mb-4">😞</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error al cargar el producto</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <div className="text-8xl mb-4">😞</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Error al cargar el producto</h2>
+          <p className="text-gray-300 mb-6 text-lg">{error}</p>
           <Link
             to="/products"
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
           >
             ← Volver a productos
           </Link>
@@ -124,14 +124,14 @@ const ProductDetail = () => {
   // Product not found
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Producto no encontrado</h2>
-          <p className="text-gray-600 mb-6">El producto que buscas no existe o ha sido eliminado.</p>
+          <div className="text-8xl mb-4">🔍</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Producto no encontrado</h2>
+          <p className="text-gray-300 mb-6 text-lg">El producto que buscas no existe o ha sido eliminado.</p>
           <Link
             to="/products"
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
           >
             ← Volver a productos
           </Link>
@@ -141,16 +141,22 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-16 px-4">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Breadcrumb */}
         <nav className="mb-8 animate-fade-in-up">
-          <div className="flex items-center space-x-2 text-gray-600">
-            <Link to="/" className="hover:text-purple-600 transition-colors">🏠 Inicio</Link>
-            <span>›</span>
-            <Link to="/products" className="hover:text-purple-600 transition-colors">Productos</Link>
-            <span>›</span>
-            <span className="text-gray-800 font-medium">{product.name}</span>
+          <div className="flex items-center space-x-2 text-gray-300">
+            <Link to="/" className="hover:text-purple-300 transition-colors">🏠 Inicio</Link>
+            <span className="text-gray-400">›</span>
+            <Link to="/products" className="hover:text-purple-300 transition-colors">Productos</Link>
+            <span className="text-gray-400">›</span>
+            <span className="text-white font-medium">{product.name}</span>
           </div>
         </nav>
 
@@ -178,8 +184,8 @@ const ProductDetail = () => {
                   onClick={() => setActiveImage(index)}
                   className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
                     activeImage === index 
-                      ? 'border-purple-500 shadow-lg' 
-                      : 'border-gray-200 hover:border-purple-300'
+                      ? 'border-purple-400 shadow-lg shadow-purple-500/50' 
+                      : 'border-white/20 hover:border-purple-400'
                   }`}
                 >
                   <img
@@ -195,25 +201,25 @@ const ProductDetail = () => {
           {/* Product Info */}
           <div className="space-y-6 animate-fade-in-up">
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              <h1 className="text-5xl font-black text-white mb-4">
                 {product.name}
               </h1>
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-3xl font-bold text-purple-600">
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
+                <span className="text-4xl font-black text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                   S/ {Number(product.price).toFixed(2)}
                 </span>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-green-500/30 text-green-200 px-4 py-2 rounded-full text-sm font-bold border border-green-400/50 backdrop-blur-sm">
                   ✅ En stock ({product.stock || 0} disponibles)
                 </span>
               </div>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-300 text-lg leading-relaxed">
                 {product.description}
               </p>
             </div>
 
             {/* Size Selection */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              <h3 className="text-lg font-bold text-white mb-4">
                 📏 Talla
               </h3>
               <div className="flex gap-2">
@@ -221,10 +227,10 @@ const ProductDetail = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 rounded-lg border-2 font-medium transition-all duration-300 ${
+                    className={`w-12 h-12 rounded-lg border-2 font-bold transition-all duration-300 ${
                       selectedSize === size
-                        ? 'border-purple-500 bg-purple-500 text-white'
-                        : 'border-gray-300 text-gray-700 hover:border-purple-300'
+                        ? 'border-purple-400 bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50'
+                        : 'border-white/30 text-white hover:border-purple-400 hover:bg-white/10'
                     }`}
                   >
                     {size}
@@ -235,20 +241,20 @@ const ProductDetail = () => {
 
             {/* Quantity Selection */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              <h3 className="text-lg font-bold text-white mb-4">
                 🔢 Cantidad
               </h3>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 bg-white/10 rounded-lg p-3 border border-white/20 w-fit">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center font-bold"
+                  className="w-10 h-10 rounded-full bg-purple-600/50 hover:bg-purple-600 text-white transition-all flex items-center justify-center font-bold text-lg"
                 >
                   −
                 </button>
-                <span className="text-xl font-semibold px-4">{quantity}</span>
+                <span className="text-2xl font-black text-white px-6">{quantity}</span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock || 0, quantity + 1))}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center font-bold"
+                  className="w-10 h-10 rounded-full bg-pink-600/50 hover:bg-pink-600 text-white transition-all flex items-center justify-center font-bold text-lg"
                 >
                   +
                 </button>
@@ -279,30 +285,30 @@ const ProductDetail = () => {
             </div>
 
             {/* Product Features */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4">
                 ✨ Características
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {product.features.map((feature: string, index: number) => (
-                  <li key={index} className="flex items-center gap-2 text-gray-600">
-                    <span className="text-green-500">✓</span>
-                    {feature}
+                  <li key={index} className="flex items-center gap-3 text-gray-200">
+                    <span className="text-green-400 font-bold text-lg">✓</span>
+                    <span className="font-medium">{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             {/* Shipping Info */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-white/20 backdrop-blur-md rounded-2xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4">
                 🚚 Información de envío
               </h3>
-              <div className="space-y-2 text-gray-600">
-                <p>🎁 Envío gratis en compras mayores a S/ 150</p>
-                <p>📦 Entrega en 2-3 días hábiles</p>
-                <p>🔄 Devoluciones gratis hasta 30 días</p>
-                <p>🛡️ Compra protegida 100%</p>
+              <div className="space-y-3 text-gray-200">
+                <p className="flex items-center gap-2"><span>🎁</span> Envío gratis en compras mayores a S/ 150</p>
+                <p className="flex items-center gap-2"><span>📦</span> Entrega en 2-3 días hábiles</p>
+                <p className="flex items-center gap-2"><span>🔄</span> Devoluciones gratis hasta 30 días</p>
+                <p className="flex items-center gap-2"><span>🛡️</span> Compra protegida 100%</p>
               </div>
             </div>
           </div>

@@ -131,19 +131,19 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
         {/* Floating Gradient Orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
         <div className="relative z-10 min-h-screen flex items-center justify-center">
           <Card className="text-center p-12">
             <div className="text-8xl mb-6 animate-spin">⚙️</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Cargando tu dashboard</h2>
-            <p className="text-gray-600 text-lg">Preparando tu experiencia personalizada...</p>
-            <div className="mt-8 w-64 bg-gray-200 rounded-full h-2 mx-auto">
+            <h2 className="text-2xl font-bold text-white mb-4">Cargando tu dashboard</h2>
+            <p className="text-gray-300 text-lg">Preparando tu experiencia personalizada...</p>
+            <div className="mt-8 w-64 bg-gray-700 rounded-full h-2 mx-auto">
               <div className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full animate-pulse w-3/4"></div>
             </div>
           </Card>
@@ -154,12 +154,12 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
         <div className="relative z-10 min-h-screen flex items-center justify-center">
           <Card className="text-center max-w-md p-12">
             <div className="text-8xl mb-6">😔</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">¡Ups! Algo salió mal</h2>
-            <p className="text-gray-600 mb-8">{error}</p>
+            <h2 className="text-2xl font-bold text-white mb-4">¡Ups! Algo salió mal</h2>
+            <p className="text-gray-300 mb-8">{error}</p>
             <Button onClick={() => window.location.reload()} variant="primary" icon="🔄">
               Intentar de nuevo
             </Button>
@@ -171,12 +171,12 @@ const Dashboard: React.FC = () => {
 
   if (!dashboardData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
         <div className="relative z-10 min-h-screen flex items-center justify-center">
           <Card className="text-center max-w-md p-12">
             <div className="text-8xl mb-6">📊</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Dashboard no disponible</h2>
-            <p className="text-gray-600 mb-8">No se pudieron cargar los datos de tu dashboard</p>
+            <h2 className="text-2xl font-bold text-white mb-4">Dashboard no disponible</h2>
+            <p className="text-gray-300 mb-8">No se pudieron cargar los datos de tu dashboard</p>
             <Button onClick={() => window.location.reload()} variant="primary" icon="🔄">
               Reintentar
             </Button>
@@ -187,11 +187,11 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
       {/* Floating Gradient Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 min-h-screen">

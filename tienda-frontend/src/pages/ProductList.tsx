@@ -83,22 +83,36 @@ const ProductList = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando productos...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-400 mx-auto"></div>
+          <p className="mt-4 text-gray-300 text-lg">Cargando productos increíbles...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">🛍️ Nuestros Productos</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-16 px-4">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="mb-12 text-center">
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-4">
+            🛍️ Nuestros 
+            <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Productos Premium
+            </span>
+          </h1>
+          <p className="text-gray-300 text-lg">Descubre nuestra colección completa de moda exclusiva</p>
+        </div>
         
         {/* Barra de búsqueda y filtros */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 mb-12">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
@@ -106,7 +120,7 @@ const ProductList = () => {
                 placeholder="Buscar productos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-white/30 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
               />
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -114,13 +128,13 @@ const ProductList = () => {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-4 py-3 rounded-lg font-semibold transition-all duration-300 ${
                     selectedCategory === category
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                      : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-white/20'
                   }`}
                 >
-                  {category === 'all' ? 'Todos' : category.charAt(0).toUpperCase() + category.slice(1)}
+                  {category === 'all' ? '✨ Todos' : '📌 ' + category.charAt(0).toUpperCase() + category.slice(1)}
                 </button>
               ))}
             </div>
@@ -129,71 +143,82 @@ const ProductList = () => {
 
         {/* Grid de productos */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h2 className="text-2xl font-semibold text-gray-600 mb-4">
+          <div className="text-center py-20">
+            <div className="text-8xl mb-6">🔍</div>
+            <h2 className="text-3xl font-bold text-white mb-4">
               No se encontraron productos
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-300 text-lg">
               Intenta con otros términos de búsqueda o categorías
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={product.id} className="group cursor-pointer">
                 <Link to={`/product/${product.id}`} className="block">
-                  <div className="relative">
-                    <img 
-                      src={getProductImage(product.name, product.category, product.imageUrl)} 
-                      alt={product.name} 
-                      className="w-full h-64 object-cover"
-                    />
-                    {(product.stock || 0) < 10 && (product.stock || 0) > 0 && (
-                      <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                        ¡Últimas unidades!
-                      </span>
-                    )}
-                    {(product.stock || 0) === 0 && (
-                      <span className="absolute top-2 right-2 bg-gray-500 text-white px-2 py-1 rounded-full text-xs">
-                        ¡Agotado!
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="p-4">
-                    <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full mb-2">
-                      {product.category}
-                    </span>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-purple-600">
-                        S/ {product.price.toFixed(2)}
-                      </span>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden hover:border-white/40 transition-all duration-300">
+                    <div className="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden">
+                      <img 
+                        src={getProductImage(product.name, product.category, product.imageUrl)} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      
+                      {/* Badges */}
+                      <div className="absolute top-4 left-4 space-y-2">
+                        {(product.stock || 0) < 10 && (product.stock || 0) > 0 && (
+                          <div className="bg-red-500/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            ⏰ Últimas {product.stock}
+                          </div>
+                        )}
+                        {(product.stock || 0) === 0 && (
+                          <div className="bg-gray-600/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            ❌ Agotado
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
-                    <p className="text-xs text-gray-500 mt-2">
-                      Stock disponible: {product.stock || 0}
-                    </p>
+                    <div className="p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="inline-block bg-purple-500/30 text-purple-200 text-xs px-3 py-1 rounded-full font-semibold border border-purple-400/50 backdrop-blur-sm">
+                          📌 {product.category}
+                        </span>
+                        <span className="text-sm text-gray-300">
+                          Stock: <span className="text-purple-300 font-bold">{product.stock || 0}</span>
+                        </span>
+                      </div>
+                      
+                      <h3 className="text-lg font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all line-clamp-2">
+                        {product.name}
+                      </h3>
+                      
+                      <p className="text-gray-400 text-sm line-clamp-2">{product.description}</p>
+                      
+                      <div className="pt-3 border-t border-white/10">
+                        <span className="text-3xl font-black text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                          S/ {product.price.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </Link>
                 
-                <div className="p-4 pt-0">
+                <div className="mt-3 flex gap-2">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       handleAddToCart(product);
                     }}
                     disabled={(product.stock || 0) === 0}
-                    className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`flex-1 px-4 py-3 rounded-lg font-bold transition-all duration-300 ${
                       (product.stock || 0) === 0
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-purple-600 text-white hover:bg-purple-700'
+                        ? 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:shadow-purple-500/50'
                     }`}
                   >
-                    {(product.stock || 0) === 0 ? 'Agotado' : 'Agregar al carrito'}
+                    {(product.stock || 0) === 0 ? '❌ Agotado' : '🛒 Agregar'}
                   </button>
                 </div>
               </div>

@@ -123,9 +123,14 @@ const InventoryDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-2 md:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-2 md:px-8 relative overflow-hidden">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
       {/* Premium Header */}
-      <div className="mb-12">
+      <div className="mb-12 relative z-10">
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 rounded-2xl p-8 text-white shadow-2xl">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
@@ -159,7 +164,7 @@ const InventoryDashboard: React.FC = () => {
       </div>
 
       {/* Animated Tab Content */}
-      <div className="transition-all duration-300">
+      <div className="transition-all duration-300 relative z-10 max-w-7xl mx-auto px-4">
         {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-8">

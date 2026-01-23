@@ -28,14 +28,19 @@ const LoyaltyDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+          <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
             🎁 Programa de Lealtad
           </h1>
-          <p className="text-gray-600 text-lg">Gana puntos con cada compra y disfruta de beneficios exclusivos</p>
+          <p className="text-gray-300 text-lg">Gana puntos con cada compra y disfruta de beneficios exclusivos</p>
         </div>
 
         {programLoading ? (
@@ -80,12 +85,12 @@ const LoyaltyDashboard: React.FC = () => {
             </div>
 
             {/* Redemption Options */}
-            <Card className="p-8 mb-10 bg-white/80 shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-blue-700 flex items-center gap-2">🎁 Canjear Puntos</h2>
+            <Card className="p-8 mb-10 bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+              <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">🎁 Canjear Puntos</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="border rounded-xl p-6 text-center bg-blue-50">
-                  <div className="text-xl font-semibold mb-2 text-blue-700">Descuento 5%</div>
-                  <div className="text-base text-gray-600 mb-4">500 puntos</div>
+                <div className="border border-purple-500/30 rounded-xl p-6 text-center bg-white/5 backdrop-blur-sm">
+                  <div className="text-xl font-semibold mb-2 text-white">Descuento 5%</div>
+                  <div className="text-base text-gray-300 mb-4">500 puntos</div>
                   <button 
                     onClick={() => handleRedeemPoints(500, 'DISCOUNT')}
                     disabled={!program || program.currentPoints < 500}
@@ -94,9 +99,9 @@ const LoyaltyDashboard: React.FC = () => {
                     Canjear
                   </button>
                 </div>
-                <div className="border rounded-xl p-6 text-center bg-blue-50">
-                  <div className="text-xl font-semibold mb-2 text-blue-700">Descuento 10%</div>
-                  <div className="text-base text-gray-600 mb-4">1,000 puntos</div>
+                <div className="border border-purple-500/30 rounded-xl p-6 text-center bg-white/5 backdrop-blur-sm">
+                  <div className="text-xl font-semibold mb-2 text-white">Descuento 10%</div>
+                  <div className="text-base text-gray-300 mb-4">1,000 puntos</div>
                   <button 
                     onClick={() => handleRedeemPoints(1000, 'DISCOUNT')}
                     disabled={!program || program.currentPoints < 1000}

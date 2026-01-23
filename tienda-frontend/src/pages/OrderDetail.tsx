@@ -64,20 +64,14 @@ const OrderDetail: React.FC = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'processing':
-        return 'bg-blue-100 text-blue-800';
-      case 'shipped':
-        return 'bg-purple-100 text-purple-800';
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+    const colors = {
+      pending: 'bg-yellow-500/30 text-yellow-100 border border-yellow-400/50',
+      processing: 'bg-blue-500/30 text-blue-100 border border-blue-400/50',
+      shipped: 'bg-purple-500/30 text-purple-100 border border-purple-400/50',
+      delivered: 'bg-green-500/30 text-green-100 border border-green-400/50',
+      cancelled: 'bg-red-500/30 text-red-100 border border-red-400/50',
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-500/30 text-gray-100 border border-gray-400/50';
   };
 
   const getStatusText = (status: string) => {
@@ -109,10 +103,15 @@ const OrderDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Cargando detalles de la orden...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center relative overflow-hidden">
+        {/* Floating Orbs */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <p className="text-gray-300 text-lg">⏳ Cargando detalles de la orden...</p>
         </div>
       </div>
     );
@@ -120,16 +119,21 @@ const OrderDetail: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">❌</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center relative overflow-hidden">
+        {/* Floating Orbs */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="text-red-400 text-6xl mb-4">❌</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Error</h2>
+          <p className="text-gray-300 mb-8 text-lg">{error}</p>
           <button
             onClick={() => navigate('/profile')}
-            className="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg"
           >
-            Volver al Perfil
+            ⬅️ Volver al Perfil
           </button>
         </div>
       </div>
@@ -138,16 +142,21 @@ const OrderDetail: React.FC = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">📦</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Orden no encontrada</h2>
-          <p className="text-gray-600 mb-6">La orden solicitada no existe o no tienes permisos para verla.</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center relative overflow-hidden">
+        {/* Floating Orbs */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="text-yellow-400 text-6xl mb-4">📦</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Orden no encontrada</h2>
+          <p className="text-gray-300 mb-8 text-lg">La orden solicitada no existe o no tienes permisos para verla.</p>
           <button
             onClick={() => navigate('/profile')}
-            className="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg"
           >
-            Volver al Perfil
+            ⬅️ Volver al Perfil
           </button>
         </div>
       </div>
@@ -155,44 +164,51 @@ const OrderDetail: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 relative overflow-hidden">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-4xl relative z-10">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate('/profile')}
-            className="flex items-center text-purple-600 hover:text-purple-800 mb-4"
+            className="flex items-center text-gray-300 hover:text-white mb-6 font-semibold text-lg group"
           >
-            ← Volver al Perfil
+            <span className="group-hover:-translate-x-2 transition-transform">⬅️</span>
+            <span className="ml-2">Volver al Perfil</span>
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">
-            Detalles de la Orden #{order.orderNumber}
+          <h1 className="text-5xl font-bold text-white">
+            📋 Detalles de la Orden #{order.orderNumber}
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Order Information */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">📋 Información de la Orden</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-600">Número de Orden</p>
-                  <p className="font-semibold">{order.orderNumber}</p>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 mb-8 hover:border-white/30 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-6">ℹ️ Información de la Orden</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm font-medium mb-1">Número de Orden</p>
+                  <p className="text-white font-bold text-lg">{order.orderNumber}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Estado</p>
-                  <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm font-medium mb-2">Estado</p>
+                  <span className={`inline-block px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm ${getStatusColor(order.status)}`}>
                     {getStatusText(order.status)}
                   </span>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Fecha de Creación</p>
-                  <p className="font-semibold">{formatDate(order.createdAt)}</p>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm font-medium mb-1">📅 Fecha de Creación</p>
+                  <p className="text-white font-semibold">{formatDate(order.createdAt)}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600">Total</p>
-                  <p className="font-semibold text-purple-600">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm font-medium mb-1">Total</p>
+                  <p className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-bold text-lg">
                     ${typeof order.total === 'number' ? order.total.toFixed(2) : parseFloat(order.total || '0').toFixed(2)}
                   </p>
                 </div>
@@ -200,25 +216,25 @@ const OrderDetail: React.FC = () => {
             </div>
 
             {/* Order Items */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">🛍️ Productos</h2>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 mb-8 hover:border-white/30 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-6">🛍️ Productos</h2>
               <div className="space-y-4">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                  <div key={item.id} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300">
                     <img
                       src={item.product.imageUrl || 'https://via.placeholder.com/80x80'}
                       alt={item.product.name}
-                      className="w-20 h-20 object-cover rounded-lg"
+                      className="w-20 h-20 object-cover rounded-xl ring-2 ring-white/20"
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
-                      <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
-                      <p className="text-sm text-gray-600">
-                        Precio unitario: ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price || '0').toFixed(2)}
+                      <h3 className="font-bold text-white text-lg">{item.product.name}</h3>
+                      <p className="text-gray-300 text-sm">📦 Cantidad: {item.quantity}</p>
+                      <p className="text-gray-400 text-sm">
+                        💵 Precio unitario: ${typeof item.price === 'number' ? item.price.toFixed(2) : parseFloat(item.price || '0').toFixed(2)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-purple-600">
+                      <p className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-bold text-lg">
                         ${(typeof item.price === 'number' ? item.price * item.quantity : parseFloat(item.price || '0') * item.quantity).toFixed(2)}
                       </p>
                     </div>
@@ -228,9 +244,9 @@ const OrderDetail: React.FC = () => {
             </div>
 
             {/* Shipping Address */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">🚚 Dirección de Envío</h2>
-              <p className="text-gray-600">{order.shippingAddress}</p>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 hover:border-white/30 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-6">🚚 Dirección de Envío</h2>
+              <p className="text-gray-300 text-lg leading-relaxed bg-white/5 border border-white/10 rounded-2xl p-4">{order.shippingAddress}</p>
             </div>
           </div>
 
@@ -238,16 +254,16 @@ const OrderDetail: React.FC = () => {
           <div className="lg:col-span-1">
             {/* Tracking Information */}
             {order.trackingCode && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">📍 Seguimiento</h2>
-                <div>
-                  <p className="text-sm text-gray-600">Código de Seguimiento</p>
-                  <p className="font-semibold break-all">{order.trackingCode}</p>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 mb-8 hover:border-white/30 transition-all duration-300">
+                <h2 className="text-xl font-bold text-white mb-6">📍 Seguimiento</h2>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-4">
+                  <p className="text-gray-400 text-sm font-medium mb-1">Código de Seguimiento</p>
+                  <p className="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text font-mono font-bold break-all">{order.trackingCode}</p>
                 </div>
                 {order.estimatedDeliveryDate && (
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-600">Fecha Estimada de Entrega</p>
-                    <p className="font-semibold">{formatDate(order.estimatedDeliveryDate)}</p>
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <p className="text-gray-400 text-sm font-medium mb-1">📅 Fecha Estimada</p>
+                    <p className="text-white font-semibold">{formatDate(order.estimatedDeliveryDate)}</p>
                   </div>
                 )}
               </div>
@@ -255,19 +271,19 @@ const OrderDetail: React.FC = () => {
 
             {/* Status History */}
             {order.statusHistory && order.statusHistory.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">📈 Historial de Estados</h2>
-                <div className="space-y-3">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 hover:border-white/30 transition-all duration-300">
+                <h2 className="text-xl font-bold text-white mb-6">📈 Historial de Estados</h2>
+                <div className="space-y-4">
                   {order.statusHistory
                     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                     .map((history) => (
-                      <div key={history.id} className="flex items-start gap-3">
-                        <div className="w-3 h-3 bg-purple-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <div key={history.id} className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-3">
+                        <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mt-2 flex-shrink-0 shadow-lg"></div>
                         <div className="flex-1">
-                          <p className="font-semibold text-sm">{getStatusText(history.status)}</p>
-                          <p className="text-xs text-gray-600">{formatDate(history.createdAt)}</p>
+                          <p className="font-bold text-white text-sm">{getStatusText(history.status)}</p>
+                          <p className="text-gray-400 text-xs">{formatDate(history.createdAt)}</p>
                           {history.notes && (
-                            <p className="text-sm text-gray-600 mt-1">{history.notes}</p>
+                            <p className="text-gray-300 text-sm mt-1">{history.notes}</p>
                           )}
                         </div>
                       </div>

@@ -56,15 +56,15 @@ const CheckoutPage: React.FC = () => {
   // Verificar si hay productos en el carrito
   if (!cart || cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <div className="bg-white rounded-2xl shadow-lg p-12">
-            <div className="text-6xl mb-6">🛒</div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Tu carrito está vacío</h1>
-            <p className="text-gray-600 mb-8">Agrega algunos productos antes de proceder al checkout</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-12 border border-white/20">
+            <div className="text-8xl mb-6 animate-bounce" style={{animationDuration: '2s'}}>🛒</div>
+            <h1 className="text-4xl font-bold text-white mb-4">Tu carrito está vacío</h1>
+            <p className="text-gray-300 mb-8 text-lg">Agrega algunos productos antes de proceder al checkout</p>
             <button
               onClick={() => navigate('/products')}
-              className="bg-purple-600 text-white px-8 py-4 rounded-xl hover:bg-purple-700 transition-colors font-semibold"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all font-semibold transform hover:scale-105 shadow-lg"
             >
               🛍️ Ir a comprar
             </button>
@@ -77,7 +77,7 @@ const CheckoutPage: React.FC = () => {
   // Verificar si el usuario está logueado
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 px-4">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <div className="bg-white rounded-2xl shadow-lg p-12">
             <div className="text-6xl mb-6">🔐</div>

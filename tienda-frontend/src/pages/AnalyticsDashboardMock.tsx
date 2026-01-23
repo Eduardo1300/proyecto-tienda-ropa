@@ -173,16 +173,21 @@ const AnalyticsDashboardMock: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
         {/* Header Mejorado */}
-        <Card className="mb-10 overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white" padding="lg">
+        <Card className="mb-10 overflow-hidden bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 text-white" padding="lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-5xl shadow-lg">📈</div>
               <div>
                 <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
-                <p className="text-purple-100 text-lg">Panel de análisis de la tienda (Mock + API)</p>
+                <p className="text-purple-100 text-lg">Panel de análisis de la tienda</p>
               </div>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -206,13 +211,13 @@ const AnalyticsDashboardMock: React.FC = () => {
 
         {/* Estadísticas principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <Card className="p-8 bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-xl">
+          <Card className="p-8 bg-gradient-to-br from-blue-500/30 to-indigo-500/30 border border-blue-400/30 text-white shadow-xl backdrop-blur-sm">
             <div className="flex items-center gap-4 mb-4">
               <div className="text-5xl">👁️</div>
               <h3 className="text-lg font-semibold">Visitas Totales</h3>
             </div>
             <div className="text-4xl font-bold mb-2">{(dataToDisplay?.overview?.totalPageViews || 0).toLocaleString()}</div>
-            <p className="text-base text-blue-100">Páginas vistas</p>
+            <p className="text-base text-blue-200">Páginas vistas</p>
           </Card>
           <Card className="p-8 bg-gradient-to-br from-green-500 to-teal-500 text-white shadow-xl">
             <div className="flex items-center gap-4 mb-4">

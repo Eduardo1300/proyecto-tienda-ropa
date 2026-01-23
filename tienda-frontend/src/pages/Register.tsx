@@ -142,7 +142,7 @@ const Register: React.FC = () => {
                   required
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-4 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                  className="w-full px-4 py-4 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                   placeholder="Juan"
                 />
               </div>
@@ -159,7 +159,7 @@ const Register: React.FC = () => {
                   required
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-4 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                className="w-full px-4 py-4 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                   placeholder="Pérez"
                 />
               </div>
@@ -177,7 +177,7 @@ const Register: React.FC = () => {
                 required
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full px-4 py-4 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                className="w-full px-4 py-4 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                 placeholder="tu_usuario_cool"
               />
             </div>
@@ -194,7 +194,7 @@ const Register: React.FC = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-4 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                className="w-full px-4 py-4 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                 placeholder="tu@email.com"
               />
             </div>
@@ -212,7 +212,7 @@ const Register: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-4 pr-12 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                  className="w-full px-4 py-4 pr-12 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                   placeholder="Mínimo 6 caracteres"
                 />
                 <button
@@ -238,7 +238,7 @@ const Register: React.FC = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-4 pr-12 bg-white/15 border border-white/30 rounded-2xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-4 focus:ring-purple-400/30 focus:border-purple-300/50 focus:bg-white/20 transition-all duration-300 group-hover:border-white/40"
+                  className="w-full px-4 py-4 pr-12 bg-white/10 border border-white/30 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400/50 focus:border-purple-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm"
                   placeholder="Repite tu contraseña"
                 />
                 <button
@@ -254,11 +254,11 @@ const Register: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-white to-purple-50 text-purple-700 py-4 rounded-2xl font-bold text-lg hover:from-purple-50 hover:to-white focus:outline-none focus:ring-4 focus:ring-purple-400/30 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-2xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-400/50 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-700"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   Creando cuenta...
                 </span>
               ) : (
@@ -270,11 +270,11 @@ const Register: React.FC = () => {
             </button>
 
             <div className="text-center">
-              <p className="text-purple-100/80">
+              <p className="text-gray-300">
                 ¿Ya tienes cuenta?{' '}
                 <Link 
                   to="/login" 
-                  className="font-bold text-white hover:text-purple-200 transition-colors underline decoration-2 underline-offset-2"
+                  className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text hover:from-purple-300 hover:to-pink-300 transition-colors"
                 >
                   Inicia sesión aquí
                 </Link>
