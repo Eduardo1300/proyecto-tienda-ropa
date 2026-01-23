@@ -20,6 +20,17 @@ interface Order {
   trackingNumber?: string;
 }
 
+interface Address {
+  id?: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  type: 'home' | 'office' | 'other';
+  isDefault?: boolean;
+}
+
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +39,16 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [newAddress, setNewAddress] = useState<Address>({
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    type: 'home',
+  });
   
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
@@ -47,6 +68,19 @@ const ProfilePage: React.FC = () => {
       return;
     }
   }, [user, navigate]);
+
+  // Cargar perfil desde localStorage al iniciar
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('profileData');
+    if (savedProfile) {
+      try {
+        const parsedProfile = JSON.parse(savedProfile);
+        setProfileData(prev => ({ ...prev, ...parsedProfile }));
+      } catch (error) {
+        console.error('Error cargando perfil guardado:', error);
+      }
+    }
+  }, []);
 
   // Cargar órdenes
   useEffect(() => {
@@ -98,14 +132,72 @@ const ProfilePage: React.FC = () => {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Guardar en localStorage para persistencia
+      const updatedUser = { ...user, ...profileData };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem('profileData', JSON.stringify(profileData));
+      
       setIsEditing(false);
       alert('✅ Perfil actualizado correctamente');
     } catch (error) {
+      console.error('Error guardando perfil:', error);
       alert('❌ Error al actualizar el perfil');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Cargar direcciones del localStorage
+  useEffect(() => {
+    const savedAddresses = localStorage.getItem('addresses');
+    if (savedAddresses) {
+      setAddresses(JSON.parse(savedAddresses));
+    }
+  }, []);
+
+  const handleAddAddress = () => {
+    if (!newAddress.street || !newAddress.city || !newAddress.zipCode) {
+      alert('❌ Por favor completa todos los campos');
+      return;
+    }
+
+    const address: Address = {
+      id: Date.now().toString(),
+      ...newAddress
+    };
+
+    const updatedAddresses = [...addresses, address];
+    setAddresses(updatedAddresses);
+    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+    
+    setNewAddress({
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: '',
+      type: 'home',
+    });
+    setShowAddressModal(false);
+    alert('✅ Dirección añadida correctamente');
+  };
+
+  const handleDeleteAddress = (id: string | undefined) => {
+    if (!id) return;
+    const updatedAddresses = addresses.filter(addr => addr.id !== id);
+    setAddresses(updatedAddresses);
+    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+    alert('✅ Dirección eliminada');
+  };
+
+  const handleSetDefaultAddress = (id: string | undefined) => {
+    if (!id) return;
+    const updatedAddresses = addresses.map(addr => ({
+      ...addr,
+      isDefault: addr.id === id
+    }));
+    setAddresses(updatedAddresses);
+    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
   };
 
   const getStatusVariant = (status: Order['status']) => {
@@ -336,6 +428,20 @@ const ProfilePage: React.FC = () => {
                         <option value="prefer-not-to-say">Prefiero no decir</option>
                       </select>
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Biografía 📝
+                      </label>
+                      <textarea
+                        value={profileData.bio}
+                        onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                        disabled={!isEditing}
+                        placeholder="Cuéntanos sobre ti... (máximo 500 caracteres)"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 transition-all duration-200 resize-none h-24"
+                        maxLength={500}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">{profileData.bio.length}/500 caracteres</p>
+                    </div>
                   </Card>
                 </div>
 
@@ -509,33 +615,170 @@ const ProfilePage: React.FC = () => {
                   <Button
                     variant="primary"
                     icon="➕"
+                    onClick={() => setShowAddressModal(true)}
                   >
                     Agregar Dirección
                   </Button>
                 </div>
 
-                <Card className="text-center py-16" gradient>
-                  <div className="text-8xl mb-6">📍</div>
-                  <h3 className="text-2xl font-bold text-gray-700 mb-4">Gestión de Direcciones</h3>
-                  <p className="text-gray-500 mb-8 text-lg">Próximamente - Guarda tus direcciones favoritas</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                    <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200">
-                      <div className="text-purple-600 text-2xl mb-3">🏠</div>
-                      <h4 className="font-semibold text-gray-800">Casa</h4>
-                      <p className="text-sm text-gray-600">Dirección principal</p>
+                {/* Address List */}
+                {addresses.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {addresses.map((address) => (
+                      <Card key={address.id} className="relative overflow-hidden hover:shadow-xl transition-all" gradient>
+                        {address.isDefault && (
+                          <div className="absolute top-0 right-0 bg-green-500 text-white px-3 py-1 text-xs font-semibold rounded-bl-lg">
+                            ⭐ Predeterminada
+                          </div>
+                        )}
+                        
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl">
+                              {address.type === 'home' ? '🏠' : address.type === 'office' ? '🏢' : '🎁'}
+                            </span>
+                            <span className="font-semibold text-gray-800 capitalize">
+                              {address.type === 'home' ? 'Casa' : address.type === 'office' ? 'Oficina' : 'Otro'}
+                            </span>
+                          </div>
+
+                          <div className="space-y-2 text-sm">
+                            <p className="text-gray-700 font-medium">{address.street}</p>
+                            <p className="text-gray-600">{address.city}, {address.state}</p>
+                            <p className="text-gray-600">{address.zipCode}, {address.country}</p>
+                          </div>
+
+                          <div className="flex gap-2 pt-4 border-t border-gray-200">
+                            {!address.isDefault && (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                icon="⭐"
+                                onClick={() => handleSetDefaultAddress(address.id)}
+                                className="flex-1"
+                              >
+                                Predeterminada
+                              </Button>
+                            )}
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              icon="🗑️"
+                              onClick={() => handleDeleteAddress(address.id)}
+                              className="flex-1"
+                            >
+                              Eliminar
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="text-center py-16" gradient>
+                    <div className="text-8xl mb-6">📍</div>
+                    <h3 className="text-2xl font-bold text-gray-700 mb-4">No hay direcciones guardadas</h3>
+                    <p className="text-gray-500 mb-8 text-lg">Agrega tu primera dirección para agilizar tus compras</p>
+                    <Button
+                      variant="primary"
+                      icon="➕"
+                      onClick={() => setShowAddressModal(true)}
+                    >
+                      Agregar Mi Primera Dirección
+                    </Button>
+                  </Card>
+                )}
+
+                {/* Add Address Modal */}
+                <Modal
+                  isOpen={showAddressModal}
+                  onClose={() => setShowAddressModal(false)}
+                  title="📍 Agregar Nueva Dirección"
+                  size="lg"
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Dirección</label>
+                      <select
+                        value={newAddress.type}
+                        onChange={(e) => setNewAddress({...newAddress, type: e.target.value as any})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      >
+                        <option value="home">🏠 Casa</option>
+                        <option value="office">🏢 Oficina</option>
+                        <option value="other">🎁 Otro</option>
+                      </select>
                     </div>
-                    <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200">
-                      <div className="text-purple-600 text-2xl mb-3">🏢</div>
-                      <h4 className="font-semibold text-gray-800">Oficina</h4>
-                      <p className="text-sm text-gray-600">Dirección de trabajo</p>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Calle *</label>
+                      <Input
+                        type="text"
+                        placeholder="Ej: Calle Principal 123"
+                        value={newAddress.street}
+                        onChange={(e) => setNewAddress({...newAddress, street: e.target.value})}
+                      />
                     </div>
-                    <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200">
-                      <div className="text-purple-600 text-2xl mb-3">🎁</div>
-                      <h4 className="font-semibold text-gray-800">Regalo</h4>
-                      <p className="text-sm text-gray-600">Envío a terceros</p>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Ciudad *</label>
+                        <Input
+                          type="text"
+                          placeholder="Ej: Madrid"
+                          value={newAddress.city}
+                          onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Estado/Región</label>
+                        <Input
+                          type="text"
+                          placeholder="Ej: Madrid"
+                          value={newAddress.state}
+                          onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Código Postal *</label>
+                        <Input
+                          type="text"
+                          placeholder="Ej: 28001"
+                          value={newAddress.zipCode}
+                          onChange={(e) => setNewAddress({...newAddress, zipCode: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">País</label>
+                        <Input
+                          type="text"
+                          placeholder="Ej: España"
+                          value={newAddress.country}
+                          onChange={(e) => setNewAddress({...newAddress, country: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 justify-end pt-6 border-t">
+                      <Button
+                        variant="secondary"
+                        onClick={() => setShowAddressModal(false)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="primary"
+                        onClick={handleAddAddress}
+                        icon="✅"
+                      >
+                        Guardar Dirección
+                      </Button>
                     </div>
                   </div>
-                </Card>
+                </Modal>
               </div>
             )}
 

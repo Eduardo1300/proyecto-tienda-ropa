@@ -123,26 +123,38 @@ const InventoryDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-emerald-100 py-10 px-2 md:px-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-10">
-        <div className="mb-4 md:mb-0">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-5xl">📦</span>
-            <h1 className="text-5xl font-extrabold text-gray-900">Gestión de Inventario</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-2 md:px-8">
+      {/* Premium Header */}
+      <div className="mb-12">
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 rounded-2xl p-8 text-white shadow-2xl">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-6xl drop-shadow-lg">📦</span>
+                <div>
+                  <h1 className="text-5xl font-extrabold drop-shadow-md">Gestión de Inventario</h1>
+                  <p className="text-blue-100 text-lg mt-2">Control Total de tu Stock en Tiempo Real</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              {['overview', 'alerts', 'reports'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    activeTab === tab
+                      ? 'bg-white text-blue-600 shadow-lg'
+                      : 'bg-blue-500/30 text-white hover:bg-blue-500/50'
+                  }`}
+                >
+                  {tab === 'overview' && '📊 Resumen'}
+                  {tab === 'alerts' && '🚨 Alertas'}
+                  {tab === 'reports' && '📋 Reportes'}
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="text-gray-700 text-lg">Monitorea y administra el stock de productos en tiempo real</p>
-        </div>
-        <div className="flex gap-2">
-          <select 
-            value={activeTab}
-            onChange={(e) => setActiveTab(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-gray-700"
-          >
-            <option value="overview">📊 Resumen</option>
-            <option value="alerts">🚨 Alertas</option>
-            <option value="reports">📋 Reportes</option>
-          </select>
         </div>
       </div>
 
@@ -152,58 +164,74 @@ const InventoryDashboard: React.FC = () => {
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-              <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-100 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><span>💰</span>Valor Total</h2>
-                  <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
-                </div>
-                <div className="text-3xl font-extrabold text-blue-600 mb-2">
-                  €{inventoryValue?.totalValue?.toFixed(2) || '0.00'}
-                </div>
-                <p className="text-sm text-gray-600">Valor del inventario</p>
-              </Card>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300"></div>
+                <Card className="relative p-6 bg-gradient-to-br from-blue-500 to-blue-600 shadow-xl hover:shadow-2xl transition-all duration-300 text-white">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-semibold text-blue-100 flex items-center gap-2"><span>💰</span>Valor Total</h2>
+                    <svg className="w-7 h-7 text-blue-200 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </div>
+                  <div className="text-4xl font-extrabold mb-2">
+                    €{inventoryValue?.totalValue?.toFixed(2) || '0.00'}
+                  </div>
+                  <p className="text-blue-100 text-sm">Valor del inventario</p>
+                  <div className="mt-4 pt-4 border-t border-blue-400 text-xs text-blue-100">Actualizado ahora</div>
+                </Card>
+              </div>
 
-              <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><span>📦</span>Productos</h2>
-                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                </div>
-                <div className="text-3xl font-extrabold text-green-600 mb-2">
-                  {inventoryValue?.products || 0}
-                </div>
-                <p className="text-sm text-gray-600">En inventario</p>
-              </Card>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300"></div>
+                <Card className="relative p-6 bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl hover:shadow-2xl transition-all duration-300 text-white">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-semibold text-green-100 flex items-center gap-2"><span>📦</span>Productos</h2>
+                    <svg className="w-7 h-7 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <div className="text-4xl font-extrabold mb-2">
+                    {inventoryValue?.products || 0}
+                  </div>
+                  <p className="text-green-100 text-sm">En inventario</p>
+                  <div className="mt-4 pt-4 border-t border-green-400 text-xs text-green-100">SKUs activos</div>
+                </Card>
+              </div>
 
-              <Card className="p-6 bg-gradient-to-br from-red-50 to-rose-100 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><span>🚨</span>Alertas Activas</h2>
-                  <svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <div className="text-3xl font-extrabold text-red-600 mb-2">
-                  {alerts.filter(a => a.status === 'ACTIVE').length}
-                </div>
-                <p className="text-sm text-gray-600">Requieren atención</p>
-              </Card>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-rose-400 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300"></div>
+                <Card className="relative p-6 bg-gradient-to-br from-red-500 to-rose-600 shadow-xl hover:shadow-2xl transition-all duration-300 text-white">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-semibold text-red-100 flex items-center gap-2"><span>🚨</span>Alertas</h2>
+                    <svg className="w-7 h-7 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <div className="text-4xl font-extrabold mb-2">
+                    {alerts.filter(a => a.status === 'ACTIVE').length}
+                  </div>
+                  <p className="text-red-100 text-sm">Requieren atención</p>
+                  <div className="mt-4 pt-4 border-t border-red-400 text-xs text-red-100">Resolver inmediatamente</div>
+                </Card>
+              </div>
 
-              <Card className="p-6 bg-gradient-to-br from-yellow-50 to-amber-100 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2"><span>⚠️</span>Stock Bajo</h2>
-                  <svg className="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                  </svg>
-                </div>
-                <div className="text-3xl font-extrabold text-yellow-600 mb-2">
-                  {lowStockProducts.length}
-                </div>
-                <p className="text-sm text-gray-600">Productos bajo mínimo</p>
-              </Card>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300"></div>
+                <Card className="relative p-6 bg-gradient-to-br from-amber-500 to-orange-600 shadow-xl hover:shadow-2xl transition-all duration-300 text-white">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-semibold text-amber-100 flex items-center gap-2"><span>⚠️</span>Stock Bajo</h2>
+                    <svg className="w-7 h-7 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    </svg>
+                  </div>
+                  <div className="text-4xl font-extrabold mb-2">
+                    {lowStockProducts.length}
+                  </div>
+                  <p className="text-amber-100 text-sm">Productos bajo mínimo</p>
+                  <div className="mt-4 pt-4 border-t border-amber-400 text-xs text-amber-100">Reorden recomendado</div>
+                </Card>
+              </div>
             </div>
 
             {/* Recent Alerts */}
