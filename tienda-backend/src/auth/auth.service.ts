@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserPayload } from '../common/types/user.types';
+import { AnalyticsService } from '../analytics/services/analytics.service';
+import { EventType } from '../analytics/entities/analytics-event.entity';
 
 interface ValidatedUser {
   id: number;
@@ -30,6 +32,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private analyticsService: AnalyticsService,
   ) {}
 
   // Validar email y contraseña
@@ -90,6 +93,18 @@ export class AuthService {
 
       // Crear el usuario (el UsersService ya maneja la normalización y el hash de la contraseña)
       const newUser = await this.usersService.create(createUserDto);
+
+      // Track user registration in analytics
+      try {
+        await this.analyticsService.trackEvent({
+          eventType: EventType.USER_REGISTRATION,
+          userId: newUser.id,
+          eventData: { email: newUser.email, username: newUser.username },
+        });
+        console.log('✅ Analytics event tracked for user registration:', newUser.id);
+      } catch (error) {
+        console.error('⚠️ Failed to track analytics event:', error);
+      }
 
       console.log('✅ User registered successfully:', newUser.email);
       return {
