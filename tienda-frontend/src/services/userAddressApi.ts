@@ -1,4 +1,36 @@
-import api from './api';
+import axios from 'axios';
+
+// Obtener la URL base del API
+const getApiBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && envUrl.includes('tienda-backend')) {
+    return envUrl;
+  }
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+    if (hostname.includes('onrender.com')) {
+      return `${protocol}//tienda-backend-n67b.onrender.com`;
+    }
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
+      return 'http://localhost:3002';
+    }
+  }
+  return envUrl || 'http://localhost:3002';
+};
+
+const api = axios.create({
+  baseURL: getApiBaseUrl(),
+});
+
+// Agregar interceptor para incluir token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Types para direcciones
 export interface UserAddress {
@@ -104,3 +136,4 @@ export const userAddressAPI = {
       data
     ),
 };
+

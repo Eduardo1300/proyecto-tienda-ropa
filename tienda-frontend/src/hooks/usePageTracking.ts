@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAnalyticsTracking } from './useAnalytics';
-import { useAuth } from './useAuth';
+import { useAuth } from '../context/AuthContext';
 
 export const usePageTracking = (pageName: string) => {
   const { trackPageView } = useAnalyticsTracking();

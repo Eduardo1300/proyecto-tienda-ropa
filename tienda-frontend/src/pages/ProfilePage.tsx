@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
-import { userAddressAPI, UserAddress, UserPreferences } from '../services/userAddressApi.ts';
+import { userAddressAPI } from '../services/userAddressApi';
+import type { UserAddress, UserPreferences, CreateAddressData, UpdatePreferencesData } from '../services/userAddressApi';
 import { Button, Card, Input, Badge, Modal } from '../components/ui';
 
-console.log('✅ ProfilePage imports successful');
-console.log('✅ userAddressAPI:', userAddressAPI);
-console.log('✅ UserAddress:', UserAddress);
-console.log('✅ UserPreferences:', UserPreferences);
+console.log('✅ ProfilePage loaded with real userAddressAPI');
 
 interface Order {
   id: string;
@@ -41,13 +39,13 @@ const ProfilePage: React.FC = () => {
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
-  const [newAddress, setNewAddress] = useState({
+  const [newAddress, setNewAddress] = useState<CreateAddressData>({
     street: '',
     city: '',
     state: '',
     zipCode: '',
     country: '',
-    type: 'home' as const,
+    type: 'home',
     label: '',
   });
   const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
@@ -201,7 +199,7 @@ const ProfilePage: React.FC = () => {
       zipCode: address.zipCode,
       country: address.country,
       type: address.type,
-      label: address.label,
+      label: address.label || '',
     });
     setEditingAddressId(address.id);
     setShowAddressModal(true);
