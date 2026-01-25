@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { useTheme } from './context/ThemeContext';
 import Header from './components/Header';
 import NotificationContainer from './components/NotificationContainer';
 import Home from './pages/Home';
@@ -28,6 +29,73 @@ import InventoryDashboard from './pages/InventoryDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
+function AppContent() {
+  const { isDarkMode } = useTheme();
+
+  return (
+    <div className={isDarkMode ? 'dark' : ''}>
+      <div className="App min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/carrito" element={<Cart />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/orders" element={<OrderManagement />} />
+            <Route path="/orders/:orderId" element={<OrderDetail />} />
+            <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/favoritos" element={<Wishlist />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            
+            {/* Analytics Dashboard - Protected Route */}
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute>
+                  <AnalyticsDashboardMock />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Loyalty Dashboard - Protected Route */}
+            <Route 
+              path="/loyalty" 
+              element={
+                <ProtectedRoute>
+                  <LoyaltyDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Inventory Dashboard - Admin Only */}
+            <Route 
+              path="/inventory" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <InventoryDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route path="/admin/product-images" element={<ProductImageManager />} />
+          </Routes>
+        </main>
+        <NotificationContainer />
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <ThemeProvider>
@@ -35,64 +103,7 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <Router>
-              <div className="App min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                <Header />
-                <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/carrito" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/admin" element={<AdminPanel />} />
-                <Route path="/orders" element={<OrderManagement />} />
-                <Route path="/orders/:orderId" element={<OrderDetail />} />
-                <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/favoritos" element={<Wishlist />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                
-                {/* Analytics Dashboard - Protected Route */}
-                <Route 
-                  path="/analytics" 
-                  element={
-                    <ProtectedRoute>
-                      <AnalyticsDashboardMock />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Loyalty Dashboard - Protected Route */}
-                <Route 
-                  path="/loyalty" 
-                  element={
-                    <ProtectedRoute>
-                      <LoyaltyDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Inventory Dashboard - Admin Only */}
-                <Route 
-                  path="/inventory" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <InventoryDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                <Route path="/admin/product-images" element={<ProductImageManager />} />
-              </Routes>
-                </main>
-                <NotificationContainer />
-              </div>
+              <AppContent />
             </Router>
           </CartProvider>
         </AuthProvider>

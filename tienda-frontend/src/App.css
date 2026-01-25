@@ -3,12 +3,27 @@
 .App {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: background-color 0.3s ease;
+}
+
+/* Dark Mode Support */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark .App {
+  background: linear-gradient(to bottom, #111827, #1f2937);
 }
 
 .main-content {
   min-height: calc(100vh - 80px);
   background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
   backdrop-filter: blur(10px);
+  transition: background 0.3s ease;
+}
+
+html.dark .main-content {
+  background: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.8));
 }
 
 /* Animaciones personalizadas */
@@ -148,6 +163,10 @@
   animation: loading-skeleton 1.5s infinite;
 }
 
+html.dark .loading-skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+}
+
 @keyframes loading-skeleton {
   0% {
     background-position: 200% 0;
@@ -182,6 +201,10 @@
 .dashboard-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+html.dark .dashboard-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsive mejoras */

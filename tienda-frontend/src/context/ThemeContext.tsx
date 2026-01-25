@@ -21,18 +21,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       return savedTheme === 'dark';
     }
     
-    // Verificar preferencia del sistema
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Verificar preferencia del sistema - por defecto dark mode
+    return true;
   });
 
   useEffect(() => {
-    // Aplicar tema al documento
+    // Aplicar clase 'dark' al html para Tailwind CSS
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
       document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.style.backgroundColor = '#111827';
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.setAttribute('data-theme', 'light');
+      document.body.style.backgroundColor = '#f9fafb';
     }
 
     // Guardar preferencia en localStorage

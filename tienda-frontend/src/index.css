@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark Mode Base Styles */
+html.dark {
+  color-scheme: dark;
+}
+
 /* Custom component styles */
 @layer components {
   .bg-gradient-primary {
@@ -32,6 +37,11 @@
   .btn-modern:hover {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   }
+
+  /* Dark Mode specific overrides */
+  html.dark & .card-hover:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
 }
 
 /* Custom animations */
@@ -50,6 +60,44 @@
   
   .animate-pulse-soft {
     animation: pulseSoft 4s ease-in-out infinite;
+  }
+
+  /* Dark mode text colors */
+  .dark .text-gray-900 {
+    @apply text-white;
+  }
+
+  .dark .text-gray-800 {
+    @apply text-gray-100;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-200;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-gray-300;
+  }
+
+  .dark .text-gray-500 {
+    @apply text-gray-400;
+  }
+
+  /* Dark mode backgrounds */
+  .dark .bg-white {
+    @apply bg-gray-800;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-gray-900;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-gray-800;
+  }
+
+  .dark .bg-gray-200 {
+    @apply bg-gray-700;
   }
 }
 
