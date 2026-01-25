@@ -37,6 +37,19 @@ export class User {
   @Column({ default: 0 })
   loyaltyPoints: number;
 
+  // Información Personal Adicional
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  birthDate: string; // ISO Date string
+
+  @Column({ nullable: true })
+  gender: string; // male, female, other, prefer-not-to-say
+
+  @Column({ nullable: true, type: 'text' })
+  bio: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -48,6 +61,7 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+}
 
   // Product-related relations (lazy-loaded to avoid circular imports)
   wishlist: any[];

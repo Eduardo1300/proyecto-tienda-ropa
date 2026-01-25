@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
+import { userAddressAPI, UserAddress, UserPreferences } from '../services/userAddressApi';
 import { Button, Card, Input, Badge, Modal } from '../components/ui';
 
 interface Order {
@@ -20,17 +21,6 @@ interface Order {
   trackingNumber?: string;
 }
 
-interface Address {
-  id?: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  type: 'home' | 'office' | 'other';
-  isDefault?: boolean;
-}
-
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -39,16 +29,19 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
-  const [newAddress, setNewAddress] = useState<Address>({
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
+  const [newAddress, setNewAddress] = useState({
     street: '',
     city: '',
     state: '',
     zipCode: '',
     country: '',
-    type: 'home',
+    type: 'home' as const,
+    label: '',
   });
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
   
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
@@ -69,22 +62,12 @@ const ProfilePage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Cargar perfil desde localStorage al iniciar
-  useEffect(() => {
-    const savedProfile = localStorage.getItem('profileData');
-    if (savedProfile) {
-      try {
-        const parsedProfile = JSON.parse(savedProfile);
-        setProfileData(prev => ({ ...prev, ...parsedProfile }));
-      } catch (error) {
-      }
-    }
-  }, []);
-
-  // Cargar órdenes
+  // Cargar perfil, órdenes, direcciones y preferencias
   useEffect(() => {
     if (user) {
       loadOrders();
+      loadAddresses();
+      loadPreferences();
     }
   }, [user]);
 
@@ -118,6 +101,28 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const loadAddresses = async () => {
+    try {
+      const response = await userAddressAPI.getAddresses();
+      if (response.data.success) {
+        setAddresses(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error loading addresses:', error);
+    }
+  };
+
+  const loadPreferences = async () => {
+    try {
+      const response = await userAddressAPI.getPreferences();
+      if (response.data.success) {
+        setPreferences(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+    }
+  };
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -130,10 +135,14 @@ const ProfilePage: React.FC = () => {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      // Guardar en localStorage para persistencia
-      const updatedUser = { ...user, ...profileData };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      localStorage.setItem('profileData', JSON.stringify(profileData));
+      await userAddressAPI.updateProfile({
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        phone: profileData.phone,
+        birthDate: profileData.birthDate,
+        gender: profileData.gender,
+        bio: profileData.bio,
+      });
       
       setIsEditing(false);
       alert('✅ Perfil actualizado correctamente');
@@ -144,57 +153,94 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  // Cargar direcciones del localStorage
-  useEffect(() => {
-    const savedAddresses = localStorage.getItem('addresses');
-    if (savedAddresses) {
-      setAddresses(JSON.parse(savedAddresses));
+  const handleAddAddress = async () => {
+    setLoading(true);
+    try {
+      if (editingAddressId) {
+        await userAddressAPI.updateAddress(editingAddressId, newAddress);
+        alert('✅ Dirección actualizada correctamente');
+      } else {
+        await userAddressAPI.createAddress(newAddress);
+        alert('✅ Dirección agregada correctamente');
+      }
+      
+      setNewAddress({
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: '',
+        type: 'home',
+        label: '',
+      });
+      setEditingAddressId(null);
+      setShowAddressModal(false);
+      await loadAddresses();
+    } catch (error) {
+      alert('❌ Error al guardar la dirección');
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
 
-  const handleAddAddress = () => {
-    if (!newAddress.street || !newAddress.city || !newAddress.zipCode) {
-      alert('❌ Por favor completa todos los campos');
-      return;
-    }
-
-    const address: Address = {
-      id: Date.now().toString(),
-      ...newAddress
-    };
-
-    const updatedAddresses = [...addresses, address];
-    setAddresses(updatedAddresses);
-    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-    
+  const handleEditAddress = (address: UserAddress) => {
     setNewAddress({
-      street: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: '',
-      type: 'home',
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      zipCode: address.zipCode,
+      country: address.country,
+      type: address.type,
+      label: address.label,
     });
-    setShowAddressModal(false);
-    alert('✅ Dirección añadida correctamente');
+    setEditingAddressId(address.id);
+    setShowAddressModal(true);
   };
 
-  const handleDeleteAddress = (id: string | undefined) => {
-    if (!id) return;
-    const updatedAddresses = addresses.filter(addr => addr.id !== id);
-    setAddresses(updatedAddresses);
-    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
-    alert('✅ Dirección eliminada');
+  const handleDeleteAddress = async (id: number) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta dirección?')) {
+      try {
+        await userAddressAPI.deleteAddress(id);
+        alert('✅ Dirección eliminada correctamente');
+        await loadAddresses();
+      } catch (error) {
+        alert('❌ Error al eliminar la dirección');
+      }
+    }
   };
 
-  const handleSetDefaultAddress = (id: string | undefined) => {
-    if (!id) return;
-    const updatedAddresses = addresses.map(addr => ({
-      ...addr,
-      isDefault: addr.id === id
-    }));
-    setAddresses(updatedAddresses);
-    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
+  const handleSetDefaultAddress = async (id: number) => {
+    try {
+      await userAddressAPI.setDefaultAddress(id);
+      alert('✅ Dirección establecida como predeterminada');
+      await loadAddresses();
+    } catch (error) {
+      alert('❌ Error al establecer dirección predeterminada');
+    }
+  };
+
+  const handleUpdatePreferences = async () => {
+    if (!preferences) return;
+    
+    setLoading(true);
+    try {
+      await userAddressAPI.updatePreferences({
+        emailNotifications: preferences.emailNotifications,
+        orderNotifications: preferences.orderNotifications,
+        promotionNotifications: preferences.promotionNotifications,
+        weeklyNewsletter: preferences.weeklyNewsletter,
+        profilePublic: preferences.profilePublic,
+        showPurchaseHistory: preferences.showPurchaseHistory,
+        allowDataCollection: preferences.allowDataCollection,
+        twoFactorEnabled: preferences.twoFactorEnabled,
+        twoFactorMethod: preferences.twoFactorMethod,
+      });
+      alert('✅ Preferencias actualizadas correctamente');
+    } catch (error) {
+      alert('❌ Error al actualizar las preferencias');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getStatusVariant = (status: Order['status']) => {
@@ -646,6 +692,27 @@ const ProfilePage: React.FC = () => {
                           </div>
 
                           <div className="flex gap-2 pt-4 border-t border-gray-200">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              icon="✏️"
+                              onClick={() => {
+                                setEditingAddressId(address.id);
+                                setNewAddress({
+                                  street: address.street,
+                                  city: address.city,
+                                  state: address.state,
+                                  zipCode: address.zipCode,
+                                  country: address.country,
+                                  type: address.type,
+                                  label: address.label || '',
+                                });
+                                setShowAddressModal(true);
+                              }}
+                              className="flex-1"
+                            >
+                              Editar
+                            </Button>
                             {!address.isDefault && (
                               <Button
                                 variant="secondary"
@@ -689,11 +756,33 @@ const ProfilePage: React.FC = () => {
                 {/* Add Address Modal */}
                 <Modal
                   isOpen={showAddressModal}
-                  onClose={() => setShowAddressModal(false)}
-                  title="📍 Agregar Nueva Dirección"
+                  onClose={() => {
+                    setShowAddressModal(false);
+                    setEditingAddressId(null);
+                    setNewAddress({
+                      street: '',
+                      city: '',
+                      state: '',
+                      zipCode: '',
+                      country: '',
+                      type: 'home',
+                      label: '',
+                    });
+                  }}
+                  title={editingAddressId ? '✏️ Editar Dirección' : '📍 Agregar Nueva Dirección'}
                   size="lg"
                 >
                   <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de la Dirección (Opcional)</label>
+                      <Input
+                        type="text"
+                        placeholder="Ej: Casa, Oficina, etc"
+                        value={newAddress.label || ''}
+                        onChange={(e) => setNewAddress({...newAddress, label: e.target.value})}
+                      />
+                    </div>
+
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Dirección</label>
                       <select
@@ -762,16 +851,29 @@ const ProfilePage: React.FC = () => {
                     <div className="flex gap-3 justify-end pt-6 border-t">
                       <Button
                         variant="secondary"
-                        onClick={() => setShowAddressModal(false)}
+                        onClick={() => {
+                          setShowAddressModal(false);
+                          setEditingAddressId(null);
+                          setNewAddress({
+                            street: '',
+                            city: '',
+                            state: '',
+                            zipCode: '',
+                            country: '',
+                            type: 'home',
+                            label: '',
+                          });
+                        }}
                       >
                         Cancelar
                       </Button>
                       <Button
                         variant="primary"
                         onClick={handleAddAddress}
+                        loading={loading}
                         icon="✅"
                       >
-                        Guardar Dirección
+                        {editingAddressId ? 'Actualizar' : 'Guardar'} Dirección
                       </Button>
                     </div>
                   </div>
@@ -787,47 +889,161 @@ const ProfilePage: React.FC = () => {
                   <p className="text-gray-600 mt-2">Configuración de seguridad y privacidad de tu cuenta</p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <Card className="space-y-6" gradient>
-                    <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
-                      🔐 Contraseña
-                    </h3>
-                    <p className="text-gray-600">Cambia tu contraseña regularmente para mantener tu cuenta segura</p>
-                    <Button variant="primary" icon="🔑" fullWidth>
-                      Cambiar Contraseña
-                    </Button>
-                  </Card>
+                {preferences && (
+                  <div className="space-y-8">
+                    {/* Notifications Section */}
+                    <Card className="space-y-6" gradient>
+                      <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
+                        🔔 Notificaciones
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Notificaciones por Email</label>
+                            <p className="text-xs text-gray-600 mt-1">Recibe actualizaciones sobre tu cuenta</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.emailNotifications || false}
+                            onChange={(e) => setPreferences({...preferences, emailNotifications: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
 
-                  <Card className="space-y-6" gradient>
-                    <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
-                      📱 Autenticación de Dos Factores
-                    </h3>
-                    <p className="text-gray-600">Agrega una capa extra de seguridad a tu cuenta</p>
-                    <Button variant="success" icon="🛡️" fullWidth>
-                      Activar 2FA
-                    </Button>
-                  </Card>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Notificaciones de Pedidos</label>
+                            <p className="text-xs text-gray-600 mt-1">Alertas sobre el estado de tus pedidos</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.orderNotifications || false}
+                            onChange={(e) => setPreferences({...preferences, orderNotifications: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
 
-                  <Card className="space-y-6" gradient>
-                    <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
-                      🔔 Notificaciones
-                    </h3>
-                    <p className="text-gray-600">Controla qué notificaciones quieres recibir</p>
-                    <Button variant="outline" icon="⚙️" fullWidth>
-                      Gestionar Notificaciones
-                    </Button>
-                  </Card>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Notificaciones de Promociones</label>
+                            <p className="text-xs text-gray-600 mt-1">Recibe ofertas y descuentos especiales</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.promotionNotifications || false}
+                            onChange={(e) => setPreferences({...preferences, promotionNotifications: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
 
-                  <Card className="space-y-6" gradient>
-                    <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
-                      📊 Privacidad
-                    </h3>
-                    <p className="text-gray-600">Configura la privacidad de tus datos personales</p>
-                    <Button variant="outline" icon="🔒" fullWidth>
-                      Configurar Privacidad
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Newsletter Semanal</label>
+                            <p className="text-xs text-gray-600 mt-1">Resumen semanal de novedades y tendencias</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.weeklyNewsletter || false}
+                            onChange={(e) => setPreferences({...preferences, weeklyNewsletter: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* Privacy Section */}
+                    <Card className="space-y-6" gradient>
+                      <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
+                        📊 Privacidad
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Perfil Público</label>
+                            <p className="text-xs text-gray-600 mt-1">Otros usuarios pueden ver tu perfil</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.profilePublic || false}
+                            onChange={(e) => setPreferences({...preferences, profilePublic: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Mostrar Historial de Compras</label>
+                            <p className="text-xs text-gray-600 mt-1">Otros usuarios pueden ver tus compras</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.showPurchaseHistory || false}
+                            onChange={(e) => setPreferences({...preferences, showPurchaseHistory: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Compartir Datos para Análisis</label>
+                            <p className="text-xs text-gray-600 mt-1">Nos ayuda a mejorar tu experiencia</p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.allowDataCollection || false}
+                            onChange={(e) => setPreferences({...preferences, allowDataCollection: e.target.checked})}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* Security Section */}
+                    <Card className="space-y-6" gradient>
+                      <h3 className="text-xl font-semibold text-gray-800 border-b border-purple-100 pb-3">
+                        🔐 Seguridad
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-800">Autenticación de Dos Factores</label>
+                            <p className="text-xs text-gray-600 mt-1">
+                              {preferences.twoFactorEnabled ? '✅ Activado' : '⚠️ Desactivado'}
+                            </p>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={preferences.twoFactorEnabled || false}
+                            onChange={(e) => setPreferences({...preferences, twoFactorEnabled: e.target.checked})}
+                            disabled
+                            className="w-5 h-5 cursor-not-allowed opacity-50"
+                          />
+                        </div>
+
+                        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                          <p className="text-sm text-blue-800">
+                            <strong>Último cambio de contraseña:</strong> {preferences.lastPasswordChangeAt ? new Date(preferences.lastPasswordChangeAt).toLocaleDateString('es-ES') : 'Nunca'}
+                          </p>
+                        </div>
+
+                        <Button variant="primary" icon="🔑" fullWidth>
+                          Cambiar Contraseña
+                        </Button>
+                      </div>
+                    </Card>
+
+                    {/* Save Preferences Button */}
+                    <Button
+                      variant="success"
+                      icon="💾"
+                      fullWidth
+                      onClick={handleUpdatePreferences}
+                      loading={loading}
+                    >
+                      Guardar Preferencias
                     </Button>
-                  </Card>
-                </div>
+                  </div>
+                )}
 
                 <Card className="bg-red-50 border border-red-200">
                   <h3 className="text-xl font-semibold text-red-800 mb-4 flex items-center gap-2">

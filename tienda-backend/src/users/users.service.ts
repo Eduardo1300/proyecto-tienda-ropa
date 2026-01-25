@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { UserAddress } from './entities/user-address.entity';
+import { UserPreferences } from './entities/user-preferences.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CreateAddressDto, UpdateAddressDto } from './dto/address.dto';
+import { UpdatePreferencesDto } from './dto/preferences.dto';
 import { 
   DashboardQueryDto, 
   OrderHistoryQueryDto, 
@@ -19,6 +23,10 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserAddress)
+    private readonly addressRepository: Repository<UserAddress>,
+    @InjectRepository(UserPreferences)
+    private readonly preferencesRepository: Repository<UserPreferences>,
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Product)
@@ -304,4 +312,133 @@ export class UsersService {
       currentPage: page,
     };
   }
+
+  // ===================== DIRECCIONES =====================
+
+  async createAddress(userId: number, createAddressDto: CreateAddressDto): Promise<UserAddress> {
+    // Si isDefault es true, desactivar otros como default
+    if (createAddressDto.isDefault) {
+      await this.addressRepository.update(
+        { user: { id: userId } },
+        { isDefault: false }
+      );
+    }
+
+    const address = this.addressRepository.create({
+      ...createAddressDto,
+      user: { id: userId } as any,
+    });
+
+    return await this.addressRepository.save(address);
+  }
+
+  async getAddresses(userId: number): Promise<UserAddress[]> {
+    return await this.addressRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getAddress(userId: number, addressId: number): Promise<UserAddress> {
+    const address = await this.addressRepository.findOne({
+      where: { id: addressId, user: { id: userId } },
+    });
+
+    if (!address) {
+      throw new NotFoundException('Dirección no encontrada');
+    }
+
+    return address;
+  }
+
+  async updateAddress(
+    userId: number,
+    addressId: number,
+    updateAddressDto: UpdateAddressDto
+  ): Promise<UserAddress> {
+    const address = await this.getAddress(userId, addressId);
+
+    // Si isDefault es true, desactivar otros como default
+    if (updateAddressDto.isDefault) {
+      await this.addressRepository.update(
+        { user: { id: userId }, id: { $ne: addressId } as any },
+        { isDefault: false }
+      );
+    }
+
+    Object.assign(address, updateAddressDto);
+    return await this.addressRepository.save(address);
+  }
+
+  async deleteAddress(userId: number, addressId: number): Promise<void> {
+    const result = await this.addressRepository.delete({
+      id: addressId,
+      user: { id: userId },
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Dirección no encontrada');
+    }
+  }
+
+  async setDefaultAddress(userId: number, addressId: number): Promise<UserAddress> {
+    // Desactivar todas las direcciones del usuario
+    await this.addressRepository.update(
+      { user: { id: userId } },
+      { isDefault: false }
+    );
+
+    // Activar la nueva dirección como default
+    const address = await this.getAddress(userId, addressId);
+    address.isDefault = true;
+    return await this.addressRepository.save(address);
+  }
+
+  // ===================== PREFERENCIAS =====================
+
+  async getPreferences(userId: number): Promise<UserPreferences> {
+    let preferences = await this.preferencesRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    // Si no existen, crear con valores por defecto
+    if (!preferences) {
+      preferences = this.preferencesRepository.create({
+        user: { id: userId } as any,
+      });
+      preferences = await this.preferencesRepository.save(preferences);
+    }
+
+    return preferences;
+  }
+
+  async updatePreferences(
+    userId: number,
+    updatePreferencesDto: UpdatePreferencesDto
+  ): Promise<UserPreferences> {
+    let preferences = await this.getPreferences(userId);
+    Object.assign(preferences, updatePreferencesDto);
+    return await this.preferencesRepository.save(preferences);
+  }
+
+  async updateProfileInfo(
+    userId: number,
+    profileData: {
+      firstName?: string;
+      lastName?: string;
+      phone?: string;
+      birthDate?: string;
+      gender?: string;
+      bio?: string;
+    }
+  ): Promise<User> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    Object.assign(user, profileData);
+    return await this.userRepository.save(user);
+  }
 }
+
