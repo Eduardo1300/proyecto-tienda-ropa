@@ -8,12 +8,12 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { GetUser } from '../auth/decorators/get-user.decorator';
-import { RequestUser } from '../common/types/user.types';
-import { UsersService } from './users.service';
-import { CreateAddressDto, UpdateAddressDto } from './dto/address.dto';
-import { UpdatePreferencesDto } from './dto/preferences.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { GetUser } from '../../auth/decorators/get-user.decorator';
+import { RequestUser } from '../../common/types/user.types';
+import { UsersService } from '../users.service';
+import { CreateAddressDto, UpdateAddressDto } from '../dto/address.dto';
+import { UpdatePreferencesDto } from '../dto/preferences.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)

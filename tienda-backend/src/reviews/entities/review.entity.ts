@@ -44,7 +44,7 @@ export class Review {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, user => user.reviews)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
 

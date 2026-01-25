@@ -23,7 +23,7 @@ export class ProductReview {
   @ManyToOne(() => Product, (product) => product.reviews)
   product: Product;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User)
   user: User;
 
   @Column({ type: 'int', width: 1 })

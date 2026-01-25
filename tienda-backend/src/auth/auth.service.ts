@@ -10,6 +10,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserPayload } from '../common/types/user.types';
 import { AnalyticsService } from '../analytics/services/analytics.service';
 import { EventType } from '../analytics/entities/analytics-event.entity';
+import { LoyaltyService } from '../loyalty/services/loyalty.service';
 
 interface ValidatedUser {
   id: number;
@@ -33,6 +34,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private analyticsService: AnalyticsService,
+    private loyaltyService: LoyaltyService,
   ) {}
 
   // Validar email y contraseña

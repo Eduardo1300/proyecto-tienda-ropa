@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
-import { userAddressAPI, UserAddress, UserPreferences } from '../services/userAddressApi';
+import { userAddressAPI, UserAddress, UserPreferences } from '../services/userAddressApi.ts';
 import { Button, Card, Input, Badge, Modal } from '../components/ui';
+
+console.log('✅ ProfilePage imports successful');
+console.log('✅ userAddressAPI:', userAddressAPI);
+console.log('✅ UserAddress:', UserAddress);
+console.log('✅ UserPreferences:', UserPreferences);
 
 interface Order {
   id: string;
@@ -22,7 +27,11 @@ interface Order {
 }
 
 const ProfilePage: React.FC = () => {
+  console.log('🚀 ProfilePage component rendering');
+  
   const { user, logout } = useAuth();
+  console.log('👤 User:', user);
+  
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'addresses' | 'security'>('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -43,6 +52,7 @@ const ProfilePage: React.FC = () => {
   });
   const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
   
+  console.log('📍 State initialized');
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
@@ -268,6 +278,8 @@ const ProfilePage: React.FC = () => {
   if (!user) {
     return null;
   }
+
+  console.log('✨ About to render ProfilePage JSX');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">

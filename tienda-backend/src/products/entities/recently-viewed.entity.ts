@@ -16,7 +16,7 @@ export class RecentlyViewed {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.recentlyViewed)
+  @ManyToOne(() => User)
   user: User;
 
   @ManyToOne(() => Product, (product) => product.recentlyViewedBy)

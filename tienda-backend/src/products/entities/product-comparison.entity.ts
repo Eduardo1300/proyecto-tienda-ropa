@@ -14,7 +14,7 @@ export class ProductComparison {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.comparisons)
+  @ManyToOne(() => User)
   user: User;
 
   @Column({ length: 200, default: 'Mi Comparación' })

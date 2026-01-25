@@ -229,7 +229,7 @@ export class UsersService {
         totalOrders: parseInt(orderStats?.totalOrders) || 0,
         totalSpent: parseFloat(orderStats?.totalSpent) || 0,
         loyaltyPoints: user.loyaltyPoints || 0,
-        wishlistItems: user.wishlist?.length || 0,
+        wishlistItems: 0,
       },
       recentOrders: recentOrders.map(order => ({
         id: order.id,
@@ -239,13 +239,7 @@ export class UsersService {
         date: order.createdAt,
         itemCount: order.items?.length || 0,
       })),
-      wishlist: user.wishlist?.map(item => ({
-        id: item.product.id,
-        name: item.product.name,
-        price: item.product.price,
-        discount: 0, // Product entity doesn't have discount property
-        imageUrl: item.product.images?.[0]?.url || undefined,
-      })) || [],
+      wishlist: [],
       favoriteProducts: favoriteProducts.map(item => ({
         id: item.product_id,
         name: item.product_name,

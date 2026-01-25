@@ -17,6 +17,7 @@ import { ProductVariant } from '../products/entities/product-variant.entity';
 import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
 import { AnalyticsModule } from '../analytics/analytics.module';
+import { LoyaltyModule } from '../loyalty/loyalty.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AnalyticsModule } from '../analytics/analytics.module';
       ProductVariant
     ]),
     AnalyticsModule,
+    LoyaltyModule,
   ],
   controllers: [OrderController, ReturnController],
   providers: [OrderService, ReturnService, EmailService, PdfService],

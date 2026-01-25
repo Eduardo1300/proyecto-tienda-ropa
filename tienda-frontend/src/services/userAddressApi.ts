@@ -56,7 +56,7 @@ export interface UpdatePreferencesData {
   twoFactorMethod?: string;
 }
 
-// Funciones API
+// API Service
 export const userAddressAPI = {
   // Direcciones
   getAddresses: () =>
@@ -104,5 +104,3 @@ export const userAddressAPI = {
       data
     ),
 };
-
-export default userAddressAPI;

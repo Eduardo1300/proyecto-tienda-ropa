@@ -52,7 +52,6 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
-
   @UpdateDateColumn()
   updatedAt: Date;
 
@@ -61,11 +60,4 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
-}
-
-  // Product-related relations (lazy-loaded to avoid circular imports)
-  wishlist: any[];
-  comparisons: any[];
-  reviews: any[];
-  recentlyViewed: any[];
 }
