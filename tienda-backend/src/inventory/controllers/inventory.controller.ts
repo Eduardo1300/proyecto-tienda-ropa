@@ -16,19 +16,7 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { InventoryService } from '../services/inventory.service';
 import { MovementType, MovementReason } from '../entities/stock-movement.entity';
 import { AlertStatus } from '../entities/inventory-alert.entity';
-
-export class UpdateStockDto {
-  productId: number;
-  quantity: number;
-  type: MovementType;
-  reason: MovementReason;
-  unitCost?: number;
-  batch?: string;
-  expirationDate?: Date;
-  location?: string;
-  notes?: string;
-  referenceNumber?: string;
-}
+import { UpdateStockDto } from '../dto/update-stock.dto';
 
 export class ReserveStockDto {
   productId: number;
