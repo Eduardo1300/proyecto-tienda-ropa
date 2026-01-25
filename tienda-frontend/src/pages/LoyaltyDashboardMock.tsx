@@ -52,9 +52,6 @@ const LoyaltyDashboard: React.FC = () => {
     // Probar conexión con el backend
     const testConnection = async () => {
       try {
-        console.log('🧪 Testing loyalty API connection...');
-        console.log('User:', user);
-        console.log('Token:', token ? 'Present' : 'Missing');
 
         const headers: HeadersInit = {
           'Content-Type': 'application/json',
@@ -71,10 +68,8 @@ const LoyaltyDashboard: React.FC = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Loyalty API test successful:', data);
           
           // Ahora probemos el endpoint de transacciones que requiere autenticación
-          console.log('🔒 Testing authenticated endpoint...');
           const transactionsResponse = await fetch('http://localhost:3002/loyalty/transactions', {
             method: 'GET',
             headers: headers
@@ -82,24 +77,18 @@ const LoyaltyDashboard: React.FC = () => {
 
           if (transactionsResponse.ok) {
             const transactionsData = await transactionsResponse.json();
-            console.log('✅ Loyalty transactions test successful:', transactionsData);
             setConnectionStatus('connected');
           } else {
-            console.log('❌ Loyalty transactions test failed:', transactionsResponse.status);
             const errorText = await transactionsResponse.text();
-            console.log('Transaction error details:', errorText);
             setConnectionStatus('error');
             setError(`Transactions: HTTP ${transactionsResponse.status} - Necesitas un token válido`);
           }
         } else {
-          console.log('❌ Loyalty API test failed:', response.status);
           const errorText = await response.text();
-          console.log('Error details:', errorText);
           setConnectionStatus('error');
           setError(`HTTP ${response.status} - ${errorText}`);
         }
       } catch (err) {
-        console.log('❌ Loyalty API connection error:', err);
         setConnectionStatus('error');
         setError('Cannot connect to loyalty service');
       }

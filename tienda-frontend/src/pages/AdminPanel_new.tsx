@@ -106,7 +106,6 @@ const AdminPanel: React.FC = () => {
         lowStockProducts: productsData.filter((product: any) => (product.stock || 0) < 5).length
       });
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -118,7 +117,6 @@ const AdminPanel: React.FC = () => {
       const response = await productsAPI.getAll();
       setProducts(response.data.data || response.data);
     } catch (error) {
-      console.error('Error loading products:', error);
     } finally {
       setLoading(false);
     }
@@ -130,7 +128,6 @@ const AdminPanel: React.FC = () => {
       const ordersData = await adminApi.getAllOrders();
       setOrders(ordersData || []);
     } catch (error) {
-      console.error('Error loading orders:', error);
       setOrders([]);
     } finally {
       setLoading(false);
@@ -145,7 +142,6 @@ const AdminPanel: React.FC = () => {
       });
       return response.data.data || response.data;
     } catch (error) {
-      console.error('Error loading users data:', error);
       return [];
     }
   };
@@ -156,7 +152,6 @@ const AdminPanel: React.FC = () => {
       const usersData = await loadUsersData();
       setUsers(usersData);
     } catch (error) {
-      console.error('Error loading users:', error);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -170,7 +165,6 @@ const AdminPanel: React.FC = () => {
       await productsAPI.delete(id);
       setProducts(products.filter(p => p.id !== id));
     } catch (error) {
-      console.error('Error deleting product:', error);
       alert('Error al eliminar el producto');
     }
   };

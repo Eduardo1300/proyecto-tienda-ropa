@@ -22,7 +22,6 @@ export const InventoryAlerts: React.FC<InventoryAlertsProps> = ({ data, onLoadDa
       const alertsData = await adminApi.getInventoryAlerts();
       onLoadData(alertsData);
     } catch (error) {
-      console.error('Error loading inventory data:', error);
       // Fallback to mock data if API fails
       const mockAlerts: InventoryAlert[] = [
         {

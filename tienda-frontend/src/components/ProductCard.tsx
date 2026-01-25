@@ -92,7 +92,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         duration: 3000
       });
     } catch (error: any) {
-      console.error('Error adding to wishlist:', error);
       if (error.response?.status === 401) {
         alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         navigate('/login');
@@ -137,7 +136,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         duration: 3000
       });
     } catch (error: any) {
-      console.error('Error adding to cart:', error);
       addNotification({
         type: 'error',
         title: 'Error',
@@ -161,7 +159,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         });
       }
     } catch (error) {
-      console.error('Error tracking view:', error);
     }
   };
 

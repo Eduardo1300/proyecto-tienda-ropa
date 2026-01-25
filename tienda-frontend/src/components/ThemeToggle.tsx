@@ -5,9 +5,7 @@ const ThemeToggle: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleToggle = () => {
-    console.log('ThemeToggle - Current isDarkMode:', isDarkMode);
     toggleTheme();
-    console.log('ThemeToggle - After toggle, isDarkMode should be:', !isDarkMode);
   };
 
   return (

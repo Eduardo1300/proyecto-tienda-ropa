@@ -20,7 +20,6 @@ const ProductList = () => {
         const response = await productsAPI.getAll();
         setProducts(response.data.data || response.data);
       } catch (error) {
-        console.error('Error fetching products:', error);
         // Mock data for development
         setProducts([
           {
@@ -78,7 +77,6 @@ const ProductList = () => {
   const handleAddToCart = (product: Product) => {
     addToCart(product);
     // Opcional: mostrar un toast o notificación
-    console.log(`Agregado al carrito: ${product.name}`);
   };
 
   if (loading) {

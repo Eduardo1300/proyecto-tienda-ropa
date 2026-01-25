@@ -18,11 +18,9 @@ export const useInventory = () => {
         onSuccess(response.data);
       }
       if (successMessage) {
-        console.log(successMessage);
       }
       return response.data;
     } catch (err) {
-      console.error('Inventory API Error:', err);
       setError('Error al conectar con el servidor de inventario');
       return null;
     } finally {

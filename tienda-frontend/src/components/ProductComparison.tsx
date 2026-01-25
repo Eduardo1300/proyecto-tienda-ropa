@@ -65,7 +65,6 @@ const ProductComparison: React.FC<ProductComparisonProps> = ({
       
       alert('Producto agregado al carrito');
     } catch (error) {
-      console.error('Error adding to cart:', error);
       alert('Error al agregar al carrito');
     } finally {
       setIsAddingToCart(prev => ({ ...prev, [product.id]: false }));
@@ -88,7 +87,6 @@ const ProductComparison: React.FC<ProductComparisonProps> = ({
       
       alert('Producto agregado a favoritos');
     } catch (error) {
-      console.error('Error adding to wishlist:', error);
     }
   };
 

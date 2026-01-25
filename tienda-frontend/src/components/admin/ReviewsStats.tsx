@@ -13,7 +13,6 @@ export const ReviewsStats: React.FC<ReviewsStatsProps> = ({ data, onLoadData }) 
       const reviewsData = await adminApi.getReviewsStats();
       onLoadData(reviewsData);
     } catch (error) {
-      console.error('Error loading reviews data:', error);
       // Fallback to mock data
       const mockData: ReviewStat[] = [
         {

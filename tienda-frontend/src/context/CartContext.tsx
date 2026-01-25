@@ -59,9 +59,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       try {
         const parsedCart = JSON.parse(savedCart);
         setCart(parsedCart);
-        console.log('🔄 Cart loaded from localStorage:', parsedCart);
       } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
         setCart([]);
       }
     }
@@ -74,7 +72,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       syncWithBackend();
     } else if (!user && isInitialized) {
       // Si no hay usuario, asegurar que el carrito se mantenga en localStorage
-      console.log('🔄 User logged out, cart will remain in localStorage');
     }
   }, [user, isInitialized]);
 
@@ -82,7 +79,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isInitialized) {
       localStorage.setItem('cart', JSON.stringify(cart));
-      console.log('💾 Cart saved to localStorage:', cart);
     }
   }, [cart, isInitialized]);
 
@@ -96,8 +92,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const backendCart = Array.isArray(backendResponse?.data?.data) ? backendResponse.data.data : 
                          Array.isArray(backendResponse?.data) ? backendResponse.data : [];
       
-      console.log('📡 Backend cart response:', backendCart);
-      console.log('🛒 Current local cart:', cart);
 
       // Crear mapa para combinar items
       const mergedItems = new Map();
@@ -129,7 +123,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         
         if (!mergedItems.has(productId)) {
           // Item solo existe local, agregarlo al backend
-          console.log('➕ Adding local item to backend:', localItem);
           try {
             // Crear el objeto que espera la API (solo los campos necesarios)
             const backendCartItem = {
@@ -145,7 +138,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               quantity: localItem.quantity
             });
           } catch (error) {
-            console.error('Error adding local item to backend:', error);
             // Si falla, mantener el item local
             mergedItems.set(productId, localItem);
           }
@@ -153,7 +145,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           // Item existe en ambos, usar la cantidad del local si es mayor
           const existingItem = mergedItems.get(productId);
           if (localItem.quantity > existingItem.quantity) {
-            console.log('🔄 Local quantity is higher, keeping local quantity');
             existingItem.quantity = localItem.quantity;
           }
         }
@@ -162,10 +153,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       // Convertir el mapa a array y actualizar estado
       const finalCart = Array.from(mergedItems.values());
       setCart(finalCart);
-      console.log('✅ Cart synced and merged:', finalCart);
     } catch (error) {
-      console.error('❌ Error syncing cart with backend:', error);
-      console.log('🔄 Keeping local cart:', cart);
     } finally {
       setLoading(false);
     }
@@ -195,8 +183,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         // Actualizar estado local primero
         setCart(prevCart => [...prevCart, newItem]);
         
-        console.log('🔍 New item added to cart:', newItem);
-        console.log('🔍 Product object:', normalizedProduct);
         
         // Si hay usuario, sincronizar con backend
         if (user) {
@@ -207,16 +193,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               userId: user.id
             };
             await cartAPI.addItem(backendCartItem);
-            console.log('✅ Item added to backend cart');
           } catch (error) {
-            console.error('❌ Error adding item to backend:', error);
           }
         }
       }
       
-      console.log('🛒 Product added to cart:', normalizedProduct.name);
     } catch (error) {
-      console.error('Error adding product to cart:', error);
     } finally {
       setLoading(false);
     }
@@ -236,15 +218,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (user && itemToRemove && typeof itemToRemove.id === 'number') {
         try {
           await cartAPI.removeItem(itemToRemove.id);
-          console.log('✅ Item removed from backend cart');
         } catch (error) {
-          console.error('❌ Error removing item from backend:', error);
         }
       }
       
-      console.log('🗑️ Product removed from cart:', productId);
     } catch (error) {
-      console.error('Error removing product from cart:', error);
     } finally {
       setLoading(false);
     }
@@ -269,9 +247,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       );
       
       // Para updates de cantidad, simplemente mantener la sincronización en próximo login
-      console.log('📊 Product quantity updated locally:', productId, quantity);
     } catch (error) {
-      console.error('Error updating product quantity:', error);
     } finally {
       setLoading(false);
     }
@@ -294,15 +270,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               await cartAPI.removeItem(item.id);
             }
           }
-          console.log('✅ Backend cart cleared');
         } catch (error) {
-          console.error('❌ Error clearing backend cart:', error);
         }
       }
       
-      console.log('🧹 Cart cleared');
     } catch (error) {
-      console.error('Error clearing cart:', error);
     } finally {
       setLoading(false);
     }

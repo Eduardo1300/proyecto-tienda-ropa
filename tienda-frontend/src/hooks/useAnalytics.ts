@@ -19,7 +19,6 @@ export const useAnalytics = () => {
         setError('Error al obtener datos');
       }
     } catch (err) {
-      console.error('Analytics API Error:', err);
       setError('Error al conectar con el servidor');
     } finally {
       setIsLoading(false);
@@ -107,7 +106,6 @@ export const useAnalyticsTracking = () => {
     try {
       await analyticsAPI.trackEvent(eventData);
     } catch (error) {
-      console.error('Error tracking event:', error);
     }
   };
 
@@ -119,7 +117,6 @@ export const useAnalyticsTracking = () => {
         sessionId: getSessionId(),
       });
     } catch (error) {
-      console.error('Error tracking page view:', error);
     }
   };
 
@@ -131,7 +128,6 @@ export const useAnalyticsTracking = () => {
         sessionId: getSessionId(),
       });
     } catch (error) {
-      console.error('Error tracking product view:', error);
     }
   };
 

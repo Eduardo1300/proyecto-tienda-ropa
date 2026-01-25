@@ -38,9 +38,7 @@ const ProductDetail = () => {
 
       try {
         setLoading(true);
-        console.log('🔄 Fetching product details for ID:', id);
         const response = await productsAPI.getById(parseInt(id));
-        console.log('✅ Product details fetched:', response.data);
         
         // Procesar datos del backend y agregar características por defecto
         const backendProduct = response.data.data || response.data;
@@ -64,7 +62,6 @@ const ProductDetail = () => {
         setProduct(extendedProduct);
         setError(null);
       } catch (err) {
-        console.error('❌ Error fetching product details:', err);
         setError('Error al cargar los detalles del producto. Redirigiendo...');
         
         // Redirigir a la página de productos después de 2 segundos
@@ -324,7 +321,6 @@ const ProductDetail = () => {
               onReviewAdded={() => {
                 // No necesitamos recargar la página, el componente ReviewsList
                 // ya se encarga de recargar las reviews automáticamente
-                console.log('✅ Review agregada, la lista se actualizará automáticamente');
               }}
             />
           </div>

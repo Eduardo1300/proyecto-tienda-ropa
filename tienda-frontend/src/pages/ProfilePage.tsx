@@ -77,7 +77,6 @@ const ProfilePage: React.FC = () => {
         const parsedProfile = JSON.parse(savedProfile);
         setProfileData(prev => ({ ...prev, ...parsedProfile }));
       } catch (error) {
-        console.error('Error cargando perfil guardado:', error);
       }
     }
   }, []);
@@ -115,7 +114,6 @@ const ProfilePage: React.FC = () => {
         setOrders([]);
       }
     } catch (error) {
-      console.error('Error cargando pedidos:', error);
       setOrders([]);
     }
   };
@@ -140,7 +138,6 @@ const ProfilePage: React.FC = () => {
       setIsEditing(false);
       alert('✅ Perfil actualizado correctamente');
     } catch (error) {
-      console.error('Error guardando perfil:', error);
       alert('❌ Error al actualizar el perfil');
     } finally {
       setLoading(false);

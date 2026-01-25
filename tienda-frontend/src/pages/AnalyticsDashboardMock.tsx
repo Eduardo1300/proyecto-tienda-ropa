@@ -28,20 +28,13 @@ const AnalyticsDashboardMock: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        console.log('🧪 Testing analytics API connection...');
-        console.log('User:', user);
-        console.log('Token:', token ? 'Present' : 'Missing');
-        console.log('API Base URL:', API_BASE_URL);
 
         // Test basic endpoint
         const testResponse = await fetch(`${API_BASE_URL}/analytics/test`);
         const testData = await testResponse.json();
         
-        console.log('Test Response Status:', testResponse.status);
-        console.log('Test Data:', testData);
         
         if (testResponse.ok) {
-          console.log('✅ Analytics test endpoint successful:', testData);
           setConnectionTest(testData);
           
           // Load dashboard data
@@ -54,51 +47,32 @@ const AnalyticsDashboardMock: React.FC = () => {
             const startDateStr = startDate.toISOString().split('T')[0];
             const endDateStr = endDate.toISOString().split('T')[0];
             
-            console.log(`📅 Fetching data from ${startDateStr} to ${endDateStr}`);
             
             const dashboardUrl = `${API_BASE_URL}/analytics/dashboard?startDate=${startDateStr}&endDate=${endDateStr}`;
-            console.log('Dashboard URL:', dashboardUrl);
             
             const dashboardResponse = await fetch(dashboardUrl, {
               method: 'GET',
               headers: headers
             });
 
-            console.log('Dashboard Response Status:', dashboardResponse.status);
             
             if (dashboardResponse.ok) {
               const response = await dashboardResponse.json();
-              console.log('✅ Dashboard response:', response);
               
               // Mapear la estructura correcta
               const data = response.data || response;
-              console.log('✅ Dashboard data loaded:', data);
-              console.log('📊 Data structure:', {
-                hasOverview: !!data.overview,
-                hasRevenue: !!data.revenue,
-                hasTopProducts: !!data.topProducts,
-                overviewKeys: data.overview ? Object.keys(data.overview) : [],
-                revenueLength: data.revenue ? data.revenue.length : 0,
-                topProductsLength: data.topProducts ? data.topProducts.length : 0,
-              });
               setDashboardData(data);
             } else {
               const errorText = await dashboardResponse.text();
-              console.log('❌ Dashboard failed:', dashboardResponse.status, errorText);
               setError(`Dashboard endpoint failed: ${dashboardResponse.status}`);
             }
           } else {
-            console.log('⚠️ User is not admin or no token');
-            console.log('Token:', token ? 'Present' : 'Missing');
-            console.log('User Role:', user?.role);
           }
         } else {
-          console.log('❌ Analytics test failed:', testResponse.status);
           setError('Analytics API not available');
         }
 
       } catch (err) {
-        console.error('Analytics connection error:', err);
         setError(`Error connecting to analytics API: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setIsLoading(false);

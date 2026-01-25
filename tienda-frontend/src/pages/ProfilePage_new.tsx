@@ -81,7 +81,6 @@ const ProfilePage: React.FC = () => {
         setOrders([]);
       }
     } catch (error) {
-      console.error('Error cargando pedidos:', error);
       setOrders([]);
     }
   };

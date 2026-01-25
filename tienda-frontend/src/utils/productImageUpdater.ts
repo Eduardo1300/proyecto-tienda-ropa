@@ -19,13 +19,11 @@ interface Product {
  */
 export const updateProductImages = async (): Promise<void> => {
   try {
-    console.log('🔄 Iniciando actualización de imágenes de productos...');
     
     // Obtener todos los productos
     const response = await productsAPI.getAll();
     const products: Product[] = response.data.data || response.data;
     
-    console.log(`📦 Encontrados ${products.length} productos para revisar`);
     
     let updatedCount = 0;
     
@@ -36,7 +34,8 @@ export const updateProductImages = async (): Promise<void> => {
         
         // Solo actualizar si la imagen es diferente a la actual
         if (appropriateImage !== product.imageUrl) {
-          console.log(`🖼️ Actualizando imagen para: ${product.name} (${product.category})`);
+          
+          // Actualizar el producto con la nueva imagen
           
           // Actualizar el producto con la nueva imagen
           await productsAPI.update(product.id, {
@@ -46,13 +45,10 @@ export const updateProductImages = async (): Promise<void> => {
           updatedCount++;
         }
       } catch (error) {
-        console.error(`❌ Error actualizando producto ${product.id}:`, error);
       }
     }
     
-    console.log(`✅ Proceso completado. ${updatedCount} productos actualizados.`);
   } catch (error) {
-    console.error('❌ Error en el proceso de actualización:', error);
     throw error;
   }
 };
@@ -75,7 +71,6 @@ export const checkProductImages = async (): Promise<{ needUpdate: Product[], tot
       total: products.length
     };
   } catch (error) {
-    console.error('Error checking product images:', error);
     throw error;
   }
 };
@@ -128,7 +123,6 @@ export const normalizeProductName = (product: Product): { name: string, category
  */
 export const cleanupProductData = async (): Promise<void> => {
   try {
-    console.log('🧹 Iniciando limpieza de datos de productos...');
     
     const response = await productsAPI.getAll();
     const products: Product[] = response.data.data || response.data;
@@ -162,19 +156,15 @@ export const cleanupProductData = async (): Promise<void> => {
         }
         
         if (needsUpdate) {
-          console.log(`🔧 Actualizando producto: ${product.name} -> ${normalized.name}`);
           await productsAPI.update(product.id, updates);
           updatedCount++;
         }
         
       } catch (error) {
-        console.error(`❌ Error procesando producto ${product.id}:`, error);
       }
     }
     
-    console.log(`✅ Limpieza completada. ${updatedCount} productos actualizados.`);
   } catch (error) {
-    console.error('❌ Error en la limpieza de productos:', error);
     throw error;
   }
 };

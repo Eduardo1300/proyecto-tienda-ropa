@@ -70,10 +70,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       navigator.serviceWorker.register('/sw.js')
         .then(registration => {
-          console.log('SW registered: ', registration);
         })
         .catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
         });
     }
   }, []);

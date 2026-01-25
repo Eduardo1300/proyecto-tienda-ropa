@@ -23,7 +23,6 @@ export const CustomersStats: React.FC<CustomersStatsProps> = ({ data, onLoadData
       const customers = await adminApi.getCustomersStats(20);
       onLoadData(customers);
     } catch (error) {
-      console.error('Error loading customers data:', error);
       
       // Fallback a datos mock si falla la API
       const mockCustomers: CustomerStat[] = [

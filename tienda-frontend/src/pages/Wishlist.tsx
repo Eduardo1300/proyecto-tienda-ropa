@@ -74,7 +74,6 @@ const Wishlist: React.FC = () => {
 
       setWishlistItems(response.data.data || response.data || []);
     } catch (error: any) {
-      console.error('Error fetching wishlist:', error);
       if (error.response?.status === 401) {
         setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         navigate('/login');
@@ -97,7 +96,6 @@ const Wishlist: React.FC = () => {
       setWishlistItems(prev => prev.filter(item => (item.product?.id || item.id) !== productId));
       alert('✅ Producto eliminado de favoritos');
     } catch (error) {
-      console.error('Error removing from wishlist:', error);
       alert('Error al eliminar de favoritos');
     }
   };

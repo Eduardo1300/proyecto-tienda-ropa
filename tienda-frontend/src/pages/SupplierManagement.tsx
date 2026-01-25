@@ -69,7 +69,6 @@ const SupplierManagement: React.FC = () => {
       });
       setSuppliers(response.data);
     } catch (error) {
-      console.error('Error fetching suppliers:', error);
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,6 @@ const SupplierManagement: React.FC = () => {
       });
       setSupplierProducts(response.data);
     } catch (error) {
-      console.error('Error fetching supplier products:', error);
     }
   };
 
@@ -110,7 +108,6 @@ const SupplierManagement: React.FC = () => {
       });
       fetchSuppliers();
     } catch (error) {
-      console.error('Error adding supplier:', error);
     }
   };
 
@@ -127,7 +124,6 @@ const SupplierManagement: React.FC = () => {
       setSelectedSupplier(null);
       fetchSuppliers();
     } catch (error) {
-      console.error('Error updating supplier:', error);
     }
   };
 
@@ -141,7 +137,6 @@ const SupplierManagement: React.FC = () => {
       });
       fetchSuppliers();
     } catch (error) {
-      console.error('Error deleting supplier:', error);
     }
   };
 

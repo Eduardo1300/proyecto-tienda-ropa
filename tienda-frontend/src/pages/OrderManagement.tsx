@@ -25,36 +25,9 @@ const OrderManagement: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      console.log('=== FETCHING ORDERS ===');
       const response = await ordersAPI.getAll();
-      console.log('Orders API response:', response);
       
       const ordersData = response.data;
-      console.log('Orders data:', ordersData);
-      
-      // Log detailed order structure
-      ordersData.forEach((order: any, index: number) => {
-        console.log(`Order ${index}:`, {
-          id: order.id,
-          orderNumber: order.orderNumber,
-          total: order.total,
-          status: order.status,
-          userId: order.userId,
-          itemsCount: order.items?.length || 0,
-          items: order.items?.map((item: any) => ({
-            id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-            productId: item.productId,
-            product: item.product ? {
-              id: item.product.id,
-              name: item.product.name,
-              imageUrl: item.product.imageUrl,
-              price: item.product.price
-            } : 'NO_PRODUCT'
-          }))
-        });
-      });
       
       // Transform orders to add UI-specific properties
       const extendedOrders: ExtendedOrder[] = ordersData.map((order: Order) => ({
@@ -63,11 +36,8 @@ const OrderManagement: React.FC = () => {
         canBeReturned: order.status === 'delivered'
       }));
       
-      console.log('Extended orders:', extendedOrders);
       setOrders(extendedOrders);
     } catch (err: any) {
-      console.error('Error fetching orders:', err);
-      console.error('Error details:', err.response?.data);
       setError(err.response?.data?.message || 'Error fetching orders');
     } finally {
       setLoading(false);

@@ -59,7 +59,6 @@ const CouponInput: React.FC<CouponInputProps> = ({
         });
       }
     } catch (error: any) {
-      console.error('Error validating coupon:', error);
       addNotification({
         type: 'error',
         title: 'Error',

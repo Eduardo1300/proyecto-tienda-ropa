@@ -81,7 +81,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       setHasMore(response.data.hasMore);
       setPage(pageNum);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
     } finally {
       setLoading(false);
     }
@@ -92,7 +91,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       const response = await axios.get(`/api/products/${productId}/reviews/summary`);
       setReviewSummary(response.data);
     } catch (error) {
-      console.error('Error fetching review summary:', error);
     }
   };
 
@@ -118,7 +116,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       fetchReviewSummary();
       alert('Reseña enviada exitosamente. Será revisada antes de publicarse.');
     } catch (error: any) {
-      console.error('Error submitting review:', error);
       alert(error.response?.data?.message || 'Error al enviar la reseña');
     } finally {
       setSubmittingReview(false);
@@ -148,7 +145,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
           : review
       ));
     } catch (error) {
-      console.error('Error marking review as helpful:', error);
     }
   };
 

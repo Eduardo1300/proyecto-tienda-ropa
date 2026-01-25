@@ -17,9 +17,7 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching products from API...');
         const response = await productsAPI.getAll();
-        console.log('✅ Products fetched:', response.data);
         
         // Procesar y limpiar datos del backend
         const backendProducts: any[] = response.data.data || response.data;
@@ -57,7 +55,6 @@ const Home = () => {
         
         setProducts(displayProducts);
       } catch (error) {
-        console.error('❌ Error fetching products:', error);
   setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
       } finally {
         setLoading(false);

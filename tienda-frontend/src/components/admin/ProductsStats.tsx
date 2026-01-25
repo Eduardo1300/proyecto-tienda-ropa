@@ -23,7 +23,6 @@ export const ProductsStats: React.FC<ProductsStatsProps> = ({ data, onLoadData }
       const products = await adminApi.getProductsStats(20);
       onLoadData(products);
     } catch (error) {
-      console.error('Error loading products data:', error);
       
       // Fallback a datos mock si falla la API
       const mockProducts: ProductStat[] = [

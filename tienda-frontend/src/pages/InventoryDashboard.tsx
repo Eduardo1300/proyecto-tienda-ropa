@@ -40,7 +40,6 @@ const InventoryDashboard: React.FC = () => {
         const response = await inventoryAPI.getStockMovements({ limit: 6, offset: 0 });
         setStockMovements(response.data || []);
       } catch (error) {
-        console.error('Error loading stock movements:', error);
       } finally {
         setLoadingMovements(false);
       }
@@ -56,7 +55,6 @@ const InventoryDashboard: React.FC = () => {
         const response = await inventoryAPI.getSuppliers();
         setSuppliers(response.data || []);
       } catch (error) {
-        console.error('Error loading suppliers:', error);
       } finally {
         setLoadingSuppliers(false);
       }

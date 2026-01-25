@@ -36,7 +36,6 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
   const loadReviews = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Loading reviews for product:', productId, 'with filters:', filters);
       
       const response = await reviewsAPI.getByProduct(productId, {
         page: filters.page || 1,
@@ -46,10 +45,8 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
         rating: filters.rating
       });
       
-      console.log('✅ Reviews loaded:', response.data);
       setReviewsData(response.data);
     } catch (error) {
-      console.error('❌ Error loading reviews:', error);
       
       // En caso de error, usar datos mock vacíos para evitar crashes
       const mockData: ReviewsListResponse = {
@@ -68,19 +65,16 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
 
   const handleCreateReview = async (data: CreateReviewDto) => {
     try {
-      console.log('🔄 Creating review:', data);
       
       const response = await reviewsAPI.create({
         ...data,
         productId: productId // Asegurar que el productId esté incluido
       });
       
-      console.log('✅ Review created:', response.data);
       setShowForm(false);
       loadReviews();
       onReviewAdded?.();
     } catch (error) {
-      console.error('❌ Error creating review:', error);
       throw error;
     }
   };
@@ -89,15 +83,12 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
     if (!editingReview) return;
     
     try {
-      console.log('🔄 Updating review:', editingReview.id, data);
       
       const response = await reviewsAPI.update(editingReview.id, data);
       
-      console.log('✅ Review updated:', response.data);
       setEditingReview(null);
       loadReviews();
     } catch (error) {
-      console.error('❌ Error updating review:', error);
       throw error;
     }
   };
@@ -108,27 +99,21 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({
     }
 
     try {
-      console.log('🔄 Deleting review:', reviewId);
       
       await reviewsAPI.delete(reviewId);
       
-      console.log('✅ Review deleted');
       loadReviews();
     } catch (error) {
-      console.error('❌ Error deleting review:', error);
     }
   };
 
   const handleVoteReview = async (reviewId: number, helpful: boolean) => {
     try {
-      console.log('🔄 Voting review:', reviewId, helpful);
       
       await reviewsAPI.vote(reviewId, helpful);
       
-      console.log('✅ Review voted');
       loadReviews();
     } catch (error) {
-      console.error('❌ Error voting review:', error);
     }
   };
 

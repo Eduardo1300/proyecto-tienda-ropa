@@ -90,12 +90,10 @@ const Products: React.FC = () => {
         
         setProducts(productsWithReviews);
       } else {
-        console.error('API response invalid');
         setProducts([]);
   setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
   setError('Conectando con el backend. Esto puede tardar unos segundos. Si el mensaje persiste, por favor recargue la página o revise su conexión.');
       setProducts([]);
     } finally {
@@ -197,7 +195,6 @@ const loadReviewsData = async (productIds: number[]) => {
       }
     });
   } catch (error) {
-    console.error('❌ Error loading reviews:', error);
     // Generate fallback data if reviews API fails
     productIds.forEach(productId => {
       const averageRating = Math.round((Math.random() * 2 + 3) * 10) / 10; // 3.0-5.0

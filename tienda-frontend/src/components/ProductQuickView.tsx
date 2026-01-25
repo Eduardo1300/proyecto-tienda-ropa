@@ -91,11 +91,9 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose })
           const isInList = wishlistResponse.data.some((item: any) => item.product.id === product.id);
           setIsInWishlist(isInList);
         } catch (error) {
-          console.error('Error checking wishlist:', error);
         }
       }
     } catch (error) {
-      console.error('Error fetching product details:', error);
     }
   };
 
@@ -120,7 +118,6 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose })
       alert('Producto agregado al carrito');
       onClose();
     } catch (error) {
-      console.error('Error adding to cart:', error);
       alert('Error al agregar al carrito');
     } finally {
       setIsAddingToCart(false);
@@ -150,7 +147,6 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose })
         setIsInWishlist(true);
       }
     } catch (error) {
-      console.error('Error toggling wishlist:', error);
     }
   };
 

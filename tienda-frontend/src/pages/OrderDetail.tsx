@@ -57,7 +57,6 @@ const OrderDetail: React.FC = () => {
       setOrder(orderData);
     } catch (err: any) {
       setError(err.message || 'Error al cargar los detalles de la orden');
-      console.error('Error fetching order detail:', err);
     } finally {
       setLoading(false);
     }

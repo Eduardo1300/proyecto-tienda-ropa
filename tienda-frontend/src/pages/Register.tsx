@@ -63,7 +63,6 @@ const Register: React.FC = () => {
         navigate('/');
       }
     } catch (error: any) {
-      console.error('Registration error:', error);
       const errorMessage = error?.message || 'Error al crear la cuenta. Inténtalo de nuevo.';
       if (errorMessage.toLowerCase().includes('email is already in use') || 
           errorMessage.toLowerCase().includes('conflict')) {

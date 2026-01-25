@@ -10,7 +10,6 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Temporal debug log
-  console.log('Header - Current user:', user);
 
   const totalItems = getTotalItems();
 

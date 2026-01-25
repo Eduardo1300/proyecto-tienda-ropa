@@ -27,15 +27,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     const savedToken = localStorage.getItem('token') || localStorage.getItem('access_token');
     
-    console.log('AuthContext - Checking localStorage:', { savedUser, savedToken });
     
     if (savedUser && savedToken) {
       try {
         const parsedUser = JSON.parse(savedUser);
-        console.log('AuthContext - Setting user:', parsedUser);
         setUser(parsedUser);
       } catch (error) {
-        console.error('Error parsing saved user:', error);
         localStorage.removeItem('user');
         localStorage.removeItem('access_token');
         localStorage.removeItem('token');
@@ -72,7 +69,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (profileResponse.ok) {
           const userData = await profileResponse.json();
-          console.log('👤 User data received from /auth/profile:', userData);
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
           return true;
@@ -81,7 +77,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       return false;
     } catch (error) {
-      console.error('Login error:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -91,7 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: RegisterData): Promise<boolean> => {
     setIsLoading(true);
     try {
-      console.log('Sending registration request:', userData);
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
@@ -100,27 +94,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify(userData),
       });
 
-      console.log('Registration response status:', response.status);
       
       if (!response.ok) {
         // Intentar obtener el mensaje de error del servidor
         try {
           const data = await response.json();
-          console.log('Registration error data:', data);
           throw new Error(data.message || `Server error: ${response.status}`);
         } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
           throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
       }
 
       const data = await response.json();
-      console.log('Registration response data:', data);
 
       // Después del registro exitoso, hacer login automáticamente
       return await login(userData.email, userData.password);
     } catch (error) {
-      console.error('Register error:', error);
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
       }
@@ -142,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       }
     } catch (error) {
-      console.error('Logout error:', error);
     } finally {
       setUser(null);
       localStorage.removeItem('user');

@@ -71,7 +71,6 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
       
       await onSubmit(submitData);
     } catch (error) {
-      console.error('Error submitting review:', error);
     } finally {
       setIsSubmitting(false);
     }

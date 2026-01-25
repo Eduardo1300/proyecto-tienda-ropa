@@ -129,7 +129,6 @@ const ProductCatalog: React.FC = () => {
       setFilterOptions({ categories: categories as string[], brands, colors, sizes, priceRange });
       setFilters(prev => ({ ...prev, priceRange }));
     } catch (error) {
-      console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
     }

@@ -83,12 +83,10 @@ export const adminApi = {
   },
 
   updateOrderStatus: async (orderId: number, status: string): Promise<any> => {
-    console.log(`📡 Enviando petición PUT a /orders/${orderId}/status con status:`, status);
     const result = await apiCall<any>(`/orders/${orderId}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
-    console.log(`📡 Respuesta recibida:`, result);
     return result;
   },
 

@@ -49,7 +49,6 @@ const AdminDashboard: React.FC = () => {
       setSalesData(sales);
       
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
       
       // Fallback a datos mock si falla la API
       const mockOverviewData: DashboardOverviewData = {

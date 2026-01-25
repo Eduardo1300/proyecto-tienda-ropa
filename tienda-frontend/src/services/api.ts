@@ -43,7 +43,6 @@ const api = axios.create({
 
 // Log para debugging
 if (typeof window !== 'undefined') {
-  console.log('🌐 API Base URL:', API_BASE_URL);
 }
 
 // Interceptor para agregar token automáticamente
@@ -89,7 +88,6 @@ api.interceptors.response.use(
             return api(originalRequest);
           }
         } catch (refreshError) {
-          console.error('Error refreshing token:', refreshError);
         }
       }
       
@@ -100,7 +98,6 @@ api.interceptors.response.use(
       window.location.href = '/login';
     }
     
-    console.error('API Error:', error);
     return Promise.reject(error);
   }
 );

@@ -53,7 +53,6 @@ const LoyaltyProgram: React.FC = () => {
       setTransactions(transactionsResponse.data.transactions);
 
     } catch (error) {
-      console.error('Error loading loyalty data:', error);
       addNotification({
         type: 'error',
         title: 'Error',
@@ -98,7 +97,6 @@ const LoyaltyProgram: React.FC = () => {
         loadLoyaltyData();
       }
     } catch (error) {
-      console.error('Error redeeming points:', error);
       addNotification({
         type: 'error',
         title: 'Error',

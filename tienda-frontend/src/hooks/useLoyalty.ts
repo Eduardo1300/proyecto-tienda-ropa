@@ -20,7 +20,6 @@ export const useLoyalty = () => {
         }
         if (successMessage || response.data.message) {
           // You could show a toast notification here
-          console.log(successMessage || response.data.message);
         }
         return response.data.data;
       } else {
@@ -28,7 +27,6 @@ export const useLoyalty = () => {
         return null;
       }
     } catch (err) {
-      console.error('Loyalty API Error:', err);
       setError('Error al conectar con el servidor');
       return null;
     } finally {

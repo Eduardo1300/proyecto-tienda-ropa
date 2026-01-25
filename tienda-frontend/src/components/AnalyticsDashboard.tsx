@@ -78,7 +78,6 @@ const AnalyticsDashboard: React.FC = () => {
       setRevenueData(revenueResponse.data);
 
     } catch (error) {
-      console.error('Error loading analytics:', error);
       addNotification({
         type: 'error',
         title: 'Error',

@@ -24,7 +24,6 @@ export const OrdersStats: React.FC<OrdersStatsProps> = ({ data, onLoadData }) =>
       const ordersData = await adminApi.getOrdersStats();
       onLoadData(ordersData);
     } catch (error) {
-      console.error('Error loading orders data:', error);
       // Fallback to mock data
       const mockOrders = [
         {

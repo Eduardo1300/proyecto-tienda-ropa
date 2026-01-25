@@ -82,14 +82,12 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
 
           products = [...products, ...newProducts].slice(0, limit);
         } catch (err) {
-          console.warn(`Strategy failed: ${strategy}`, err);
           continue;
         }
       }
 
       setRelatedProducts(products);
     } catch (err) {
-      console.error('Error fetching related products:', err);
       setError('Error al cargar productos relacionados');
     } finally {
       setLoading(false);
@@ -98,7 +96,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
 
   const handleQuickView = (product: Product) => {
     // This would open a quick view modal
-    console.log('Quick view for product:', product.id);
   };
 
   const handleAddToComparison = (product: Product) => {
@@ -259,7 +256,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
                 <button
                   onClick={() => {
                     // This would open the comparison modal
-                    console.log('Compare products:', comparisonProducts);
                   }}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
                 >

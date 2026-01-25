@@ -121,15 +121,10 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handlePlaceOrder = async () => {
-    console.log('🚀 BUTTON CLICKED - handlePlaceOrder called');
     setLoading(true);
     setError('');
 
     try {
-      console.log('=== STARTING ORDER CREATION ===');
-      console.log('User:', user);
-      console.log('Cart:', cart);
-      console.log('Total:', total);
 
       // Crear la orden real en el backend
       const orderData = {
@@ -146,10 +141,8 @@ const CheckoutPage: React.FC = () => {
         tax: 0
       };
       
-      console.log('Order data to send:', orderData);
       
       const response = await ordersAPI.create(orderData as any);
-      console.log('Order creation response:', response);
       
       // Limpiar carrito
       clearCart();
@@ -164,8 +157,6 @@ const CheckoutPage: React.FC = () => {
       });
 
     } catch (err: any) {
-      console.error('Error creating order:', err);
-      console.error('Error details:', err.response?.data);
       setError(err.response?.data?.message || 'Error al procesar la orden');
     } finally {
       setLoading(false);
