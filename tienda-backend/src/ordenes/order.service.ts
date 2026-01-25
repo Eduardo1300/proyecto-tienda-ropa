@@ -18,6 +18,7 @@ import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
 import { AnalyticsService } from '../analytics/services/analytics.service';
 import { EventType } from '../analytics/entities/analytics-event.entity';
+import { LoyaltyService } from '../loyalty/services/loyalty.service';
 
 @Injectable()
 export class OrderService {
@@ -33,6 +34,7 @@ export class OrderService {
     private emailService: EmailService,
     private pdfService: PdfService,
     private analyticsService: AnalyticsService,
+    private loyaltyService: LoyaltyService,
   ) {}
 
   async createOrder(dto: CreateOrderDto): Promise<Order> {
@@ -99,6 +101,14 @@ export class OrderService {
       console.log('✅ Analytics event tracked for purchase:', savedOrder.id);
     } catch (error) {
       console.error('⚠️ Failed to track analytics event:', error);
+    }
+
+    // Award loyalty points for purchase
+    try {
+      await this.loyaltyService.processOrderPoints(user.id, savedOrder.id, savedOrder.total);
+      console.log('✅ Loyalty points awarded for purchase:', savedOrder.id);
+    } catch (error) {
+      console.error('⚠️ Failed to award loyalty points:', error);
     }
 
     // Send confirmation email

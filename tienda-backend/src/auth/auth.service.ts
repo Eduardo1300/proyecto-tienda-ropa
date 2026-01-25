@@ -106,6 +106,14 @@ export class AuthService {
         console.error('⚠️ Failed to track analytics event:', error);
       }
 
+      // Create loyalty program and welcome bonus
+      try {
+        await this.loyaltyService.createProgram(newUser.id);
+        console.log('✅ Loyalty program created for new user:', newUser.id);
+      } catch (error) {
+        console.error('⚠️ Failed to create loyalty program:', error);
+      }
+
       console.log('✅ User registered successfully:', newUser.email);
       return {
         message: 'User registered successfully',
