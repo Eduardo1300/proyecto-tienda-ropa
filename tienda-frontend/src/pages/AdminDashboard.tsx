@@ -99,41 +99,51 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center relative overflow-hidden">
+        {/* Floating Gradient Orbs */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-300">Cargando dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 relative z-10">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Dashboard Administrativo</h1>
-              <p className="text-gray-600">Panel de control y estadísticas</p>
+              <h1 className="text-2xl font-bold text-white">Dashboard Administrativo</h1>
+              <p className="text-gray-300">Panel de control y estadísticas</p>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 flex-col sm:flex-row gap-4">
               <select
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border border-white/20 bg-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                <option value="7d">Últimos 7 días</option>
-                <option value="30d">Últimos 30 días</option>
-                <option value="90d">Últimos 3 meses</option>
-                <option value="1y">Último año</option>
+                <option value="7d" className="bg-gray-800 text-white">Últimos 7 días</option>
+                <option value="30d" className="bg-gray-800 text-white">Últimos 30 días</option>
+                <option value="90d" className="bg-gray-800 text-white">Últimos 3 meses</option>
+                <option value="1y" className="bg-gray-800 text-white">Último año</option>
               </select>
               
               <button
                 onClick={loadDashboardData}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
               >
                 🔄 Actualizar
               </button>
@@ -143,7 +153,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b">
+      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 relative z-10">
         <div className="container mx-auto px-6">
           <div className="flex space-x-8 overflow-x-auto">
             {tabs.map((tab) => (
@@ -152,8 +162,8 @@ const AdminDashboard: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-purple-400 text-purple-300'
+                    : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-500'
                 }`}
               >
                 <span>{tab.icon}</span>
@@ -165,7 +175,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 relative z-10">
         {activeTab === 'overview' && overviewData && (
           <DashboardOverview data={overviewData} />
         )}
