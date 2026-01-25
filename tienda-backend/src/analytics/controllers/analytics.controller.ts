@@ -47,6 +47,61 @@ export class AnalyticsController {
     };
   }
 
+  // Endpoint público para ver datos de analytics (sin autenticación)
+  @Public()
+  @Get('public/dashboard')
+  async getPublicDashboard(
+    @Query('startDate') startDateStr?: string,
+    @Query('endDate') endDateStr?: string
+  ) {
+    try {
+      const startDate = startDateStr 
+        ? new Date(startDateStr) 
+        : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const endDate = endDateStr 
+        ? new Date(endDateStr) 
+        : new Date();
+
+      const [
+        dashboardMetrics,
+        revenueByDay,
+        topProducts,
+        userBehaviorFunnel,
+        searchAnalytics,
+        couponAnalytics,
+        customerSegmentation
+      ] = await Promise.all([
+        this.analyticsService.getDashboardMetrics(startDate, endDate),
+        this.analyticsService.getRevenueByDay(startDate, endDate),
+        this.analyticsService.getTopProductsByRevenue(startDate, endDate),
+        this.analyticsService.getUserBehaviorFunnel(startDate, endDate),
+        this.analyticsService.getSearchAnalytics(startDate, endDate),
+        this.analyticsService.getCouponAnalytics(startDate, endDate),
+        this.analyticsService.getCustomerSegmentation(startDate, endDate)
+      ]);
+
+      return {
+        success: true,
+        data: {
+          period: { startDate, endDate },
+          overview: dashboardMetrics,
+          revenue: revenueByDay,
+          topProducts: topProducts,
+          userBehavior: userBehaviorFunnel,
+          search: searchAnalytics,
+          coupons: couponAnalytics,
+          customers: customerSegmentation
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Error al obtener dashboard de analytics',
+        error: error.message,
+      };
+    }
+  }
+
   // Endpoint para crear datos de prueba
   @Public()
   @Post('test/create-sample-data')
