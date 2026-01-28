@@ -27,7 +27,7 @@ const Input: React.FC<InputProps> = ({
   icon,
   fullWidth = true
 }) => {
-  const baseClasses = 'border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-gray-800';
+  const baseClasses = 'border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 transition-all duration-200 focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-gray-900 dark:text-white bg-white dark:bg-gray-800';
   const errorClasses = error ? 'border-red-500 dark:border-red-400 focus:ring-red-500' : '';
   const iconPadding = icon ? 'pl-12' : '';
   const widthClass = fullWidth ? 'w-full' : '';

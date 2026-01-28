@@ -69,7 +69,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
 
   if (!sortedImages.length) {
     return (
-      <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center ${className}`}>
+      <div className={`bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center ${className}`}>
         <div className="text-center text-gray-500 dark:text-gray-400">
           <span className="text-4xl mb-2 block">🖼️</span>
           <p>Sin imágenes disponibles</p>

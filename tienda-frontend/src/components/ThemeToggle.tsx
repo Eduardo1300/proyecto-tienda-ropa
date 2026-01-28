@@ -11,7 +11,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={handleToggle}
-      className="relative inline-flex items-center justify-center w-12 h-6 bg-gray-200 dark:bg-gray-600 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+      className="relative inline-flex items-center justify-center w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
       aria-label={isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
     >
       <span

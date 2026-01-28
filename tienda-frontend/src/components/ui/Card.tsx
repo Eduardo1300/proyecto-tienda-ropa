@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = ({
   };
   
   const hoverClass = hover ? 'cursor-pointer card-hover' : ''; // Use global card-hover
-  const gradientClass = gradient ? 'bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-900' : '';
+  const gradientClass = gradient ? 'bg-gradient-to-br from-white to-gray-50 dark:from-gray-700 dark:to-gray-900' : '';
   
   const classes = `
     ${baseClasses}
