@@ -69,8 +69,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
 
   if (!sortedImages.length) {
     return (
-      <div className={`bg-gray-200 rounded-lg flex items-center justify-center ${className}`}>
-        <div className="text-center text-gray-500">
+      <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center ${className}`}>
+        <div className="text-center text-gray-500 dark:text-gray-400">
           <span className="text-4xl mb-2 block">🖼️</span>
           <p>Sin imágenes disponibles</p>
         </div>
@@ -82,7 +82,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     <div className={`relative ${className}`}>
       {/* Main Image Display */}
       <div 
-        className="relative bg-white rounded-lg overflow-hidden shadow-md group cursor-pointer"
+        className="relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md group cursor-pointer"
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
@@ -108,7 +108,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
           
           {/* Image Counter */}
           {sortedImages.length > 1 && (
-            <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-sm">
+            <div className="absolute top-4 right-4 bg-gray-900/50 dark:bg-gray-900/70 text-white px-2 py-1 rounded-full text-sm">
               {selectedImageIndex + 1} / {sortedImages.length}
             </div>
           )}
@@ -123,7 +123,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                     prev > 0 ? prev - 1 : sortedImages.length - 1
                   );
                 }}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-75"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-900/50 dark:bg-gray-900/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-700/75 dark:hover:bg-gray-800/75"
                 aria-label="Imagen anterior"
               >
                 ←
@@ -136,7 +136,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                     prev < sortedImages.length - 1 ? prev + 1 : 0
                   );
                 }}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-opacity-75"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-900/50 dark:bg-gray-900/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-700/75 dark:hover:bg-gray-800/75"
                 aria-label="Siguiente imagen"
               >
                 →
@@ -146,7 +146,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
 
           {/* Zoom Indicator */}
           <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+            <div className="bg-gray-900/50 dark:bg-gray-900/70 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
               🔍 Hover para zoom • Click para pantalla completa
             </div>
           </div>
@@ -162,8 +162,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
               onClick={() => setSelectedImageIndex(index)}
               className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-all ${
                 index === selectedImageIndex
-                  ? 'border-blue-500 ring-2 ring-blue-200'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-primary ring-2 ring-primary-light/50'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-primary-light/50 dark:hover:border-primary-dark'
               }`}
             >
               <img
@@ -188,7 +188,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
             {/* Close Button */}
             <button
               onClick={() => setIsFullscreen(false)}
-              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+              className="absolute top-4 right-4 text-white text-2xl hover:text-gray-200 z-10"
               aria-label="Cerrar pantalla completa"
             >
               ×
@@ -212,7 +212,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                       prev > 0 ? prev - 1 : sortedImages.length - 1
                     );
                   }}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-900/50 text-white p-3 rounded-full hover:bg-gray-700/75"
                   aria-label="Imagen anterior"
                 >
                   ←
@@ -225,7 +225,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                       prev < sortedImages.length - 1 ? prev + 1 : 0
                     );
                   }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-900/50 text-white p-3 rounded-full hover:bg-gray-700/75"
                   aria-label="Siguiente imagen"
                 >
                   →
@@ -235,11 +235,11 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
 
             {/* Fullscreen Counter and Info */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
-              <div className="bg-black bg-opacity-50 px-4 py-2 rounded-lg">
+              <div className="bg-gray-900/50 px-4 py-2 rounded-lg">
                 <div className="text-sm mb-1">
                   {selectedImageIndex + 1} de {sortedImages.length}
                 </div>
-                <div className="text-xs text-gray-300">
+                <div className="text-xs text-gray-300 dark:text-gray-400">
                   Usa las flechas del teclado para navegar • ESC para cerrar
                 </div>
               </div>
@@ -257,8 +257,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                     }}
                     className={`flex-shrink-0 w-12 h-12 rounded border-2 overflow-hidden ${
                       index === selectedImageIndex
-                        ? 'border-white'
-                        : 'border-gray-400 opacity-70 hover:opacity-100'
+                        ? 'border-primary'
+                        : 'border-gray-500 dark:border-gray-400 opacity-70 hover:opacity-100'
                     }`}
                   >
                     <img

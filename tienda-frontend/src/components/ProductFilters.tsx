@@ -119,14 +119,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
+      <div className="bg-gradient-to-r from-primary to-accent p-4">
         <div className="flex items-center justify-between text-white">
           <h3 className="text-lg font-semibold flex items-center">
             🔍 Filtros
             {getActiveFiltersCount() > 0 && (
-              <span className="ml-2 bg-white text-purple-600 text-sm px-2 py-1 rounded-full">
+              <span className="ml-2 bg-white text-primary text-sm px-2 py-1 rounded-full">
                 {getActiveFiltersCount()}
               </span>
             )}
@@ -147,12 +147,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="border-b pb-4">
           <button
             onClick={() => toggleSection('category')}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
           >
             <span className="flex items-center">
-              📂 Categoría {filters.category && <span className="ml-1 text-purple-600">✓</span>}
+              📂 Categoría {filters.category &&               <span className="ml-1 text-primary">✓</span>}
             </span>
-            <span className="text-gray-400">{expandedSections.category ? '−' : '+'}</span>
+            <span className="text-gray-400 dark:text-gray-500">{expandedSections.category ? '−' : '+'}</span>
           </button>
           
           {expandedSections.category && (
@@ -163,7 +163,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   placeholder="Buscar categoría..."
                   value={categorySearch}
                   onChange={(e) => setCategorySearch(e.target.value)}
-                  className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                 />
               )}
               <div className="max-h-32 overflow-y-auto">
@@ -175,9 +175,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                       value=""
                       checked={filters.category === ''}
                       onChange={() => updateFilter('category', '')}
-                      className="mr-2 text-purple-600"
+                      className="mr-2 text-primary"
                     />
-                    <span className="text-gray-600">Todas las categorías</span>
+                    <span className="text-gray-600 dark:text-gray-300">Todas las categorías</span>
                   </label>
                   {filteredCategories.map((category) => (
                     <label key={category} className="flex items-center text-sm">
@@ -187,9 +187,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         value={category}
                         checked={filters.category === category}
                         onChange={() => updateFilter('category', category)}
-                        className="mr-2 text-purple-600"
+                        className="mr-2 text-primary"
                       />
-                      <span className="capitalize">{category}</span>
+                      <span className="capitalize text-gray-700 dark:text-gray-200">{category}</span>
                     </label>
                   ))}
                 </div>
@@ -202,12 +202,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="border-b pb-4">
           <button
             onClick={() => toggleSection('brand')}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
           >
             <span className="flex items-center">
-              🏷️ Marca {filters.brand && <span className="ml-1 text-purple-600">✓</span>}
+              🏷️ Marca {filters.brand &&               <span className="ml-1 text-primary">✓</span>}
             </span>
-            <span className="text-gray-400">{expandedSections.brand ? '−' : '+'}</span>
+            <span className="text-gray-400 dark:text-gray-500">{expandedSections.brand ? '−' : '+'}</span>
           </button>
           
           {expandedSections.brand && (
@@ -218,7 +218,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   placeholder="Buscar marca..."
                   value={brandSearch}
                   onChange={(e) => setBrandSearch(e.target.value)}
-                  className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                 />
               )}
               <div className="max-h-32 overflow-y-auto">
@@ -230,9 +230,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                       value=""
                       checked={filters.brand === ''}
                       onChange={() => updateFilter('brand', '')}
-                      className="mr-2 text-purple-600"
+                      className="mr-2 text-primary"
                     />
-                    <span className="text-gray-600">Todas las marcas</span>
+                    <span className="text-gray-600 dark:text-gray-300">Todas las marcas</span>
                   </label>
                   {filteredBrands.map((brand) => (
                     <label key={brand} className="flex items-center text-sm">
@@ -242,9 +242,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         value={brand}
                         checked={filters.brand === brand}
                         onChange={() => updateFilter('brand', brand)}
-                        className="mr-2 text-purple-600"
+                        className="mr-2 text-primary"
                       />
-                      <span>{brand}</span>
+                      <span className="text-gray-700 dark:text-gray-200">{brand}</span>
                     </label>
                   ))}
                 </div>
@@ -257,20 +257,20 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="border-b pb-4">
           <button
             onClick={() => toggleSection('price')}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
           >
             <span className="flex items-center">
-              💰 Precio {hasCustomPriceRange() && <span className="ml-1 text-purple-600">✓</span>}
+              💰 Precio {hasCustomPriceRange() &&               <span className="ml-1 text-primary">✓</span>}
             </span>
-            <span className="text-gray-400">{expandedSections.price ? '−' : '+'}</span>
+            <span className="text-gray-400 dark:text-gray-500">{expandedSections.price ? '−' : '+'}</span>
           </button>
           
           {expandedSections.price && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <span className="font-semibold text-purple-600">${filters.priceRange[0]}</span>
-                <span className="text-gray-400">-</span>
-                <span className="font-semibold text-purple-600">${filters.priceRange[1]}</span>
+              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-semibold text-primary">${filters.priceRange[0]}</span>
+                <span className="text-gray-400 dark:text-gray-500">-</span>
+                <span className="font-semibold text-primary">${filters.priceRange[1]}</span>
               </div>
               
               {/* Dual Range Slider */}
@@ -281,7 +281,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   max={filterOptions.priceRange[1]}
                   value={filters.priceRange[0]}
                   onChange={(e) => updateFilter('priceRange', [parseInt(e.target.value), filters.priceRange[1]])}
-                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="absolute w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                 />
                 <input
                   type="range"
@@ -289,7 +289,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   max={filterOptions.priceRange[1]}
                   value={filters.priceRange[1]}
                   onChange={(e) => updateFilter('priceRange', [filters.priceRange[0], parseInt(e.target.value)])}
-                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="absolute w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
               
@@ -304,7 +304,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                   <button
                     key={index}
                     onClick={() => updateFilter('priceRange', [range.min || filterOptions.priceRange[0], range.max || filterOptions.priceRange[1]])}
-                    className="px-2 py-1 border border-gray-300 rounded text-xs hover:bg-purple-50 hover:border-purple-300 transition-colors"
+                    className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-xs hover:bg-primary-light/10 hover:border-primary-light dark:hover:bg-primary-dark/10 transition-colors text-gray-700 dark:text-gray-200"
                   >
                     {range.label}
                   </button>
@@ -319,12 +319,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           <div className="border-b pb-4">
             <button
               onClick={() => toggleSection('colors')}
-              className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+              className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
             >
               <span className="flex items-center">
-                🎨 Colores {filters.colors.length > 0 && <span className="ml-1 text-purple-600">({filters.colors.length})</span>}
+                🎨 Colores {filters.colors.length > 0 && <span className="ml-1 text-primary">({filters.colors.length})</span>}
               </span>
-              <span className="text-gray-400">{expandedSections.colors ? '−' : '+'}</span>
+              <span className="text-gray-400 dark:text-gray-500">{expandedSections.colors ? '−' : '+'}</span>
             </button>
             
             {expandedSections.colors && (
@@ -335,8 +335,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     onClick={() => toggleArrayFilter('colors', color)}
                     className={`px-3 py-2 rounded-lg text-sm border transition-all ${
                       filters.colors.includes(color)
-                        ? 'bg-purple-500 text-white border-purple-500 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-purple-300 hover:bg-purple-50'
+                        ? 'bg-primary text-white border-primary shadow-md'
+                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:border-primary-light hover:bg-primary-light/10 dark:hover:bg-primary-dark/10'
                     }`}
                   >
                     {color}
@@ -352,12 +352,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           <div className="border-b pb-4">
             <button
               onClick={() => toggleSection('sizes')}
-              className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+              className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
             >
               <span className="flex items-center">
-                📏 Tallas {filters.sizes.length > 0 && <span className="ml-1 text-purple-600">({filters.sizes.length})</span>}
+                📏 Tallas {filters.sizes.length > 0 && <span className="ml-1 text-primary">({filters.sizes.length})</span>}
               </span>
-              <span className="text-gray-400">{expandedSections.sizes ? '−' : '+'}</span>
+              <span className="text-gray-400 dark:text-gray-500">{expandedSections.sizes ? '−' : '+'}</span>
             </button>
             
             {expandedSections.sizes && (
@@ -368,8 +368,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     onClick={() => toggleArrayFilter('sizes', size)}
                     className={`px-2 py-2 rounded-md text-sm border transition-all font-medium ${
                       filters.sizes.includes(size)
-                        ? 'bg-purple-500 text-white border-purple-500 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-purple-300 hover:bg-purple-50'
+                        ? 'bg-primary text-white border-primary shadow-md'
+                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:border-primary-light hover:bg-primary-light/10 dark:hover:bg-primary-dark/10'
                     }`}
                   >
                     {size}
@@ -384,25 +384,25 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="border-b pb-4">
           <button
             onClick={() => toggleSection('rating')}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
           >
             <span className="flex items-center">
-              ⭐ Calificación {filters.rating > 0 && <span className="ml-1 text-purple-600">✓</span>}
+              ⭐ Calificación {filters.rating > 0 &&               <span className="ml-1 text-primary">✓</span>}
             </span>
-            <span className="text-gray-400">{expandedSections.rating ? '−' : '+'}</span>
+            <span className="text-gray-400 dark:text-gray-500">{expandedSections.rating ? '−' : '+'}</span>
           </button>
           
           {expandedSections.rating && (
             <div className="space-y-2">
               {[4, 3, 2, 1].map((rating) => (
-                <label key={rating} className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+                <label key={rating} className="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
                   <input
                     type="radio"
                     name="rating"
                     value={rating}
                     checked={filters.rating === rating}
                     onChange={(e) => updateFilter('rating', parseInt(e.target.value))}
-                    className="mr-3 text-purple-600"
+                    className="mr-3 text-primary"
                   />
                   <div className="flex items-center">
                     {Array.from({ length: rating }, (_, i) => (
@@ -411,20 +411,20 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     {Array.from({ length: 5 - rating }, (_, i) => (
                       <span key={i} className="text-gray-300 text-sm">☆</span>
                     ))}
-                    <span className="ml-2 text-sm text-gray-600">y más</span>
+                    <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">y más</span>
                   </div>
                 </label>
               ))}
-              <label className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded">
+              <label className="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded">
                 <input
                   type="radio"
                   name="rating"
                   value={0}
                   checked={filters.rating === 0}
                   onChange={(e) => updateFilter('rating', parseInt(e.target.value))}
-                  className="mr-3 text-purple-600"
+                  className="mr-3 text-primary"
                 />
-                <span className="text-sm text-gray-600">Todas las calificaciones</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Todas las calificaciones</span>
               </label>
             </div>
           )}
@@ -434,15 +434,15 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div>
           <button
             onClick={() => toggleSection('special')}
-            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 mb-2 hover:text-purple-600 transition-colors"
+            className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 hover:text-primary transition-colors"
           >
             <span className="flex items-center">
               🏆 Especiales
               {(filters.onSale || filters.featured || filters.new || filters.bestseller || !filters.inStock) && 
-                <span className="ml-1 text-purple-600">✓</span>
+                              <span className="ml-1 text-primary">✓</span>
               }
             </span>
-            <span className="text-gray-400">{expandedSections.special ? '−' : '+'}</span>
+            <span className="text-gray-400 dark:text-gray-500">{expandedSections.special ? '−' : '+'}</span>
           </button>
           
           {expandedSections.special && (
@@ -454,14 +454,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 { key: 'new', label: '🆕 Nuevos', checked: filters.new },
                 { key: 'bestseller', label: '🔥 Bestsellers', checked: filters.bestseller },
               ].map((filter) => (
-                <label key={filter.key} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                <label key={filter.key} className="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded transition-colors">
                   <input
                     type="checkbox"
                     checked={filter.checked}
                     onChange={(e) => updateFilter(filter.key as keyof Filters, e.target.checked)}
-                    className="mr-3 text-purple-600 rounded"
+                    className="mr-3 text-primary rounded"
                   />
-                  <span className="text-sm text-gray-700">{filter.label}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{filter.label}</span>
                 </label>
               ))}
             </div>

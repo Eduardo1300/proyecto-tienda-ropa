@@ -16,15 +16,15 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="bg-gradient-primary text-white shadow-2xl sticky top-0 z-50 backdrop-blur-lg">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-gray-50 dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group" onClick={() => setIsMenuOpen(false)}>
-            <div className="text-3xl transform group-hover:scale-110 transition-transform duration-300">
+            <div className="text-3xl transform group-hover:scale-110 transition-transform duration-300 text-primary">
               👗
             </div>
-            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
+            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
               Fashion Store
             </span>
           </Link>
@@ -33,13 +33,13 @@ const Header = () => {
           <nav className="hidden md:flex space-x-6">
             <Link 
               to="/" 
-              className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+              className="relative py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
             >
               <span className="relative z-10 text-sm">🏠 Inicio</span>
             </Link>
             <Link 
               to="/products" 
-              className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+              className="relative py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
             >
               <span className="relative z-10 text-sm">👕 Productos</span>
             </Link>
@@ -47,14 +47,14 @@ const Header = () => {
               <>
                 <Link 
                   to="/analytics" 
-                  className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+                  className="relative py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
                   title="Ver estadísticas y métricas"
                 >
                   <span className="relative z-10 text-sm">📊 Analytics</span>
                 </Link>
                 <Link 
                   to="/loyalty" 
-                  className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group"
+                  className="relative py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
                   title="Programa de lealtad y puntos"
                 >
                   <span className="relative z-10 text-sm">🏆 Lealtad</span>
@@ -62,11 +62,11 @@ const Header = () => {
                 {user?.role === 'admin' && (
                   <Link 
                     to="/inventory" 
-                    className="relative py-2 px-3 rounded-full hover:bg-white hover:bg-opacity-20 transition-all duration-300 group border border-yellow-300 bg-yellow-500 bg-opacity-20"
+                    className="relative py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 group border border-accent-light dark:border-accent-dark bg-primary-light/10 dark:bg-accent-dark/20"
                     title="Solo administradores - Gestión de inventario"
                   >
                     <span className="relative z-10 text-sm">📦 Inventario</span>
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full animate-pulse"></span>
                   </Link>
                 )}
               </>
@@ -78,13 +78,13 @@ const Header = () => {
             {/* Cart */}
             <Link 
               to="/cart"
-              className="relative bg-white/20 hover:bg-white/30 p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg backdrop-blur-sm"
+              className="relative p-3 rounded-full transition-all duration-300 transform hover:scale-110 shadow-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h9a2 2 0 002-2v-.5" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-pulse">
+                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-pulse">
                   {totalItems}
                 </span>
               )}
@@ -96,7 +96,7 @@ const Header = () => {
             {/* Auth Section Desktop */}
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
-                <div className="hidden sm:flex items-center space-x-2 bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                <div className="hidden sm:flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-full text-gray-700 dark:text-gray-200">
                   <span className="text-lg">👤</span>
                   <span className="text-sm font-medium">
                     ¡Hola, {user?.username}!
@@ -107,14 +107,14 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                   <Link 
                     to="/dashboard"
-                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                    className="btn-modern btn-modern-primary bg-primary hover:bg-primary-dark"
                   >
                     📊 Dashboard
                   </Link>
                   
                   <Link 
                     to="/profile"
-                    className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                    className="btn-modern bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-500"
                   >
                     👤 Perfil
                   </Link>
@@ -122,7 +122,7 @@ const Header = () => {
                   {user?.role === 'admin' && (
                     <Link 
                       to="/admin"
-                      className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                      className="btn-modern bg-accent hover:bg-accent-dark"
                     >
                       👑 Admin
                     </Link>
@@ -130,7 +130,7 @@ const Header = () => {
                   
                   <button 
                     onClick={logout}
-                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg btn-modern"
+                    className="btn-modern bg-gray-400 hover:bg-gray-500"
                   >
                     🚪 Salir
                   </button>
@@ -139,7 +139,7 @@ const Header = () => {
             ) : (
               <Link 
                 to="/login"
-                className="bg-gradient-success text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 btn-modern"
+                className="btn-modern btn-modern-primary"
               >
                 🔐 Entrar
               </Link>
@@ -149,7 +149,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button 
             onClick={toggleMenu}
-            className="md:hidden text-white p-2 hover:bg-white/20 rounded-full transition-all duration-300"
+            className="md:hidden p-2 rounded-full transition-all duration-300 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             {isMenuOpen ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,13 +167,13 @@ const Header = () => {
             {/* Mobile Cart */}
             <Link 
               to="/cart"
-              className="relative bg-white/20 hover:bg-white/30 p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg backdrop-blur-sm"
+              className="relative p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h9a2 2 0 002-2v-.5" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold text-xs animate-pulse">
+                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold text-xs animate-pulse">
                   {totalItems}
                 </span>
               )}
@@ -186,20 +186,20 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-white/20 pt-4 animate-in fade-in slide-in-from-top-2">
+          <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 animate-in fade-in slide-in-from-top-2">
             {/* Mobile Navigation Links */}
             <nav className="space-y-2 mb-4">
               <Link 
                 to="/" 
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 px-4 rounded-lg hover:bg-white/20 transition-all duration-300 text-sm"
+                className="block py-2 px-4 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 text-sm"
               >
                 🏠 Inicio
               </Link>
               <Link 
                 to="/products"
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 px-4 rounded-lg hover:bg-white/20 transition-all duration-300 text-sm"
+                className="block py-2 px-4 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 text-sm"
               >
                 👕 Productos
               </Link>
@@ -208,48 +208,47 @@ const Header = () => {
                   <Link 
                     to="/analytics"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-2 px-4 rounded-lg hover:bg-white/20 transition-all duration-300 text-sm"
+                    className="block py-2 px-4 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-primary/10 dark:hover:bg-primary-dark/20 hover:text-primary transition-all duration-300 text-sm"
                   >
                     📊 Analytics
                   </Link>
                   <Link 
                     to="/loyalty"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-2 px-4 rounded-lg hover:bg-white/20 transition-all duration-300 text-sm"
+                    className="block py-2 px-4 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 text-sm"
                   >
                     🏆 Lealtad
                   </Link>
                   {user?.role === 'admin' && (
-                    <Link 
-                      to="/inventory"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="block py-2 px-4 rounded-lg hover:bg-white/20 transition-all duration-300 text-sm border border-yellow-300 bg-yellow-500/20"
-                    >
-                      📦 Inventario
-                    </Link>
-                  )}
+                                      <Link 
+                                        to="/inventory"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="block py-2 px-4 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-primary/10 dark:hover:bg-primary-dark/20 transition-all duration-300 text-sm border border-accent-light dark:border-accent-dark bg-primary-light/10 dark:bg-accent-dark/20"
+                                      >
+                                        📦 Inventario
+                                      </Link>                  )}
                 </>
               )}
             </nav>
 
             {/* Mobile User Actions */}
             {isAuthenticated ? (
-              <div className="space-y-2 border-t border-white/20 pt-4">
-                <div className="px-4 py-2 bg-white/10 rounded-lg text-sm">
+              <div className="space-y-2 border-t border-gray-200 dark:border-gray-700 pt-4">
+                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-200">
                   <span className="text-lg mr-2">👤</span>
                   ¡Hola, {user?.username}!
                 </div>
                 <Link 
                   to="/dashboard"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block py-2 px-4 rounded-lg bg-green-500 hover:bg-green-600 text-sm font-semibold transition-all duration-300"
+                  className="block py-2 px-4 rounded-lg btn-modern-primary text-sm font-semibold"
                 >
                   📊 Dashboard
                 </Link>
                 <Link 
                   to="/profile"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-sm font-semibold transition-all duration-300"
+                  className="block py-2 px-4 rounded-lg btn-modern bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-500 text-sm font-semibold"
                 >
                   👤 Perfil
                 </Link>
@@ -257,7 +256,7 @@ const Header = () => {
                   <Link 
                     to="/admin"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-2 px-4 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-sm font-semibold transition-all duration-300"
+                    className="block py-2 px-4 rounded-lg btn-modern bg-accent hover:bg-accent-dark text-sm font-semibold"
                   >
                     👑 Admin
                   </Link>
@@ -267,7 +266,7 @@ const Header = () => {
                     logout();
                     setIsMenuOpen(false);
                   }}
-                  className="w-full py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600 text-sm font-semibold transition-all duration-300"
+                  className="w-full py-2 px-4 rounded-lg btn-modern bg-gray-400 hover:bg-gray-500 text-sm font-semibold"
                 >
                   🚪 Salir
                 </button>
@@ -276,7 +275,7 @@ const Header = () => {
               <Link 
                 to="/login"
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 px-4 rounded-lg bg-gradient-success text-white text-sm font-semibold text-center hover:shadow-lg transition-all duration-300"
+                className="block py-2 px-4 rounded-lg btn-modern-primary text-sm font-semibold text-center"
               >
                 🔐 Entrar
               </Link>
@@ -285,8 +284,6 @@ const Header = () => {
         )}
       </div>
       
-      {/* Decorative bottom border */}
-      <div className="h-1 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400"></div>
     </header>
   );
 };

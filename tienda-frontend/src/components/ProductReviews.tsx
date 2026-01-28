@@ -209,15 +209,15 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
   if (loading && reviews.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
           <div className="space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="border-b border-gray-200 pb-4">
-                <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div key={i} className="border-b border-gray-200 dark:border-gray-700 pb-4">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
               </div>
             ))}
           </div>
@@ -227,17 +227,17 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
           ⭐ Reseñas y Calificaciones
         </h3>
         
         {canReview && (
           <button
             onClick={() => setShowReviewForm(!showReviewForm)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark flex items-center gap-2"
           >
             ✍️ Escribir Reseña
           </button>
@@ -246,15 +246,15 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
       {/* Review Summary */}
       {reviewSummary && (
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+        <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Overall Rating */}
             <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 mb-2">
+              <div className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 {reviewSummary.averageRating.toFixed(1)}
               </div>
               {renderStars(Math.round(reviewSummary.averageRating), 'lg')}
-              <div className="text-sm text-gray-600 mt-2">
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">
                 Basado en {reviewSummary.totalReviews} reseñas
               </div>
             </div>
@@ -263,14 +263,14 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map(rating => (
                 <div key={rating} className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600 w-8">{rating} ★</span>
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-300 w-8">{rating} ★</span>
+                  <div className="flex-1 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                     <div 
                       className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${getRatingPercentage(rating)}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm text-gray-600 w-12">
+                  <span className="text-sm text-gray-600 dark:text-gray-300 w-12">
                     {getRatingPercentage(rating)}%
                   </span>
                 </div>
@@ -282,13 +282,13 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
       {/* Review Form */}
       {showReviewForm && (
-        <div className="mb-8 p-4 border border-gray-200 rounded-lg">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Escribir una Reseña</h4>
+        <div className="mb-8 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Escribir una Reseña</h4>
           
           <form onSubmit={submitReview} className="space-y-4">
             {/* Rating */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Calificación *
               </label>
               {renderInteractiveStars(newReview.rating, (rating) => 
@@ -298,14 +298,14 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Título de la reseña *
               </label>
               <input
                 type="text"
                 value={newReview.title}
                 onChange={(e) => setNewReview(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                 placeholder="Resumen de tu experiencia"
                 required
               />
@@ -313,14 +313,14 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
             {/* Comment */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Comentario *
               </label>
               <textarea
                 value={newReview.comment}
                 onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
                 rows={4}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
                 placeholder="Comparte tu experiencia con este producto..."
                 required
               />
@@ -331,7 +331,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
               <button
                 type="submit"
                 disabled={submittingReview}
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-modern btn-modern-primary"
               >
                 {submittingReview ? 'Enviando...' : 'Enviar Reseña'}
               </button>
@@ -339,7 +339,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
               <button
                 type="button"
                 onClick={() => setShowReviewForm(false)}
-                className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400"
+                className="btn-modern bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-500"
               >
                 Cancelar
               </button>
@@ -349,15 +349,15 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       )}
 
       {/* Filters and Sorting */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
         <div className="flex items-center gap-4">
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Filtrar:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">Filtrar:</span>
             <select
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-1 text-sm"
+              className="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
             >
               <option value="all">Todas las reseñas</option>
               <option value="5">5 estrellas</option>
@@ -371,11 +371,11 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
           {/* Sort */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Ordenar:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">Ordenar:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-1 text-sm"
+              className="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
             >
               <option value="newest">Más recientes</option>
               <option value="oldest">Más antiguas</option>
@@ -386,7 +386,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
           </div>
         </div>
 
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           {getFilteredReviewsCount()} reseñas
         </div>
       </div>
@@ -395,10 +395,10 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       {reviews.length === 0 ? (
         <div className="text-center py-12">
           <span className="text-6xl mb-4 block">📝</span>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {filterBy === 'all' ? 'No hay reseñas aún' : 'No hay reseñas que coincidan con el filtro'}
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             {filterBy === 'all' 
               ? '¡Sé el primero en escribir una reseña para este producto!'
               : 'Prueba con otros filtros para ver más reseñas.'
@@ -408,25 +408,25 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
       ) : (
         <div className="space-y-6">
           {reviews.map((review) => (
-            <div key={review.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+            <div key={review.id} className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0">
               {/* Review Header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold">
+                  <div className="w-10 h-10 bg-primary-light/20 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-semibold">
                       {review.user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">{review.user.name}</div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">{review.user.name}</div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       {renderStars(review.rating, 'sm')}
                       <span>•</span>
                       <span>{new Date(review.createdAt).toLocaleDateString()}</span>
                       {review.isVerifiedPurchase && (
                         <>
                           <span>•</span>
-                          <span className="text-green-600 flex items-center gap-1">
+                          <span className="text-green-600 dark:text-green-400 flex items-center gap-1">
                             ✓ Compra verificada
                           </span>
                         </>
@@ -438,22 +438,22 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
 
               {/* Review Content */}
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-900 mb-2">{review.title}</h4>
-                <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{review.title}</h4>
+                <p className="text-gray-700 dark:text-gray-200 leading-relaxed">{review.comment}</p>
               </div>
 
               {/* Review Actions */}
               <div className="flex items-center gap-4 text-sm">
                 <button
                   onClick={() => markHelpful(review.id, true)}
-                  className="text-gray-600 hover:text-green-600 flex items-center gap-1"
+                  className="text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 flex items-center gap-1"
                 >
                   👍 Útil ({review.helpfulCount})
                 </button>
                 
                 <button
                   onClick={() => markHelpful(review.id, false)}
-                  className="text-gray-600 hover:text-red-600 flex items-center gap-1"
+                  className="text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-1"
                 >
                   👎 No útil ({review.notHelpfulCount})
                 </button>
@@ -466,7 +466,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, canReview = 
             <div className="text-center pt-6">
               <button
                 onClick={loadMoreReviews}
-                className="bg-gray-100 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-200"
+                className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cargar más reseñas
               </button>

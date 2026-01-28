@@ -194,14 +194,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <ProductImage
             src={getProductImage(product.name, product.category, product.imageUrl || product.image)}
             alt={product.name}
-            className="w-full h-full rounded-lg"
+            className="w-full h-full object-cover rounded-lg"
             loading="lazy"
           />
           
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
-            {product.isBestseller && <Badge variant="warning" size="sm" icon="🔥">Bestseller</Badge>}
+            {product.isBestseller && <Badge variant="accent" size="sm" icon="🔥">Bestseller</Badge>}
             {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
           </div>
         </div>
@@ -210,12 +210,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 hover:text-purple-600 cursor-pointer transition-colors"
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:text-primary cursor-pointer transition-colors"
                     onClick={() => { trackView(); navigate(`/product/${product.id}`); }}>
                   {product.name}
                 </h3>
-                <p className="text-sm text-gray-500 mb-2">{product.brand}</p>
-                <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{product.brand}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{product.description}</p>
               </div>
               
               <div className="flex flex-col items-end gap-2">
@@ -223,8 +223,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   onClick={(e) => { e?.stopPropagation(); addToWishlist(); }}
                   className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
                     isInWishlist 
-                      ? 'text-red-500 bg-red-50' 
-                      : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
+                      ? 'text-accent bg-accent-light/20' 
+                      : 'text-gray-400 dark:text-gray-500 hover:text-accent hover:bg-accent-light/20'
                   }`}
                 >
                   {isInWishlist ? '❤️' : '🤍'}
@@ -233,8 +233,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   onClick={(e) => { e?.stopPropagation(); onAddToComparison(); }}
                   className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${
                     isInComparison 
-                      ? 'text-blue-500 bg-blue-50' 
-                      : 'text-gray-400 hover:text-blue-500 hover:bg-blue-50'
+                      ? 'text-primary bg-primary-light/20' 
+                      : 'text-gray-400 dark:text-gray-500 hover:text-primary hover:bg-primary-light/20'
                   }`}
                   title="Comparar"
                 >
@@ -244,18 +244,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             <div className="flex items-center gap-2 mb-2">
-              <div className="flex items-center">
+              <div className="flex items-center text-yellow-400">
                 {renderStars(product.averageRating)}
               </div>
-              <span className="text-sm text-gray-500">({product.reviewCount})</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">({product.reviewCount})</span>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-gray-900">S/ {product.price.toFixed(2)}</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-gray-100">S/ {product.price.toFixed(2)}</span>
               {product.compareAtPrice && (
-                <span className="text-sm text-gray-500 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
               )}
             </div>
 
@@ -265,6 +265,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 size="sm"
                 onClick={(e) => { e?.stopPropagation(); onQuickView(); }}
                 icon="👁️"
+                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Vista Rápida
               </Button>
@@ -274,6 +275,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 loading={isAddingToCart}
                 size="sm"
                 icon="🛒"
+                className="btn-modern btn-modern-primary"
               >
                 {product.stock <= 0 ? 'Sin Stock' : 'Agregar'}
               </Button>
@@ -299,7 +301,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
           {product.isFeatured && <Badge variant="primary" size="sm" icon="⭐">Destacado</Badge>}
-          {product.isBestseller && <Badge variant="warning" size="sm" icon="🔥">Bestseller</Badge>}
+          {product.isBestseller && <Badge variant="accent" size="sm" icon="🔥">Bestseller</Badge>}
           {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
         </div>
 
@@ -307,20 +309,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
           <button
             onClick={(e) => { e.stopPropagation(); addToWishlist(); }}
-            className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-110 ${
+            className={`p-3 rounded-full backdrop-blur-sm shadow-md transition-all duration-200 hover:scale-110 ${
               isInWishlist 
-                ? 'bg-red-500 text-white shadow-red-500/25' 
-                : 'bg-white/80 text-gray-600 hover:bg-red-50 hover:text-red-500'
+                ? 'bg-accent text-white shadow-accent/25' 
+                : 'bg-gray-50/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-200 hover:bg-accent-light/20 hover:text-accent'
             }`}
           >
             {isInWishlist ? '❤️' : '🤍'}
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onAddToComparison(); }}
-            className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-110 ${
+            className={`p-3 rounded-full backdrop-blur-sm shadow-md transition-all duration-200 hover:scale-110 ${
               isInComparison 
-                ? 'bg-blue-500 text-white shadow-blue-500/25' 
-                : 'bg-white/80 text-gray-600 hover:bg-blue-50 hover:text-blue-500'
+                ? 'bg-primary text-white shadow-primary/25' 
+                : 'bg-gray-50/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-200 hover:bg-primary-light/20 hover:text-primary'
             }`}
             title="Comparar"
           >
@@ -349,10 +351,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             disabled={isAddingToCart || product.stock <= 0}
             loading={isAddingToCart}
             fullWidth
-            variant="primary"
+            className="btn-modern btn-modern-primary bg-primary/90 hover:bg-primary text-white"
             size="sm"
             icon="🛒"
-            className="bg-white/20 backdrop-blur-md border-white/30 text-white hover:bg-white/30"
           >
             {product.stock <= 0 ? 'Sin Stock' : 'Agregar al Carrito'}
           </Button>
@@ -361,27 +362,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       <div className="p-4">
         <div className="mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-purple-600 cursor-pointer line-clamp-2 transition-colors duration-200"
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:text-primary cursor-pointer line-clamp-2 transition-colors duration-200"
               onClick={() => { trackView(); navigate(`/product/${product.id}`); }}>
             {product.name}
           </h3>
           {product.brand && (
-            <p className="text-sm text-purple-600 font-medium">{product.brand}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{product.brand}</p>
           )}
         </div>
 
         <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center">
+          <div className="flex items-center text-yellow-400">
             {renderStars(product.averageRating)}
           </div>
-          <span className="text-sm text-gray-500">({product.reviewCount})</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">({product.reviewCount})</span>
         </div>
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-gray-900">S/ {product.price.toFixed(2)}</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">S/ {product.price.toFixed(2)}</span>
             {product.compareAtPrice && (
-              <span className="text-sm text-gray-500 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 line-through">S/ {product.compareAtPrice.toFixed(2)}</span>
             )}
           </div>
           
@@ -399,6 +400,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             size="sm"
             fullWidth
             icon="👁️"
+            className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Ver Detalles
           </Button>
@@ -408,6 +410,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             loading={isAddingToCart}
             size="sm"
             fullWidth
+            className="btn-modern btn-modern-primary"
             icon="🛒"
           >
             {product.stock <= 0 ? 'Sin Stock' : 'Agregar'}

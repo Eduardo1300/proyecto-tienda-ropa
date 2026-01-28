@@ -11,11 +11,11 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={handleToggle}
-      className="relative inline-flex items-center justify-center w-12 h-6 bg-gray-200 dark:bg-gray-700 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+      className="relative inline-flex items-center justify-center w-12 h-6 bg-gray-200 dark:bg-gray-600 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
       aria-label={isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
     >
       <span
-        className={`absolute left-1 inline-block w-4 h-4 bg-white dark:bg-gray-300 rounded-full shadow transform transition-transform duration-300 ${
+        className={`absolute left-1 inline-block w-4 h-4 bg-white dark:bg-gray-200 rounded-full shadow transform transition-transform duration-300 ${
           isDarkMode ? 'translate-x-6' : 'translate-x-0'
         }`}
       />
@@ -38,9 +38,8 @@ const ThemeToggle: React.FC = () => {
         />
       </svg>
 
-      {/* Moon Icon */}
       <svg
-        className={`absolute right-1 w-3 h-3 text-purple-400 transition-opacity duration-300 ${
+        className={`absolute right-1 w-3 h-3 text-primary transition-opacity duration-300 ${
           isDarkMode ? 'opacity-100' : 'opacity-0'
         }`}
         fill="currentColor"

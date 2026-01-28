@@ -19,7 +19,7 @@ const Card: React.FC<CardProps> = ({
   hover = false,
   gradient = false
 }) => {
-  const baseClasses = 'bg-white transition-all duration-200';
+  const baseClasses = 'bg-white dark:bg-gray-800 transition-all duration-200';
   
   const paddingClasses = {
     none: '',
@@ -32,8 +32,8 @@ const Card: React.FC<CardProps> = ({
     none: '',
     sm: 'shadow-sm',
     md: 'shadow-md',
-    lg: 'shadow-lg hover:shadow-xl',
-    xl: 'shadow-xl hover:shadow-2xl'
+    lg: 'shadow-lg', // Removed hover for consistency with global card-hover
+    xl: 'shadow-xl'  // Removed hover for consistency with global card-hover
   };
   
   const roundedClasses = {
@@ -44,8 +44,8 @@ const Card: React.FC<CardProps> = ({
     xl: 'rounded-xl'
   };
   
-  const hoverClass = hover ? 'hover:scale-105 cursor-pointer' : '';
-  const gradientClass = gradient ? 'bg-gradient-to-br from-white to-purple-50' : '';
+  const hoverClass = hover ? 'cursor-pointer card-hover' : ''; // Use global card-hover
+  const gradientClass = gradient ? 'bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-900' : '';
   
   const classes = `
     ${baseClasses}
