@@ -1,0 +1,18 @@
+# Robots.txt para Fashion Store
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://fashionstore.com.pe/sitemap.xml
+
+# Recursos no indexar
+Disallow: /api/
+Disallow: /admin/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+
+# Improve crawling efficiency
+Crawl-delay: 10
