@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
+import { Button, Badge } from '../components/ui';
 
 interface ShippingInfo {
   firstName: string;
@@ -252,85 +253,85 @@ const CheckoutPage: React.FC = () => {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Nombre</label>
                       <input
                         type="text"
                         required
                         value={shippingInfo.firstName}
                         onChange={(e) => setShippingInfo({...shippingInfo, firstName: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="Tu nombre"
                       />
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Apellido</label>
                       <input
                         type="text"
                         required
                         value={shippingInfo.lastName}
                         onChange={(e) => setShippingInfo({...shippingInfo, lastName: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="Tu apellido"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Email</label>
                       <input
                         type="email"
                         required
                         value={shippingInfo.email}
                         onChange={(e) => setShippingInfo({...shippingInfo, email: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="tu@email.com"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Teléfono</label>
                       <input
                         type="tel"
                         required
                         value={shippingInfo.phone}
                         onChange={(e) => setShippingInfo({...shippingInfo, phone: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="+51 999 999 999"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Dirección</label>
                       <input
                         type="text"
                         required
                         value={shippingInfo.address}
                         onChange={(e) => setShippingInfo({...shippingInfo, address: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="Av. Principal 123, Distrito"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Ciudad</label>
                       <input
                         type="text"
                         required
                         value={shippingInfo.city}
                         onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="Lima"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Código Postal</label>
+                      <label className="block text-sm font-medium text-white/90 mb-2">Código Postal</label>
                       <input
                         type="text"
                         required
                         value={shippingInfo.zipCode}
                         onChange={(e) => setShippingInfo({...shippingInfo, zipCode: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                         placeholder="15001"
                       />
                     </div>
@@ -341,11 +342,13 @@ const CheckoutPage: React.FC = () => {
               {/* Step 2: Payment Information */}
               {currentStep === 2 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">💳 Información de Pago</h2>
+                  <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                    💳 Información de Pago
+                  </h2>
                   
                   {/* Payment Methods */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Método de Pago</label>
+                    <label className="block text-sm font-medium text-white/90 mb-3">Método de Pago</label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {[
                         { value: 'card', label: 'Tarjeta de Crédito/Débito', icon: '💳' },
@@ -356,8 +359,8 @@ const CheckoutPage: React.FC = () => {
                           key={method.value}
                           className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
                             paymentInfo.method === method.value
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-purple-500 bg-gradient-to-br from-purple-500/20 to-pink-500/20'
+                              : 'border-white/20 bg-white/10 hover:border-purple-400'
                           }`}
                         >
                           <input
@@ -369,8 +372,8 @@ const CheckoutPage: React.FC = () => {
                             className="sr-only"
                           />
                           <div className="text-center">
-                            <div className="text-2xl mb-2">{method.icon}</div>
-                            <div className="font-medium text-sm">{method.label}</div>
+                            <div className="text-3xl mb-2">{method.icon}</div>
+                            <div className="font-medium text-white text-sm">{method.label}</div>
                           </div>
                         </label>
                       ))}
@@ -381,52 +384,52 @@ const CheckoutPage: React.FC = () => {
                   {paymentInfo.method === 'card' && (
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Número de Tarjeta</label>
+                        <label className="block text-sm font-medium text-white/90 mb-2">Número de Tarjeta</label>
                         <input
                           type="text"
                           required
                           value={paymentInfo.cardNumber}
                           onChange={(e) => setPaymentInfo({...paymentInfo, cardNumber: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                           placeholder="1234 5678 9012 3456"
                           maxLength={19}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Nombre en la Tarjeta</label>
+                        <label className="block text-sm font-medium text-white/90 mb-2">Nombre en la Tarjeta</label>
                         <input
                           type="text"
                           required
                           value={paymentInfo.cardName}
                           onChange={(e) => setPaymentInfo({...paymentInfo, cardName: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                           placeholder="JUAN PEREZ"
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Vencimiento</label>
+                          <label className="block text-sm font-medium text-white/90 mb-2">Fecha de Vencimiento</label>
                           <input
                             type="text"
                             required
                             value={paymentInfo.expiryDate}
                             onChange={(e) => setPaymentInfo({...paymentInfo, expiryDate: e.target.value})}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                             placeholder="MM/AA"
                             maxLength={5}
                           />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                          <label className="block text-sm font-medium text-white/90 mb-2">CVV</label>
                           <input
                             type="text"
                             required
                             value={paymentInfo.cvv}
                             onChange={(e) => setPaymentInfo({...paymentInfo, cvv: e.target.value})}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white/20 transition-all"
                             placeholder="123"
                             maxLength={4}
                           />
@@ -437,19 +440,19 @@ const CheckoutPage: React.FC = () => {
 
                   {paymentInfo.method === 'paypal' && (
                     <div className="text-center py-8">
-                      <div className="text-6xl mb-4">🅿️</div>
-                      <p className="text-gray-600">Serás redirigido a PayPal para completar el pago</p>
+                      <div className="text-6xl mb-4 animate-bounce">🅿️</div>
+                      <p className="text-gray-300">Serás redirigido a PayPal para completar el pago</p>
                     </div>
                   )}
 
                   {paymentInfo.method === 'cash' && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                    <div className="bg-gradient-to-br from-yellow-500/20 to-amber-500/20 border border-yellow-400/30 backdrop-blur-md rounded-xl p-6">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">💵</span>
-                        <h3 className="text-lg font-semibold text-yellow-800">Pago Contraentrega</h3>
+                        <h3 className="text-lg font-semibold text-white">Pago Contraentrega</h3>
                       </div>
-                      <p className="text-yellow-700">
-                        Pagarás en efectivo cuando recibas tu pedido. Ten el monto exacto listo: <strong>S/ {total.toFixed(2)}</strong>
+                      <p className="text-gray-300">
+                        Pagarás en efectivo cuando recibas tu pedido. Ten el monto exacto listo: <span className="font-bold text-yellow-400">S/ {total.toFixed(2)}</span>
                       </p>
                     </div>
                   )}
@@ -459,13 +462,15 @@ const CheckoutPage: React.FC = () => {
               {/* Step 3: Order Confirmation */}
               {currentStep === 3 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">✅ Confirmar Orden</h2>
+                  <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                    ✅ Confirmar Orden
+                  </h2>
                   
                   <div className="space-y-6">
                     {/* Shipping Info Review */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3">📦 Información de Envío</h3>
-                      <p className="text-gray-600">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+                      <h3 className="font-semibold text-purple-300 mb-3 flex items-center gap-2">📦 Información de Envío</h3>
+                      <p className="text-gray-300">
                         {shippingInfo.firstName} {shippingInfo.lastName}<br />
                         {shippingInfo.address}<br />
                         {shippingInfo.city}, {shippingInfo.zipCode}<br />
@@ -475,9 +480,9 @@ const CheckoutPage: React.FC = () => {
                     </div>
 
                     {/* Payment Info Review */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3">💳 Método de Pago</h3>
-                      <p className="text-gray-600">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+                      <h3 className="font-semibold text-purple-300 mb-3 flex items-center gap-2">💳 Método de Pago</h3>
+                      <p className="text-gray-300">
                         {paymentInfo.method === 'card' && '💳 Tarjeta terminada en ' + paymentInfo.cardNumber.slice(-4)}
                         {paymentInfo.method === 'paypal' && '🅿️ PayPal'}
                         {paymentInfo.method === 'cash' && '💵 Pago Contraentrega'}
@@ -485,16 +490,16 @@ const CheckoutPage: React.FC = () => {
                     </div>
 
                     {/* Products Review */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h3 className="font-semibold text-gray-800 mb-3">🛍️ Productos ({cart.length})</h3>
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+                      <h3 className="font-semibold text-purple-300 mb-3 flex items-center gap-2">🛍️ Productos ({cart.length})</h3>
                       <div className="space-y-3">
                         {cart.map((item) => (
                           <div key={item.id} className="flex justify-between items-center">
                             <div>
-                              <span className="font-medium">{item.product?.name || 'Producto'}</span>
-                              <span className="text-gray-500 ml-2">x{item.quantity}</span>
+                              <span className="font-medium text-white">{item.product?.name || 'Producto'}</span>
+                              <span className="text-gray-400 ml-2">x{item.quantity}</span>
                             </div>
-                            <span className="font-semibold">S/ {((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
+                            <span className="font-semibold text-purple-300">S/ {((item.product?.price || 0) * item.quantity).toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
@@ -504,34 +509,35 @@ const CheckoutPage: React.FC = () => {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between mt-8 pt-6 border-t">
-                <button
+              <div className="flex justify-between mt-8 pt-6 border-t border-white/20">
+                <Button
                   onClick={handlePreviousStep}
                   disabled={currentStep === 1}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10"
                 >
                   ← Anterior
-                </button>
+                </Button>
 
                 {currentStep < 3 ? (
-                  <button
+                  <Button
                     onClick={handleNextStep}
                     disabled={
                       (currentStep === 1 && !validateStep1()) ||
                       (currentStep === 2 && !validateStep2())
                     }
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
                   >
                     Siguiente →
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
                     onClick={handlePlaceOrder}
                     disabled={loading}
-                    className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white"
                   >
                     {loading ? '⏳ Procesando...' : '🎉 Confirmar Pedido'}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -539,58 +545,60 @@ const CheckoutPage: React.FC = () => {
 
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Resumen del Pedido</h3>
+            <div className="bg-gradient-to-br from-purple-600/30 via-pink-600/30 to-red-600/30 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6 sticky top-6">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">📋 Resumen del Pedido</h3>
               
               <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-300">
                   <span>Subtotal ({cart.length} productos)</span>
-                  <span>S/ {subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-white">S/ {subtotal.toFixed(2)}</span>
                 </div>
                 
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-300">
                   <span>Envío</span>
-                  <span>S/ {shipping.toFixed(2)}</span>
+                  <span className="font-semibold text-green-400">GRATIS</span>
                 </div>
                 
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-300">
                   <span>IGV (18%)</span>
-                  <span>S/ {tax.toFixed(2)}</span>
+                  <span className="font-semibold text-white">S/ {tax.toFixed(2)}</span>
                 </div>
                 
-                <div className="border-t pt-3">
-                  <div className="flex justify-between text-xl font-bold text-gray-800">
-                    <span>Total</span>
-                    <span className="text-purple-600">S/ {total.toFixed(2)}</span>
+                <div className="border-t border-white/20 pt-3 bg-white/5 rounded-lg p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold text-white">Total</span>
+                    <span className="text-2xl font-black text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                      S/ {total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
                 {cart.slice(0, 3).map((item) => (
-                  <div key={item.id} className="flex items-center space-x-3">
+                  <div key={item.id} className="flex items-center space-x-3 bg-white/10 rounded-lg p-2">
                     <img
                       src={item.product?.imageUrl || 'https://via.placeholder.com/60x60'}
                       alt={item.product?.name || 'Producto'}
                       className="w-12 h-12 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{item.product?.name || 'Producto'}</p>
-                      <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
+                      <p className="text-sm font-medium text-white truncate">{item.product?.name || 'Producto'}</p>
+                      <p className="text-sm text-gray-400">Cantidad: {item.quantity}</p>
                     </div>
                   </div>
                 ))}
                 
                 {cart.length > 3 && (
-                  <p className="text-sm text-gray-500 text-center">
+                  <p className="text-sm text-purple-300 text-center">
                     +{cart.length - 3} productos más
                   </p>
                 )}
               </div>
 
-              <div className="mt-6 pt-6 border-t">
-                <div className="flex items-center justify-center space-x-3 text-sm text-gray-500">
-                  <span>🔒</span>
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <div className="flex items-center justify-center space-x-3 text-sm text-gray-400">
+                  <span className="text-xl">🔒</span>
                   <span>Compra 100% segura</span>
                 </div>
               </div>

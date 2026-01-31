@@ -330,6 +330,7 @@ const ProductCatalog: React.FC = () => {
           </div>
         </div>
       </div>
+      </div>
 
       <div className="flex gap-8">
         {/* Filters Sidebar */}
