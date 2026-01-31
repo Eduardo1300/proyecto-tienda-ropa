@@ -6,6 +6,7 @@ import { productsAPI } from '../services/api';
 import { ReviewsList } from '../components/ReviewsList';
 import { getProductImage, getProductImages } from '../utils/productImages';
 import type { Product } from '../types';
+import SEO from '../components/SEO';
 
 interface ExtendedProduct extends Product {
   features: string[];
@@ -146,6 +147,23 @@ const ProductDetail = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <SEO
+          title={product ? `${product.name} - Fashion Store` : 'Producto - Fashion Store'}
+          description={product?.description || 'Ver detalles del producto en Fashion Store'}
+          keywords={`${product?.name}, ${product?.category}, ropa, moda, comprar`}
+          image={product?.imageUrl || ''}
+          url={`https://fashionstore.com.pe/product/${product?.id}`}
+          type="product"
+          product={product ? {
+            name: product.name,
+            description: product.description,
+            price: Number(product.price),
+            image: product.imageUrl || getProductImage(product.name, product.category, ''),
+            availability: (product.stock || 0) > 0,
+            brand: 'Fashion Store',
+            category: product.category
+          } : undefined}
+        />
         {/* Breadcrumb */}
         <nav className="mb-8 animate-fade-in-up">
           <div className="flex items-center space-x-2 text-gray-300">

@@ -5,6 +5,7 @@ import ProductFilters from '../components/ProductFilters';
 import ProductQuickView from '../components/ProductQuickView';
 import ProductComparison from '../components/ProductComparison';
 import { Button, Card, Badge } from '../components/ui';
+import SEO from '../components/SEO';
 
 interface Product {
   id: number;
@@ -260,6 +261,12 @@ const ProductCatalog: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+      <SEO
+        title="Catálogo de Productos - Fashion Store"
+        description="Explora nuestra colección completa de ropa premium. Encuentra camisetas, pantalones, vestidos, accesorios y más con los mejores precios."
+        keywords="catálogo productos, ropa online, comprar ropa, moda Perú, ropa hombre, ropa mujer, accesorios moda"
+        type="website"
+      />
       {/* Header */}
       <div className="mb-8 text-center">
         <Badge variant="primary" size="lg" className="mb-4 inline-block backdrop-blur-md">

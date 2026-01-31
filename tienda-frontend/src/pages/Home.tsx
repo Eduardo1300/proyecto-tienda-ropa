@@ -6,6 +6,7 @@ import { Button, Card, Badge } from "../components/ui";
 import ProductImage from "../components/ProductImage";
 import { getProductImage } from "../utils/productImages";
 import type { Product } from "../types";
+import SEO from "../components/SEO";
 
 const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -82,7 +83,14 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+    <>
+      <SEO
+        title="Fashion Store - Ropa Premium y Moda Tendencia en Perú"
+        description="Descubre la mejor colección de ropa premium en Perú. Camisetas, pantalones, vestidos, accesorios y más con envío rápido a todo el país. Calidad garantizada."
+        keywords="ropa, moda, tienda de ropa, ropa premium, comprar ropa online, camisetas, vestidos, accesorios, Perú, lima, tendencias moda 2024"
+        type="website"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       {/* Floating Gradient Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -488,6 +496,7 @@ const Home = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 
