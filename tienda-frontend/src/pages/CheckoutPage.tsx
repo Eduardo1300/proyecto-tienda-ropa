@@ -182,16 +182,30 @@ const CheckoutPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">🛒 Checkout</h1>
-          <p className="text-gray-600">Completa tu compra de manera segura</p>
+          <Badge variant="primary" size="lg" className="mb-4 inline-block backdrop-blur-md">
+            🛒 Checkout Seguro
+          </Badge>
+          <h1 className="text-5xl font-black text-white mb-4">
+            Completa Tu
+            <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
+              Compra Segura
+            </span>
+          </h1>
+          <p className="text-gray-300 text-lg">Proceso de pago 100% protegido</p>
         </div>
 
         {/* Progress Steps */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6 mb-8">
           <div className="flex items-center justify-center space-x-4">
             {[
               { step: 1, title: 'Envío', icon: '📦' },
@@ -199,16 +213,18 @@ const CheckoutPage: React.FC = () => {
               { step: 3, title: 'Confirmación', icon: '✅' }
             ].map((item, index) => (
               <React.Fragment key={item.step}>
-                <div className={`flex items-center space-x-2 ${currentStep >= item.step ? 'text-purple-600' : 'text-gray-400'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    currentStep >= item.step ? 'bg-purple-600 text-white' : 'bg-gray-200'
+                <div className={`flex items-center space-x-2 ${currentStep >= item.step ? 'text-purple-400' : 'text-gray-400'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                    currentStep >= item.step 
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50' 
+                      : 'bg-white/10 text-gray-400'
                   }`}>
                     {currentStep > item.step ? '✓' : item.step}
                   </div>
-                  <span className="font-medium">{item.icon} {item.title}</span>
+                  <span className="font-medium hidden sm:inline">{item.icon} {item.title}</span>
                 </div>
                 {index < 2 && (
-                  <div className={`w-12 h-1 ${currentStep > item.step ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
+                  <div className={`w-16 h-1 rounded-full transition-all duration-300 ${currentStep > item.step ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white/20'}`}></div>
                 )}
               </React.Fragment>
             ))}
@@ -218,17 +234,22 @@ const CheckoutPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-6">
               {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-                  {error}
+                <div className="bg-red-500/20 border border-red-400/30 text-red-100 px-4 py-3 rounded-xl mb-6 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⚠️</span>
+                    <span className="font-medium">{error}</span>
+                  </div>
                 </div>
               )}
 
               {/* Step 1: Shipping Information */}
               {currentStep === 1 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-6">📦 Información de Envío</h2>
+                  <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                    📦 Información de Envío
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>

@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard';
 import ProductFilters from '../components/ProductFilters';
 import ProductQuickView from '../components/ProductQuickView';
 import ProductComparison from '../components/ProductComparison';
+import { Button, Card, Badge } from '../components/ui';
 
 interface Product {
   id: number;
@@ -241,18 +242,36 @@ const ProductCatalog: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-xl">Cargando productos...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8 px-4">
+      {/* Floating Gradient Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">🛍️ Catálogo de Productos</h1>
-        <p className="text-gray-600 mt-2">Descubre nuestra colección completa</p>
+      <div className="mb-8 text-center">
+        <Badge variant="primary" size="lg" className="mb-4 inline-block backdrop-blur-md">
+          🛍️ Catálogo Completo
+        </Badge>
+        <h1 className="text-5xl font-black text-white mb-4">
+          Descubre Nuestra
+          <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
+            Colección Premium
+          </span>
+        </h1>
+        <p className="text-gray-300 text-lg">Encuentra las mejores tendencias de moda para ti</p>
       </div>
 
       {/* Search and Controls */}
@@ -265,20 +284,20 @@ const ProductCatalog: React.FC = () => {
               placeholder="Buscar productos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-purple-200/70 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent backdrop-blur-sm"
             />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-400">🔍</span>
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <span className="text-xl">🔍</span>
             </div>
           </div>
         </div>
 
         {/* Sort and View Controls */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2"
+            className="bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 backdrop-blur-sm"
           >
             <option value="name">Nombre</option>
             <option value="price">Precio</option>
@@ -287,23 +306,24 @@ const ProductCatalog: React.FC = () => {
             <option value="newest">Más Nuevo</option>
           </select>
 
-          <button
+          <Button
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            className="p-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            variant="outline"
+            className="border-white/30 text-white hover:bg-white/10"
           >
             {sortOrder === 'asc' ? '↑' : '↓'}
-          </button>
+          </Button>
 
-          <div className="flex border border-gray-300 rounded-md">
+          <div className="flex border border-white/30 rounded-xl overflow-hidden">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'hover:bg-gray-50'}`}
+              className={`p-3 ${viewMode === 'grid' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               ⊞
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'hover:bg-gray-50'}`}
+              className={`p-3 ${viewMode === 'list' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               ☰
             </button>
@@ -314,44 +334,50 @@ const ProductCatalog: React.FC = () => {
       <div className="flex gap-8">
         {/* Filters Sidebar */}
         <div className="w-64 flex-shrink-0">
-          <ProductFilters
-            filters={filters}
-            filterOptions={filterOptions}
-            onFiltersChange={setFilters}
-          />
+          <Card className="bg-white/10 backdrop-blur-md border border-white/20 p-6 sticky top-4">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              🔍 Filtros
+            </h3>
+            <ProductFilters
+              filters={filters}
+              filterOptions={filterOptions}
+              onFiltersChange={setFilters}
+            />
+          </Card>
         </div>
 
         {/* Products Grid/List */}
         <div className="flex-1">
           {/* Results Info */}
           <div className="mb-6 flex items-center justify-between">
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Mostrando {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} productos
             </p>
             
             {/* Comparison Bar */}
             {comparisonProducts.length > 0 && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-purple-200">
                   Comparar ({comparisonProducts.length}/4):
                 </span>
                 {comparisonProducts.map(product => (
-                  <div key={product.id} className="flex items-center bg-blue-100 rounded-full px-2 py-1">
-                    <span className="text-xs text-blue-800 mr-1">{product.name.substring(0, 10)}...</span>
+                  <div key={product.id} className="flex items-center bg-purple-600/30 rounded-full px-3 py-1 border border-purple-400/30">
+                    <span className="text-xs text-white mr-1">{product.name.substring(0, 10)}...</span>
                     <button
                       onClick={() => removeFromComparison(product.id)}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-purple-200 hover:text-white"
                     >
                       ×
                     </button>
                   </div>
                 ))}
-                <button
+                <Button
                   onClick={() => setShowComparison(true)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600"
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600"
                 >
                   Comparar
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -374,50 +400,53 @@ const ProductCatalog: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No se encontraron productos</p>
-              <p className="text-gray-400 mt-2">Intenta ajustar los filtros de búsqueda</p>
-            </div>
+            <Card className="text-center py-16 bg-white/10 backdrop-blur-md border border-white/20">
+              <div className="text-8xl mb-6">🔍</div>
+              <h3 className="text-2xl font-bold text-white mb-4">No se encontraron productos</h3>
+              <p className="text-gray-300 mb-6">Intenta ajustar los filtros de búsqueda</p>
+              <Button variant="outline" icon="🔄" className="text-white border-white/30 hover:bg-white/10">
+                Limpiar Filtros
+              </Button>
+            </Card>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="mt-8 flex justify-center">
               <nav className="flex space-x-2">
-                <button
+                <Button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10"
                 >
-                  Anterior
-                </button>
+                  ← Anterior
+                </Button>
                 
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   const pageNumber = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
                   if (pageNumber > totalPages) return null;
                   
                   return (
-                    <button
+                    <Button
                       key={pageNumber}
                       onClick={() => paginate(pageNumber)}
-                      className={`px-3 py-2 border rounded-md ${
-                        currentPage === pageNumber
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'border-gray-300 hover:bg-gray-50'
-                      }`}
+                      variant={currentPage === pageNumber ? "primary" : "outline"}
+                      className={currentPage === pageNumber ? "bg-gradient-to-r from-purple-600 to-pink-600" : "border-white/30 text-white hover:bg-white/10"}
                     >
                       {pageNumber}
-                    </button>
+                    </Button>
                   );
                 })}
                 
-                <button
+                <Button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  variant="outline"
+                  className="border-white/30 text-white hover:bg-white/10"
                 >
-                  Siguiente
-                </button>
+                  Siguiente →
+                </Button>
               </nav>
             </div>
           )}

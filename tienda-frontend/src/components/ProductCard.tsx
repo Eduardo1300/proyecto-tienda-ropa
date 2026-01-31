@@ -200,8 +200,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
-            {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
-            {product.isBestseller && <Badge variant="accent" size="sm" icon="🔥">Bestseller</Badge>}
+{product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
+            {product.isBestseller && <Badge variant="primary" size="sm" icon="🔥">Bestseller</Badge>}
             {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
           </div>
         </div>
@@ -299,9 +299,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
+{product.isNew && <Badge variant="success" size="sm" icon="✨">Nuevo</Badge>}
           {product.isFeatured && <Badge variant="primary" size="sm" icon="⭐">Destacado</Badge>}
-          {product.isBestseller && <Badge variant="accent" size="sm" icon="🔥">Bestseller</Badge>}
+          {product.isBestseller && <Badge variant="primary" size="sm" icon="🔥">Bestseller</Badge>}
           {discountPercentage > 0 && <Badge variant="danger" size="sm">-{discountPercentage}%</Badge>}
         </div>
 
