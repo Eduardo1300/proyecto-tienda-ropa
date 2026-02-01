@@ -20,5 +20,5 @@ Thumbs.db
 *.sql
 *.bak
 *.dump
-backup.sql
+
 database_schema.sql
