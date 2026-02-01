@@ -22,7 +22,7 @@ export class LoyaltyProgram {
   @Column({ default: 0 })
   availablePoints: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   lifetimeSpent: number;
 
   @Column({
