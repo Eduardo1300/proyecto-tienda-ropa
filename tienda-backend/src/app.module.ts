@@ -12,6 +12,7 @@ import { CouponModule } from './coupons/coupon.module';
 import { LoyaltyModule } from './loyalty/loyalty.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { HealthModule } from './health/health.module';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -120,6 +121,7 @@ import { AnalyticsEvent } from './analytics/entities/analytics-event.entity';
     LoyaltyModule,
     AnalyticsModule,
     ReviewsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
