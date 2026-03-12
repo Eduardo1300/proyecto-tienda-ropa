@@ -16,8 +16,8 @@ const getApiBaseUrl = (): string => {
     
     // Si estamos en Render (hostname contiene .onrender.com)
     if (hostname.includes('onrender.com')) {
-      // La URL del backend en Render es tienda-backend-n67b.onrender.com
-      return `${protocol}//tienda-backend-n67b.onrender.com`;
+      // La URL del backend en Render es tienda-backend-tde1.onrender.com
+      return `${protocol}//tienda-backend-tde1.onrender.com`;
     }
     
     // Si estamos en localhost o IP local, usa localhost:3002

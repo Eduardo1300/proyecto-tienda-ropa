@@ -10,7 +10,7 @@ const getApiBaseUrl = (): string => {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
     if (hostname.includes('onrender.com')) {
-      return `${protocol}//tienda-backend-n67b.onrender.com`;
+      return `${protocol}//tienda-backend-tde1.onrender.com`;
     }
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
       return 'http://localhost:3002';
