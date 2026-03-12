@@ -18,5 +18,5 @@ test
 *.spec.ts
 *.e2e-spec.ts
 jest.config.js
-tsconfig*.json
+!tsconfig.build.json
 !tsconfig.json
