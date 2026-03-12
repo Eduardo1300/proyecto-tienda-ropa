@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tienda-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://tienda_db_0rhl_user:MgdRVS5Kn30WuQM64u7ZHBANrleLh0eb@dpg-d6d3kpsr85hc73bkaoa0-a.oregon-postgres.render.com/tienda_db_0rhl
+      - JWT_SECRET=${JWT_SECRET:-default-secret-change-in-production}
+      - JWT_EXPIRES_IN=7d
+      - PORT=3000
+    ports:
+      - "3000:3000"
