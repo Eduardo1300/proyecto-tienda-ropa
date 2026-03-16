@@ -18,6 +18,7 @@ async function bootstrap() {
       'https://proyecto-tienda-ropa.vercel.app',
       'https://tienda-frontend-6mrw.onrender.com',
       'https://tienda.christophervaldivia.me',
+      'https://proyecto-tienda-ropa-production.up.railway.app',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
