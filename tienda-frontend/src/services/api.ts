@@ -9,10 +9,15 @@ const getApiBaseUrl = (): string => {
     return envUrl;
   }
 
-  // Si está en producción (Render), detecta automáticamente
+  // Si está en producción, detecta automáticamente
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
+    
+    // Si estamos en dominio personalizado (Railway)
+    if (hostname === 'tienda.christophervaldivia.me') {
+      return 'https://proyecto-tienda-ropa-production.up.railway.app';
+    }
     
     // Si estamos en Render (hostname contiene .onrender.com)
     if (hostname.includes('onrender.com')) {
