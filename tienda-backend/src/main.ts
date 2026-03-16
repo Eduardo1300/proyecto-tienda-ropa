@@ -8,20 +8,29 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT', 3000);
 
-  // Configurar CORS
+  // Configurar CORS - Permitir múltiples orígenes incluyendo dominios personalizados
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    'https://proyecto-tienda-ropa.vercel.app',
+    'https://tienda-frontend-6mrw.onrender.com',
+    'https://tienda.christophervaldivia.me',
+    'https://proyecto-tienda-ropa-production.up.railway.app',
+  ];
+
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:5174',
-      'https://proyecto-tienda-ropa.vercel.app',
-      'https://tienda-frontend-6mrw.onrender.com',
-      'https://tienda.christophervaldivia.me',
-      'https://proyecto-tienda-ropa-production.up.railway.app',
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS policy violation'), false);
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Validación global
