@@ -12,7 +12,7 @@ import { AnalyticsService } from '../analytics/services/analytics.service';
 import { EventType } from '../analytics/entities/analytics-event.entity';
 import { LoyaltyService } from '../loyalty/services/loyalty.service';
 
-interface ValidatedUser {
+export interface ValidatedUser {
   id: number;
   username: string;
   email: string;
