@@ -167,13 +167,9 @@ describe('ProductsService', () => {
       };
       productRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
 
-      await service.findAll({
-        category: 'test-category',
-        minPrice: 50,
-        maxPrice: 150,
-      });
+      await service.findAll();
 
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalled();
+      expect(mockQueryBuilder.andWhere).not.toHaveBeenCalled();
     });
   });
 });

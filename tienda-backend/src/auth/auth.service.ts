@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -35,6 +36,7 @@ export class AuthService {
     private jwtService: JwtService,
     private analyticsService: AnalyticsService,
     private loyaltyService: LoyaltyService,
+    private configService: ConfigService,
   ) {}
 
   // Validar email y contraseña
@@ -144,13 +146,17 @@ export class AuthService {
       email: user.email,
     };
 
+    const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
+    const jwtRefreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || 'claverefresh456';
+    const jwtExpiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '24h';
+
     const access_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET || 'clave_secreta_acceso',
-      expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+      secret: jwtSecret,
+      expiresIn: jwtExpiresIn,
     });
 
     const refresh_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
+      secret: jwtRefreshSecret,
       expiresIn: '7d',
     });
 
@@ -165,8 +171,12 @@ export class AuthService {
   // Refrescar el access_token usando refresh_token
   async getNewAccessToken(refreshToken: string) {
     try {
+      const jwtRefreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || 'claverefresh456';
+      const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
+      const jwtExpiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '24h';
+
       const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: jwtRefreshSecret,
       });
 
       const user = await this.usersService.findById(payload.sub);
@@ -178,8 +188,8 @@ export class AuthService {
       const newAccessToken = this.jwtService.sign(
         { sub: user.id, username: user.username, email: user.email, role: user.role },
         {
-          secret: process.env.JWT_SECRET,
-          expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+          secret: jwtSecret,
+          expiresIn: jwtExpiresIn,
         },
       );
 
@@ -203,10 +213,11 @@ export class AuthService {
     }
 
     // Generar token de reset
+    const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
     const resetToken = this.jwtService.sign(
       { sub: user.id, purpose: 'password-reset' },
       {
-        secret: process.env.JWT_SECRET,
+        secret: jwtSecret,
         expiresIn: '1h', // Token válido por 1 hora
       },
     );
@@ -225,8 +236,9 @@ export class AuthService {
   // Resetear contraseña con token
   async resetPassword(token: string, newPassword: string) {
     try {
+      const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
       const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
+        secret: jwtSecret,
       });
 
       if (payload.purpose !== 'password-reset') {

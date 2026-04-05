@@ -9,15 +9,20 @@ const getApiBaseUrl = (): string => {
     return envUrl;
   }
 
-  // Si está en producción (Render), detecta automáticamente
+  // Si está en producción, detecta automáticamente
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
     
+    // Si estamos en dominio personalizado (Railway)
+    if (hostname === 'tienda.christophervaldivia.me') {
+      return 'https://proyecto-tienda-ropa-production.up.railway.app';
+    }
+    
     // Si estamos en Render (hostname contiene .onrender.com)
     if (hostname.includes('onrender.com')) {
-      // La URL del backend en Render es tienda-backend-n67b.onrender.com
-      return `${protocol}//tienda-backend-n67b.onrender.com`;
+      // La URL del backend en Render es tienda-backend-tde1.onrender.com
+      return `${protocol}//tienda-backend-tde1.onrender.com`;
     }
     
     // Si estamos en localhost o IP local, usa localhost:3002

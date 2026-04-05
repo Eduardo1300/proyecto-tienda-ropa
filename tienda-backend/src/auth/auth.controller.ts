@@ -73,6 +73,17 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
+  @Post('debug/validate')
+  async debugValidate(
+    @Body() body: { email: string; password: string },
+  ) {
+    const result = await this.authService.validateUser(body.email, body.password);
+    return { 
+      success: !!result,
+      user: result || null,
+    };
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@GetUser() user: RequestUser) {

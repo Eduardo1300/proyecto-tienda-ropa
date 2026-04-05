@@ -46,6 +46,7 @@ export default defineConfig({
     },
   },
   server: {
+    middlewareMode: false,
     proxy: {
       '/api': {
         target: 'http://localhost:3002',
@@ -53,5 +54,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
     },
+  },
+  preview: {
+    port: 5173,
   },
 })
