@@ -141,10 +141,14 @@ export const categoryImageMap: Record<string, string[]> = {
 export const getProductImage = (productName: string, category: string, existingImage?: string): string => {
   const normalizedName = productName.toLowerCase().trim();
   
-  // Buscar por palabras clave en el nombre del producto
+  // SI hay imagen existente de la base de datos, usarla directamente
+  if (existingImage && existingImage.trim() !== '') {
+    return existingImage;
+  }
+  
+  // Buscar por palabras clave en el nombre del producto solo si no hay imagen
   for (const [keyword, images] of Object.entries(productImageMap)) {
     if (normalizedName.includes(keyword)) {
-      // Seleccionar una imagen aleatoria del array
       const randomIndex = Math.floor(Math.random() * images.length);
       return images[randomIndex];
     }
@@ -156,11 +160,6 @@ export const getProductImage = (productName: string, category: string, existingI
     const images = categoryImageMap[normalizedCategory];
     const randomIndex = Math.floor(Math.random() * images.length);
     return images[randomIndex];
-  }
-  
-  // Si no se encuentra nada y hay imagen existente, usarla como fallback
-  if (existingImage && existingImage.trim() !== '') {
-    return existingImage;
   }
   
   // Imagen por defecto si no se encuentra nada
