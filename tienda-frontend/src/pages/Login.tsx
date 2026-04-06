@@ -82,7 +82,7 @@ const Login: React.FC = () => {
                 <div className="flex items-center justify-between text-sm text-white bg-white/10 rounded-lg px-3 py-2">
                   <span className="flex items-center gap-2"><span className="text-base">👤</span> Usuario:</span>
                   <span className="font-mono">prueba@gmail.com</span>
-                  <span className="font-mono ml-2">123456</span>
+                  <span className="font-mono ml-2">password123</span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-white bg-white/10 rounded-lg px-3 py-2">
                   <span className="flex items-center gap-2"><span className="text-base">🛡️</span> Admin:</span>
