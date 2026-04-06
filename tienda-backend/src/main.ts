@@ -18,19 +18,26 @@ async function bootstrap() {
     'https://tienda-frontend-6mrw.onrender.com',
     'https://tienda.christophervaldivia.me',
     'https://proyecto-tienda-ropa-production.up.railway.app',
+    'https://tiendaderopa-frontend-2c1c.up.railway.app',
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Permitir solicitudes sin origen (como curl o postman)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log('CORS blocked origin:', origin);
         callback(new Error('CORS policy violation'), false);
       }
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   // Validación global
