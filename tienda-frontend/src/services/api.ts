@@ -14,9 +14,9 @@ const getApiBaseUrl = (): string => {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
     
-    // Si estamos en dominio personalizado (Railway)
-    if (hostname === 'tienda.christophervaldivia.me') {
-      return 'https://proyecto-tienda-ropa-production.up.railway.app';
+  // Si estamos en dominio personalizado (Vercel + dominio propio)
+    if (hostname === 'tienda.christophervaldivia.me' || hostname === 'proyecto-tienda-ropa.vercel.app') {
+      return 'https://tienda-backend-1.onrender.com';
     }
     
     // Si estamos en Render (hostname contiene .onrender.com)
