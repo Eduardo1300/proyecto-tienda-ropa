@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('contraseña123');
+  const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuth();
@@ -20,6 +20,7 @@ const Login: React.FC = () => {
     }
 
     const success = await login(email, password);
+    console.log('Login result:', success, 'email:', email);
     if (success) {
       navigate('/');
     } else {

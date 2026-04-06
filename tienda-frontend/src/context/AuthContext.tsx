@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
+    console.log('AuthContext login called with:', email, 'API_URL:', API_BASE_URL);
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -52,6 +53,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
+      console.log('Login response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
         
