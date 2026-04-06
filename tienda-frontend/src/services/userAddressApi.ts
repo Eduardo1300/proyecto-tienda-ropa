@@ -11,7 +11,7 @@ const getApiBaseUrl = (): string => {
     const protocol = window.location.protocol;
   // Si estamos en dominio personalizado (Vercel + dominio propio)
     if (hostname === 'tienda.christophervaldivia.me' || hostname === 'proyecto-tienda-ropa.vercel.app') {
-      return 'https://tienda-backend-1.onrender.com';
+      return 'https://proyecto-tienda-ropa.onrender.com';
     }
     if (hostname.includes('onrender.com')) {
       return `${protocol}//tienda-backend-tde1.onrender.com`;
