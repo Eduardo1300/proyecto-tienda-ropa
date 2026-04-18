@@ -1,6 +1,6 @@
 # 🛍️ Tienda de Ropa - E-commerce Full Stack
 
-Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y **React + TypeScript** (frontend), con autenticación robusta, gestión de productos, carrito de compras, sistema de órdenes, analytics, programa de lealtad y gestión de inventario.
+Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y **Vue 3 + TypeScript** (frontend), con autenticación robusta, gestión de productos, carrito de compras, sistema de órdenes, analytics, programa de lealtad y gestión de inventario.
 
 ## 📊 Tabla de Contenidos
 
@@ -81,7 +81,7 @@ Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      CLIENTE (Browser)                       │
-│                    React + TypeScript                        │
+│                    Vue 3 + TypeScript                        │
 ├─────────────────────────────────────────────────────────────┤
 │                        Vite Dev Server                        │
 │                    (Puerto 5173)                             │
@@ -203,109 +203,51 @@ proyecto_tienda_de_ropa/
 │   ├── nest-cli.json
 │   └── test/                             # Tests E2E
 │
-├── 📂 tienda-frontend/                   # Aplicación React
-│   ├── 📂 src/
-│   │   ├── 📂 components/
-│   │   │   ├── 📂 ui/                    # Componentes base UI
-│   │   │   │   ├── Button.tsx
-│   │   │   │   ├── Card.tsx
-│   │   │   │   ├── Badge.tsx
-│   │   │   │   ├── Input.tsx
-│   │   │   │   └── Modal.tsx
-│   │   │   │
-│   │   │   ├── 📂 admin/                 # Componentes de admin
-│   │   │   │
-│   │   │   ├── ProductCard.tsx           # Tarjeta de producto
-│   │   │   ├── ProductFilters.tsx        # Filtros de búsqueda
-│   │   │   ├── ProductImageGallery.tsx   # Galería de imágenes
-│   │   │   ├── ProductComparison.tsx     # Comparación de productos
-│   │   │   ├── ProductQuickView.tsx      # Vista rápida
-│   │   │   ├── Header.tsx                # Navegación principal
-│   │   │   ├── Footer.tsx                # Pie de página
-│   │   │   ├── CouponInput.tsx           # Input de cupón
-│   │   │   ├── LoadingSpinner.tsx        # Spinner de carga
-│   │   │   ├── PageTransition.tsx        # Transiciones
-│   │   │   ├── NotificationContainer.tsx # Notificaciones
-│   │   │   ├── ProtectedRoute.tsx        # Rutas protegidas
-│   │   │   ├── ThemeToggle.tsx           # Cambio de tema
-│   │   │   ├── ReviewCard.tsx            # Tarjeta de reseña
-│   │   │   ├── ReviewForm.tsx            # Formulario de reseña
-│   │   │   ├── ReviewsList.tsx           # Lista de reseñas
-│   │   │   ├── LoyaltyProgram.tsx        # Programa de lealtad
-│   │   │   ├── AnalyticsDashboard.tsx    # Dashboard analytics
-│   │   │   └── ...más componentes
-│   │   │
-│   │   ├── 📂 pages/                     # Páginas de la app
-│   │   │   ├── Home.tsx                  # Página principal
-│   │   │   ├── ProductCatalog.tsx        # Catálogo
-│   │   │   ├── ProductDetail.tsx         # Detalle de producto
-│   │   │   ├── Cart.tsx / CartPage.tsx   # Carrito
-│   │   │   ├── CheckoutPage.tsx          # Checkout
-│   │   │   ├── Login.tsx                 # Login
-│   │   │   ├── Register.tsx              # Registro
-│   │   │   ├── ProfilePage.tsx           # Perfil de usuario
-│   │   │   ├── Dashboard.tsx             # Dashboard usuario
-│   │   │   ├── OrderDetail.tsx           # Detalle de orden
-│   │   │   ├── OrderTracking.tsx         # Seguimiento
-│   │   │   ├── OrderManagement.tsx       # Gestión de órdenes
-│   │   │   ├── AdminDashboard.tsx        # Dashboard admin
-│   │   │   ├── AdminPanel.tsx            # Panel admin
-│   │   │   ├── AnalyticsDashboard.tsx    # Page analytics
-│   │   │   ├── LoyaltyDashboard.tsx      # Page lealtad
-│   │   │   ├── InventoryDashboard.tsx    # Page inventario
-│   │   │   └── ...más páginas
-│   │   │
-│   │   ├── 📂 context/                   # React Context
-│   │   │   ├── AuthContext.tsx           # Auth global
-│   │   │   ├── CartContext.tsx           # Carrito global
-│   │   │   ├── NotificationContext.tsx   # Notificaciones
-│   │   │   └── ThemeContext.tsx          # Tema (dark/light)
-│   │   │
-│   │   ├── 📂 hooks/                     # Custom hooks
-│   │   │   ├── useAuth.ts                # Hook de auth
-│   │   │   ├── useCart.ts                # Hook de carrito
-│   │   │   ├── useAnalytics.ts           # Hook analytics
-│   │   │   ├── useLoyalty.ts             # Hook lealtad
-│   │   │   ├── useInventory.ts           # Hook inventario
-│   │   │   ├── usePageTracking.ts        # Tracking de páginas
-│   │   │   └── useResponsive.ts          # Responsive checks
-│   │   │
-│   │   ├── 📂 services/                  # Servicios API
-│   │   │   ├── api.ts                    # Cliente Axios base
-│   │   │   ├── authApi.ts                # Endpoints auth
-│   │   │   ├── productsApi.ts            # Endpoints productos
-│   │   │   ├── cartApi.ts                # Endpoints carrito
-│   │   │   ├── ordersApi.ts              # Endpoints órdenes
-│   │   │   ├── adminApi.ts               # Endpoints admin
-│   │   │   ├── analyticsApi.ts           # Endpoints analytics
-│   │   │   ├── loyaltyApi.ts             # Endpoints lealtad
-│   │   │   └── inventoryApi.ts           # Endpoints inventario
-│   │   │
-│   │   ├── 📂 types/                     # Tipos TypeScript
-│   │   │   ├── index.ts                  # Export principal
-│   │   │   ├── producto.ts               # Tipos producto
-│   │   │   ├── user.types.ts             # Tipos usuario
-│   │   │   ├── order.types.ts            # Tipos orden
-│   │   │   └── review.types.ts           # Tipos reseña
-│   │   │
-│   │   ├── 📂 utils/                     # Utilidades
-│   │   │   ├── format.ts                 # Formateo de datos
-│   │   │   ├── validation.ts             # Validaciones
-│   │   │   └── constants.ts              # Constantes
-│   │   │
-│   │   ├── App.tsx                       # Componente principal
-│   │   ├── main.tsx                      # Entry point
-│   │   ├── index.css                     # Estilos globales
-│   │   └── vite-env.d.ts                 # Tipos Vite
-│   │
-│   ├── 📂 public/                        # Assets estáticos
-│   ├── .env                              # Variables entorno
-│   ├── .env.example
-│   ├── package.json
-│   ├── vite.config.ts                    # Configuración Vite
-│   ├── tsconfig.json                     # Configuración TS
-│   ├── tailwind.config.js                # Configuración Tailwind
-│   └── postcss.config.cjs                # Configuración PostCSS
+├── 📂 tienda-frontend/                   # Aplicación Vue 3
+│   ├── 📂 tienda-vue/                    # Código fuente Vue
+│   │   ├── 📂 src/
+│   │   │   ├── 📂 components/           # Componentes Vue
+│   │   │   │   ├── Header.vue            # Navegación principal
+│   │   │   │   ├── Footer.vue            # Pie de página
+│   │   │   │   └── ...
+│   │   │   ├── 📂 pages/                  # Páginas de la app
+│   │   │   │   ├── Home.vue              # Página principal
+│   │   │   │   ├── Products.vue          # Catálogo
+│   │   │   │   ├── ProductDetail.vue     # Detalle de producto
+│   │   │   │   ├── Cart.vue              # Carrito
+│   │   │   │   ├── Checkout.vue          # Checkout
+│   │   │   │   ├── Login.vue              # Login
+│   │   │   │   ├── Register.vue           # Registro
+│   │   │   │   ├── Profile.vue            # Perfil de usuario
+│   │   │   │   ├── Dashboard.vue         # Dashboard usuario
+│   │   │   │   ├── Orders.vue            # Órdenes
+│   │   │   │   ├── OrderDetail.vue        # Detalle de orden
+│   │   │   │   ├── OrderTracking.vue     # Seguimiento
+│   │   │   │   ├── Loyalty.vue            # Programa de lealtad
+│   │   │   │   ├── Wishlist.vue          # Lista de deseos
+│   │   │   │   ├── Admin.vue              # Panel admin
+│   │   │   │   ├── Analytics.vue          # Analytics
+│   │   │   │   ├── Inventory.vue          # Inventario
+│   │   │   │   ├── SupplierManagement.vue # Gestión proveedores
+│   │   │   │   └── ReturnRequest.vue      # Solicitud devolución
+│   │   │   ├── 📂 stores/                # Pinia stores
+│   │   │   │   ├── auth.ts                # Estado autenticación
+│   │   │   │   ├── cart.ts                # Estado carrito
+│   │   │   │   └── theme.ts               # Tema (dark/light)
+│   │   │   ├── 📂 api/                    # Cliente API
+│   │   │   │   └── index.ts               # Axios + endpoints
+│   │   │   ├── 📂 router/                 # Vue Router
+│   │   │   │   └── index.ts               # Rutas + protección
+│   │   │   ├── 📂 types/                  # Tipos TypeScript
+│   │   │   │   └── index.ts               # Interfaces
+│   │   │   ├── App.vue                   # Componente principal
+│   │   │   ├── main.ts                    # Entry point
+│   │   │   └── style.css                 # Estilos globales
+│   │   ├── 📂 public/                     # Assets estáticos
+│   │   ├── package.json
+│   │   ├── vite.config.ts                # Configuración Vite
+│   │   ├── tailwind.config.js             # Configuración Tailwind
+│   │   └── dist/                         # Build producción
 │
 ├── 📂 tienda_db_backup.sql               # Backup BD
 ├── 📂 tienda_db_data.sql                 # Datos BD
@@ -337,19 +279,17 @@ proyecto_tienda_de_ropa/
 | **nodemailer** | - | Envío de emails |
 | **pdfkit** | - | Generación PDFs |
 
-### Frontend (React)
+### Frontend (Vue 3)
 
 | Tecnología | Versión | Propósito |
 |------------|---------|-----------|
-| **React** | 19.2.0 | Biblioteca UI |
-| **TypeScript** | 5.8.3 | Tipado estático |
-| **Vite** | 7.0.6 | Build tool |
-| **React Router** | 7.7.1 | Enrutamiento |
-| **TailwindCSS** | 3.4.3 | Estilos utility-first |
-| **Axios** | 1.11.0 | Cliente HTTP |
-| **Chart.js** | 4.5.0 | Gráficos analytics |
-| **Heroicons** | 2.2.0 | Iconos |
-| **Framer Motion** | - | Animaciones |
+| **Vue 3** | 3.3.0 | Framework UI progresivo |
+| **TypeScript** | 5.3.0 | Tipado estático |
+| **Vite** | 4.5.0 | Build tool |
+| **Vue Router** | 4.2.0 | Enrutamiento |
+| **Pinia** | 2.1.0 | Estado global |
+| **TailwindCSS** | 3.4.0 | Estilos utility-first |
+| **Axios** | 1.6.0 | Cliente HTTP |
 
 ---
 
@@ -400,14 +340,17 @@ cp .env.example .env
 nano .env
 ```
 
-### 4. Configurar Frontend
+### 4. Configurar Frontend (Vue 3)
 
 ```bash
 # Entrar al directorio frontend
-cd ../tienda-frontend
+cd ../tienda-frontend/tienda-vue
 
 # Instalar dependencias
 npm install
+
+# Ejecutar en desarrollo
+npm run dev
 ```
 
 ---
@@ -1722,13 +1665,14 @@ npm run seed:analytics    # Seed analytics
 # 4. Configurar variables de entorno en Render dashboard
 ```
 
-### Vercel/Netlify (Frontend)
+### Vercel (Frontend Vue 3)
 
 ```bash
-# 1. Conectar repositorio
-# 2. Configurar build command: npm run build
-# 3. Configurar output directory: dist
-# 4. Agregar variable: VITE_API_URL=https://tu-backend.onrender.com
+# 1. Conectar repositorio a Vercel
+# 2. Configurar root directory: tienda-frontend
+# 3. Configurar build command: cd tienda-vue && npm install && npm run build
+# 4. Configurar output directory: tienda-vue/dist
+# 5. Agregar variable: VITE_API_URL=https://tu-backend.onrender.com
 ```
 
 ### Docker (Opcional)
@@ -1785,7 +1729,7 @@ Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
 ## 🙏 Agradecimientos
 
 - [NestJS Team](https://nestjs.com/) - Framework backend
-- [React Team](https://react.dev/) - Biblioteca UI
+- [Vue Team](https://vuejs.org/) - Framework UI
 - [TailwindCSS](https://tailwindcss.com/) - Sistema de diseño
 - [TypeORM](https://typeorm.io/) - ORM robusto
 - [PostgreSQL](https://www.postgresql.org/) - Base de datos
