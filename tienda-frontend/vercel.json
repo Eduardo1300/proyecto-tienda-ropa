@@ -1,8 +1,9 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
+  "buildCommand": "cd tienda-vue && npm install && npm run build && mv dist ../dist",
+  "devCommand": "cd tienda-vue && npm run dev",
   "installCommand": "npm ci",
-  "framework": "vite",
+  "framework": "static",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/(.*)",
