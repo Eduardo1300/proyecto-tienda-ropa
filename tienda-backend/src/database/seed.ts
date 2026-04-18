@@ -5,6 +5,17 @@ import { ProductsService } from '../products/products.service';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
+// Loyalty program entity import
+import { LoyaltyProgram } from '../loyalty/entities/loyalty-program.entity';
+import { LoyaltyTransaction } from '../loyalty/entities/loyalty-transaction.entity';
+
+// Wishlist entity import
+import { Wishlist } from '../products/entities/wishlist.entity';
+
+// Order entity import for demo orders
+import { Order } from '../ordenes/entities/order.entity';
+import { OrderItem } from '../ordenes/entities/order-item.entity';
+
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const usersService = app.get(UsersService);
@@ -268,6 +279,147 @@ async function seed() {
     }
 
     console.log('✅ Reviews created successfully');
+
+    // Create Loyalty Program data for customer
+    const loyaltyRepository = dataSource.getRepository(LoyaltyProgram);
+    const loyaltyProgram = await loyaltyRepository.save({
+      userId: customerUser.id,
+      totalPoints: 2500,
+      availablePoints: 1250,
+      lifetimeSpent: 2500.00,
+      currentTier: 'silver',
+      tierProgress: 75,
+      isActive: true,
+    });
+
+    // Create Loyalty Transactions
+    const transactionRepository = dataSource.getRepository(LoyaltyTransaction);
+    const transactions = [
+      { type: 'earn', points: 150, description: 'Compra en Camiseta Premium Algodón' },
+      { type: 'earn', points: 200, description: 'Compra en Jeans Slim Fit Azul' },
+      { type: 'earn', points: 300, description: 'Compra en Polera Casual' },
+      { type: 'redeem', points: -500, description: 'Canjeo por descuento 10%' },
+      { type: 'earn', points: 450, description: 'Compra en Zapatos Formales Oxford' },
+      { type: 'earn', points: 180, description: 'Compra en Blusa Elegante Seda' },
+      { type: 'bonus', points: 220, description: 'Puntos de bienvenida' },
+      { type: 'earn', points: 350, description: 'Compra en Chaqueta Casual Moderna' },
+      { type: 'earn', points: 250, description: 'Compra en Vestido Casual Verano' },
+      { type: 'earn', points: 400, description: 'Compra en Reloj Elegante Acero' },
+    ];
+
+    for (const tx of transactions) {
+      await transactionRepository.save({
+        loyaltyProgramId: loyaltyProgram.id,
+        type: tx.type,
+        points: tx.points,
+        description: tx.description,
+      });
+    }
+    console.log('✅ Loyalty program and transactions created');
+
+    // Create Wishlist items for customer
+    const wishlistRepository = dataSource.getRepository(Wishlist);
+    const allProducts = await productsService.findAll({});
+    const wishlistProducts = [allProducts[0], allProducts[5], allProducts[10], allProducts[15]];
+
+    for (const product of wishlistProducts) {
+      await wishlistRepository.save({
+        userId: customerUser.id,
+        productId: product.id,
+      });
+    }
+    console.log('✅ Wishlist items created');
+
+    // Create demo orders for customer
+    const orderRepository = dataSource.getRepository(Order);
+    const orderItemRepository = dataSource.getRepository(OrderItem);
+
+    const demoOrders = [
+      {
+        orderNumber: 'ORD-2025-00001',
+        userId: customerUser.id,
+        status: 'delivered',
+        total: 350.00,
+        shippingCost: 15.00,
+        paymentMethod: 'tarjeta',
+        paymentStatus: 'paid',
+        items: [
+          { productId: allProducts[0].id, quantity: 2, price: 29.95 },
+          { productId: allProducts[2].id, quantity: 1, price: 59.95 },
+        ],
+      },
+      {
+        orderNumber: 'ORD-2025-00002',
+        userId: customerUser.id,
+        status: 'shipped',
+        total: 450.00,
+        shippingCost: 15.00,
+        paymentMethod: 'tarjeta',
+        paymentStatus: 'paid',
+        estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        trackingCode: 'OLVA123456789',
+        shippingCarrier: 'Olva Courier',
+        items: [
+          { productId: allProducts[3].id, quantity: 1, price: 79.90 },
+          { productId: allProducts[6].id, quantity: 2, price: 69.90 },
+          { productId: allProducts[16].id, quantity: 1, price: 159.90 },
+        ],
+      },
+      {
+        orderNumber: 'ORD-2025-00003',
+        userId: customerUser.id,
+        status: 'processing',
+        total: 280.00,
+        shippingCost: 12.00,
+        paymentMethod: 'yape',
+        paymentStatus: 'paid',
+        estimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        items: [
+          { productId: allProducts[8].id, quantity: 1, price: 74.90 },
+          { productId: allProducts[12].id, quantity: 1, price: 149.95 },
+        ],
+      },
+      {
+        orderNumber: 'ORD-2025-00004',
+        userId: customerUser.id,
+        status: 'pending',
+        total: 175.50,
+        shippingCost: 10.00,
+        paymentMethod: 'tarjeta',
+        paymentStatus: 'pending',
+        items: [
+          { productId: allProducts[1].id, quantity: 3, price: 39.90 },
+          { productId: allProducts[19].id, quantity: 1, price: 55.80 },
+        ],
+      },
+    ];
+
+    for (const orderData of demoOrders) {
+      const order = await orderRepository.save({
+        orderNumber: orderData.orderNumber,
+        userId: orderData.userId,
+        status: orderData.status,
+        total: orderData.total,
+        shippingCost: orderData.shippingCost,
+        paymentMethod: orderData.paymentMethod,
+        paymentStatus: orderData.paymentStatus,
+        trackingCode: orderData.trackingCode || null,
+        shippingCarrier: orderData.shippingCarrier || null,
+        estimatedDeliveryDate: orderData.estimatedDelivery ? new Date(orderData.estimatedDelivery) : null,
+        createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
+      });
+
+      for (const item of orderData.items) {
+        await orderItemRepository.save({
+          orderId: order.id,
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        });
+      }
+    }
+    console.log('✅ Demo orders created');
+
     console.log('🎉 Database seed completed!');
   } catch (error) {
     console.error('❌ Error during seeding:', error);

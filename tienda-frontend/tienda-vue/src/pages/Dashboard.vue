@@ -82,7 +82,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">📋 Pedidos Recientes</h2>
@@ -123,7 +123,7 @@
           </div>
         </div>
 
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">❤️ Lista de Deseos</h2>
@@ -154,7 +154,7 @@
           </div>
         </div>
 
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">⏳ Pedidos Pendientes</h2>
