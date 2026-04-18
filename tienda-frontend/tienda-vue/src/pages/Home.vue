@@ -28,16 +28,16 @@
             <div class="flex flex-col sm:flex-row gap-4">
               <RouterLink 
                 to="/products"
-                class="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full text-center overflow-hidden"
+                class="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full text-center overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
               >
-                <span class="relative z-10 group-hover:scale-110 transition-transform duration-300 block">Explorar Coleccion</span>
+                <span class="relative z-10">Explorar Coleccion</span>
                 <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </RouterLink>
               <RouterLink 
                 to="/products"
-                class="group px-8 py-4 border border-white/30 text-white font-bold rounded-full text-center hover:bg-white/10 transition-all duration-300 backdrop-blur-md"
+                class="group px-8 py-4 border border-white/30 text-white font-bold rounded-full text-center hover:bg-white/10 hover:border-purple-400 transition-all duration-300 backdrop-blur-md hover:shadow-lg"
               >
-                <span class="group-hover:scale-110 transition-transform duration-300 inline-block">Ver Ofertas</span>
+                <span class="inline-block">Ver Ofertas</span>
               </RouterLink>
             </div>
 
