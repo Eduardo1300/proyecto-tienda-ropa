@@ -296,9 +296,15 @@ onMounted(async () => {
   // Load orders
   try {
     const ordersRes = await ordersAPI.getAll()
+    console.log('Orders API response:', ordersRes.data)
+    
     const orders = ordersRes.data || []
     recentOrders.value = orders.slice(0, 5)
-    pendingOrders.value = orders.filter((o: any) => o.status === 'shipped' || o.status === 'processing')
+    
+    // Show orders that are not delivered
+    pendingOrders.value = orders.filter((o: any) => o.status && o.status !== 'delivered')
+    console.log('Pending orders:', pendingOrders.value)
+    
     stats.value.totalOrders = orders.length
     stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
   } catch (err) {
@@ -308,6 +314,7 @@ onMounted(async () => {
   // Load loyalty
   try {
     const loyaltyRes = await loyaltyAPI.getProgram()
+    console.log('Loyalty API response:', loyaltyRes.data)
     loyaltyPoints.value = loyaltyRes.data?.availablePoints || 0
     stats.value.loyaltyPoints = loyaltyPoints.value
   } catch (err) {
@@ -317,6 +324,7 @@ onMounted(async () => {
   // Load wishlist
   try {
     const wishlistRes = await wishlistAPI.get()
+    console.log('Wishlist API response:', wishlistRes.data)
     let wishlist: any[] = []
     if (wishlistRes.data) {
       wishlist = Array.isArray(wishlistRes.data) ? wishlistRes.data : (wishlistRes.data.items || [])
