@@ -161,6 +161,12 @@ const handleSubmit = async () => {
   error.value = ''
   isLoading.value = true
   
+  // Limpiar sesión anterior antes de hacer login
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user')
+  
   const success = await authStore.login({ email: email.value, password: password.value })
   
   console.log('Login success:', success)

@@ -1,29 +1,34 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
       <!-- Empty Cart -->
-      <div v-if="cartStore.items.length === 0" class="max-w-2xl mx-auto text-center">
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-12 border border-white/20">
+      <div v-if="cartStore.items.length === 0" class="max-w-2xl mx-auto text-center animate-fade-in-up">
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-12 border border-white/20 hover:border-purple-500/30 transition-all">
           <div class="text-8xl mb-6 animate-bounce">🛒</div>
           <h1 class="text-4xl font-bold text-white mb-4">Tu carrito esta vacio</h1>
           <p class="text-gray-300 mb-8 text-lg">Agrega algunos productos antes de proceder al checkout</p>
-          <RouterLink to="/products" class="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all font-semibold">
+          <RouterLink to="/products" class="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all font-semibold transform hover:scale-105">
             🛍️ Ir a comprar
           </RouterLink>
         </div>
       </div>
 
       <!-- Not Auth -->
-      <div v-else-if="!authStore.isAuthenticated" class="max-w-2xl mx-auto text-center">
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-12 border border-white/20">
-          <div class="text-6xl mb-6">🔐</div>
+      <div v-else-if="!authStore.isAuthenticated" class="max-w-2xl mx-auto text-center animate-fade-in-up">
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-12 border border-white/20 hover:border-purple-500/30 transition-all">
+          <div class="text-6xl mb-6 animate-pulse">🔐</div>
           <h1 class="text-3xl font-bold text-white mb-4">Inicia sesion para continuar</h1>
           <p class="text-gray-300 mb-8">Necesitas iniciar sesion para proceder con tu compra</p>
           <div class="flex gap-4 justify-center">
-            <RouterLink to="/login" class="px-8 py-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-semibold">
+            <RouterLink to="/login" class="px-8 py-4 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all font-semibold transform hover:scale-105">
               🔑 Iniciar Sesion
             </RouterLink>
-            <RouterLink to="/register" class="px-8 py-4 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-semibold">
+            <RouterLink to="/register" class="px-8 py-4 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all font-semibold transform hover:scale-105">
               📝 Registrarse
             </RouterLink>
           </div>
@@ -32,22 +37,24 @@
 
       <!-- Checkout -->
       <div v-else>
-        <h1 class="text-4xl font-bold text-white mb-8">Finalizar Compra</h1>
+        <h1 class="text-4xl font-black text-white mb-8 animate-fade-in-up">
+          Finalizar <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Compra</span>
+        </h1>
         
         <!-- Steps -->
-        <div class="flex items-center justify-center mb-8">
+        <div class="flex items-center justify-center mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
           <div class="flex items-center">
-            <div :class="currentStep >= 1 ? 'bg-purple-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">1</div>
+            <div :class="currentStep >= 1 ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold transform hover:scale-110 transition-transform">1</div>
             <span class="ml-2 text-white">Envío</span>
           </div>
           <div class="w-20 h-1 bg-white/20 mx-4"></div>
           <div class="flex items-center">
-            <div :class="currentStep >= 2 ? 'bg-purple-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">2</div>
+            <div :class="currentStep >= 2 ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold transform hover:scale-110 transition-transform">2</div>
             <span class="ml-2 text-white">Pago</span>
           </div>
           <div class="w-20 h-1 bg-white/20 mx-4"></div>
           <div class="flex items-center">
-            <div :class="currentStep >= 3 ? 'bg-purple-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">3</div>
+            <div :class="currentStep >= 3 ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-white/20'" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold transform hover:scale-110 transition-transform">3</div>
             <span class="ml-2 text-white">Confirmación</span>
           </div>
         </div>
@@ -56,54 +63,54 @@
           <!-- Form -->
           <div class="space-y-6">
             <!-- Shipping -->
-            <div v-if="currentStep === 1" class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
-              <h2 class="text-2xl font-bold text-white mb-6">Informacion de Envio</h2>
+            <div v-if="currentStep === 1" class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-purple-500/30 transition-all animate-fade-in-up">
+              <h2 class="text-2xl font-bold text-white mb-6">📦 Informacion de Envio</h2>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm text-gray-300 mb-2">Nombre *</label>
-                  <input v-model="shipping.firstName" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white" :class="errors.firstName ? 'border-red-500' : 'border-white/20'" />
+                  <input v-model="shipping.firstName" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" :class="errors.firstName ? 'border-red-500' : 'border-white/20'" />
                   <p v-if="errors.firstName" class="text-red-400 text-xs mt-1">{{ errors.firstName }}</p>
                 </div>
                 <div>
                   <label class="block text-sm text-gray-300 mb-2">Apellido *</label>
-                  <input v-model="shipping.lastName" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white" :class="errors.lastName ? 'border-red-500' : 'border-white/20'" />
+                  <input v-model="shipping.lastName" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" :class="errors.lastName ? 'border-red-500' : 'border-white/20'" />
                   <p v-if="errors.lastName" class="text-red-400 text-xs mt-1">{{ errors.lastName }}</p>
                 </div>
                 <div class="col-span-2">
                   <label class="block text-sm text-gray-300 mb-2">Email *</label>
-                  <input v-model="shipping.email" type="email" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white" :class="errors.email ? 'border-red-500' : 'border-white/20'" />
+                  <input v-model="shipping.email" type="email" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" :class="errors.email ? 'border-red-500' : 'border-white/20'" />
                   <p v-if="errors.email" class="text-red-400 text-xs mt-1">{{ errors.email }}</p>
                 </div>
                 <div class="col-span-2">
                   <label class="block text-sm text-gray-300 mb-2">Direccion *</label>
-                  <input v-model="shipping.address" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white" :class="errors.address ? 'border-red-500' : 'border-white/20'" />
+                  <input v-model="shipping.address" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" :class="errors.address ? 'border-red-500' : 'border-white/20'" />
                   <p v-if="errors.address" class="text-red-400 text-xs mt-1">{{ errors.address }}</p>
                 </div>
                 <div>
                   <label class="block text-sm text-gray-300 mb-2">Ciudad *</label>
-                  <input v-model="shipping.city" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white" :class="errors.city ? 'border-red-500' : 'border-white/20'" />
+                  <input v-model="shipping.city" type="text" class="w-full px-4 py-3 bg-white/10 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" :class="errors.city ? 'border-red-500' : 'border-white/20'" />
                   <p v-if="errors.city" class="text-red-400 text-xs mt-1">{{ errors.city }}</p>
                 </div>
                 <div>
                   <label class="block text-sm text-gray-300 mb-2">Telefono</label>
-                  <input v-model="shipping.phone" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white" />
+                  <input v-model="shipping.phone" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500" />
                 </div>
               </div>
-              <button @click="goToPayment" class="mt-6 w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl">
-                Continuar
+              <button @click="goToPayment" class="mt-6 w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+                ➡️ Continuar
               </button>
             </div>
 
             <!-- Payment -->
-            <div v-if="currentStep === 2" class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+            <div v-if="currentStep === 2" class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-purple-500/30 transition-all animate-fade-in-up">
               <h2 class="text-2xl font-bold text-white mb-6">💳 Método de Pago</h2>
               <div class="space-y-4 mb-6">
-                <label class="flex items-center p-4 bg-white/10 rounded-xl cursor-pointer border border-white/20">
-                  <input type="radio" v-model="payment.method" value="card" class="w-5 h-5 text-purple-600" />
+                <label class="flex items-center p-4 bg-white/10 rounded-xl cursor-pointer border border-white/20 hover:bg-white/20 hover:border-purple-500/50 transition-all">
+                  <input type="radio" v-model="payment.method" value="card" class="w-5 h-5 text-purple-600 accent-purple-500" />
                   <span class="ml-3 text-white">💳 Tarjeta de Crédito/Débito</span>
                 </label>
-                <label class="flex items-center p-4 bg-white/10 rounded-xl cursor-pointer border border-white/20">
-                  <input type="radio" v-model="payment.method" value="paypal" class="w-5 h-5 text-purple-600" />
+                <label class="flex items-center p-4 bg-white/10 rounded-xl cursor-pointer border border-white/20 hover:bg-white/20 hover:border-purple-500/50 transition-all">
+                  <input type="radio" v-model="payment.method" value="paypal" class="w-5 h-5 text-purple-600 accent-purple-500" />
                   <span class="ml-3 text-white">🅿️ PayPal</span>
                 </label>
                 <label class="flex items-center p-4 bg-white/10 rounded-xl cursor-pointer border border-white/20">

@@ -6,9 +6,9 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-10 relative z-10">
-      <div class="mb-10">
-        <h1 class="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-          🎁 Programa de Lealtad
+      <div class="mb-10 animate-fade-in-up">
+        <h1 class="text-4xl font-black text-white mb-2 flex items-center gap-3">
+          🎁 Programa de <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Lealtad</span>
         </h1>
         <p class="text-gray-300 text-lg">Gana puntos con cada compra y disfruta de beneficios exclusivos</p>
       </div>
@@ -80,70 +80,70 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div class="bg-white/80 shadow-lg rounded-2xl p-8">
-            <h2 class="text-2xl font-bold mb-6 text-purple-700 flex items-center gap-2">📜 Historial de Transacciones</h2>
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">📜 Historial de Transacciones</h2>
             <div class="space-y-3 max-h-80 overflow-y-auto">
-              <div v-if="transactions.length > 0" v-for="(transaction, index) in transactions" :key="index" class="flex justify-between items-center py-4 border-b border-gray-100">
+              <div v-if="transactions.length > 0" v-for="(transaction, index) in transactions" :key="index" class="flex justify-between items-center py-4 border-b border-white/10">
                 <div>
-                  <div class="text-base font-medium">{{ transaction.description }}</div>
-                  <div class="text-xs text-gray-500">{{ new Date(transaction.createdAt).toLocaleDateString('es-ES') }}</div>
+                  <div class="text-base font-medium text-white">{{ transaction.description }}</div>
+                  <div class="text-xs text-gray-400">{{ new Date(transaction.createdAt).toLocaleDateString('es-ES') }}</div>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span :class="transaction.type === 'EARNED' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 py-1 rounded-lg text-xs font-bold">
+                  <span :class="transaction.type === 'EARNED' ? 'bg-green-500/30 text-green-300 border border-green-400/30' : 'bg-red-500/30 text-red-300 border border-red-400/30'" class="px-2 py-1 rounded-lg text-xs font-bold">
                     {{ transaction.type === 'EARNED' ? '+' : '-' }}{{ transaction.points }}
                   </span>
-                  <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-lg">{{ transaction.type }}</span>
+                  <span class="bg-white/10 text-gray-300 text-xs px-2 py-1 rounded-lg">{{ transaction.type }}</span>
                 </div>
               </div>
-              <p v-else class="text-center text-gray-500 py-8">No hay transacciones disponibles</p>
+              <p v-else class="text-center text-gray-400 py-8">No hay transacciones disponibles</p>
             </div>
           </div>
 
-          <div class="bg-white/80 shadow-lg rounded-2xl p-8">
-            <h2 class="text-2xl font-bold mb-6 text-green-700 flex items-center gap-2">🏆 Tabla de Líderes</h2>
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-2xl p-8">
+            <h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">🏆 Tabla de Líderes</h2>
             <div class="space-y-3 max-h-80 overflow-y-auto">
-              <div v-if="leaderboard.length > 0" v-for="(user, index) in leaderboard" :key="index" class="flex justify-between items-center py-4 border-b border-gray-100">
+              <div v-if="leaderboard.length > 0" v-for="(user, index) in leaderboard" :key="index" class="flex justify-between items-center py-4 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                  <div :class="index === 0 ? 'bg-yellow-100 text-yellow-800' : index === 1 ? 'bg-gray-100 text-gray-800' : index === 2 ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'" class="w-8 h-8 rounded-full flex items-center justify-center text-base font-bold">
+                  <div :class="index === 0 ? 'bg-yellow-500/30 text-yellow-300 border border-yellow-400/30' : index === 1 ? 'bg-gray-400/30 text-gray-300 border border-gray-400/30' : index === 2 ? 'bg-orange-500/30 text-orange-300 border border-orange-400/30' : 'bg-blue-500/30 text-blue-300 border border-blue-400/30'" class="w-8 h-8 rounded-full flex items-center justify-center text-base font-bold">
                     {{ index + 1 }}
                   </div>
                   <div>
-                    <div class="text-base font-medium">Usuario {{ index + 1 }}</div>
-                    <div class="text-xs text-gray-500">{{ user.tier || 'Bronze' }}</div>
+                    <div class="text-base font-medium text-white">Usuario {{ index + 1 }}</div>
+                    <div class="text-xs text-gray-400">{{ user.tier || 'Bronze' }}</div>
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-base font-bold">{{ (user.currentPoints || 0).toLocaleString() }}</div>
-                  <div class="text-xs text-gray-500">puntos</div>
+                  <div class="text-base font-bold text-white">{{ (user.currentPoints || 0).toLocaleString() }}</div>
+                  <div class="text-xs text-gray-400">puntos</div>
                 </div>
               </div>
-              <p v-else class="text-center text-gray-500 py-8">No hay datos de leaderboard disponibles</p>
+              <p v-else class="text-center text-gray-400 py-8">No hay datos de leaderboard disponibles</p>
             </div>
           </div>
         </div>
 
-        <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 mt-10">
-          <h2 class="text-2xl font-bold mb-6 text-indigo-700 flex items-center gap-2">✨ ¿Cómo Ganar Puntos?</h2>
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 mt-10">
+          <h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">✨ ¿Cómo Ganar Puntos?</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="text-center">
-              <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🛒</div>
-              <h3 class="font-semibold mb-1 text-blue-700">Compras</h3>
-              <p class="text-base text-gray-600">1 punto por $1</p>
+            <div class="text-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:scale-105 transform">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🛒</div>
+              <h3 class="font-semibold mb-1 text-white">Compras</h3>
+              <p class="text-base text-gray-400">1 punto por S/ 1</p>
             </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">⭐</div>
-              <h3 class="font-semibold mb-1 text-green-700">Reseñas</h3>
-              <p class="text-base text-gray-600">50 puntos por reseña</p>
+            <div class="text-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:scale-105 transform">
+              <div class="w-16 h-16 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">⭐</div>
+              <h3 class="font-semibold mb-1 text-white">Reseñas</h3>
+              <p class="text-base text-gray-400">50 puntos por reseña</p>
             </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🤝</div>
-              <h3 class="font-semibold mb-1 text-purple-700">Referidos</h3>
-              <p class="text-base text-gray-600">100 puntos por referido</p>
+            <div class="text-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:scale-105 transform">
+              <div class="w-16 h-16 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🤝</div>
+              <h3 class="font-semibold mb-1 text-white">Referidos</h3>
+              <p class="text-base text-gray-400">100 puntos por referido</p>
             </div>
-            <div class="text-center">
-              <div class="w-16 h-16 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🎂</div>
-              <h3 class="font-semibold mb-1 text-yellow-700">Cumpleaños</h3>
-              <p class="text-base text-gray-600">200 puntos</p>
+            <div class="text-center p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all hover:scale-105 transform">
+              <div class="w-16 h-16 bg-gradient-to-br from-yellow-500/30 to-orange-500/30 rounded-xl flex items-center justify-center mx-auto mb-3 text-3xl">🎂</div>
+              <h3 class="font-semibold mb-1 text-white">Cumpleaños</h3>
+              <p class="text-base text-gray-400">200 puntos</p>
             </div>
           </div>
         </div>
@@ -192,3 +192,11 @@ const fetchData = async () => {
 
 onMounted(() => { fetchData() })
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+</style>

@@ -1,9 +1,16 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-40 -left-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
       <!-- Breadcrumb -->
-      <div class="mb-6">
-        <RouterLink to="/products" class="text-purple-400 hover:underline">Volver a productos</RouterLink>
+      <div class="mb-6 animate-fade-in-up">
+        <RouterLink to="/products" class="text-purple-400 hover:text-purple-300 hover:underline transition-colors inline-flex items-center gap-2">
+          ← Volver a productos
+        </RouterLink>
       </div>
 
       <div v-if="loading" class="text-center py-12">
@@ -11,7 +18,8 @@
         <p class="mt-4 text-gray-300">Cargando producto...</p>
       </div>
 
-      <div v-else-if="!product" class="text-center py-12">
+      <div v-else-if="!product" class="text-center py-12 animate-fade-in-up">
+        <div class="text-6xl mb-4">😕</div>
         <h2 class="text-2xl font-bold text-white mb-2">Producto no encontrado</h2>
         <RouterLink to="/products" class="text-purple-400 hover:underline">Volver a productos</RouterLink>
       </div>
@@ -20,33 +28,33 @@
         <!-- Product Main Info -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
           <!-- Images -->
-          <div class="space-y-4">
-            <div class="aspect-square bg-white/10 rounded-2xl overflow-hidden flex items-center justify-center">
-              <span class="text-9xl">{{ getProductEmoji(product) }}</span>
+          <div class="space-y-4 animate-scale-in">
+            <div class="aspect-square bg-white/10 rounded-2xl overflow-hidden flex items-center justify-center border border-white/20 hover:border-purple-500/50 transition-all duration-300 group">
+              <span class="text-9xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">{{ getProductEmoji(product) }}</span>
             </div>
             <div class="grid grid-cols-4 gap-4">
               <div 
                 v-for="i in 4" 
                 :key="i"
-                class="aspect-square bg-white/10 rounded-lg flex items-center justify-center"
+                class="aspect-square bg-white/10 rounded-lg flex items-center justify-center border border-white/20 hover:border-purple-500/50 hover:scale-105 transition-all duration-300 cursor-pointer"
               >
-                <span class="text-3xl">{{ getProductEmoji(product) }}</span>
+                <span class="text-3xl transform hover:rotate-12 transition-transform duration-300">{{ getProductEmoji(product) }}</span>
               </div>
             </div>
           </div>
 
           <!-- Product Info -->
-          <div class="space-y-6">
+          <div class="space-y-6 animate-fade-in-up" style="animation-delay: 0.2s;">
             <div>
-              <span class="inline-block px-3 py-1 bg-purple-500/30 text-purple-300 rounded-full text-sm mb-4">
+              <span class="inline-block px-3 py-1 bg-purple-500/30 text-purple-300 rounded-full text-sm mb-4 animate-pulse">
                 {{ product.category }}
               </span>
-              <h1 class="text-4xl font-bold text-white mb-2">{{ product.name }}</h1>
+              <h1 class="text-4xl md:text-5xl font-black text-white mb-4 hover:text-purple-400 transition-colors">{{ product.name }}</h1>
               <div class="flex items-center gap-4 flex-wrap">
-                <span class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                <span class="text-3xl md:text-4xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                   S/ {{ Number(product.price).toFixed(2) }}
                 </span>
-                <div v-if="product.reviewCount" class="flex items-center gap-2">
+                <div v-if="product.reviewCount" class="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full">
                   <div class="flex items-center">
                     <span class="text-yellow-400 text-xl">★</span>
                     <span class="text-white font-semibold ml-1">{{ Number(product.averageRating || 0).toFixed(1) }}</span>
@@ -54,42 +62,47 @@
                   <span class="text-gray-400">({{ product.reviewCount }} reseñas)</span>
                 </div>
               </div>
-              <div class="mt-2">
-                <span v-if="product.stock > 0" class="text-green-400 flex items-center gap-1">
-                  <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+              <div class="mt-4 flex items-center gap-2">
+                <span v-if="product.stock > 0" class="text-green-400 flex items-center gap-2">
+                  <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
                   En stock ({{ product.stock }} disponibles)
                 </span>
-                <span v-else class="text-red-400">Agotado</span>
+                <span v-else class="text-red-400 flex items-center gap-2">
+                  <span class="w-3 h-3 bg-red-400 rounded-full"></span>
+                  Agotado
+                </span>
               </div>
             </div>
 
-            <p class="text-gray-300 text-lg">{{ product.description }}</p>
+            <p class="text-gray-300 text-lg leading-relaxed border-l-4 border-purple-500 pl-4">{{ product.description }}</p>
 
             <!-- Quantity & Add to Cart -->
-            <div class="flex items-center gap-4">
-              <div class="flex items-center border border-white/20 rounded-lg">
-                <button @click="quantity > 1 && quantity--" class="px-4 py-2 text-white hover:bg-white/10">-</button>
-                <span class="px-4 py-2 text-white">{{ quantity }}</span>
-                <button @click="quantity++" class="px-4 py-2 text-white hover:bg-white/10">+</button>
+            <div class="flex items-center gap-4 flex-wrap">
+              <div class="flex items-center border border-white/20 rounded-xl bg-white/5">
+                <button @click="quantity > 1 && quantity--" class="px-4 py-3 text-white hover:bg-white/10 transition-colors rounded-l-xl">−</button>
+                <span class="px-6 py-3 text-white font-semibold border-x border-white/10">{{ quantity }}</span>
+                <button @click="quantity++" class="px-4 py-3 text-white hover:bg-white/10 transition-colors rounded-r-xl">+</button>
               </div>
               <button 
                 @click="addToCart" 
                 :disabled="product.stock <= 0"
-                class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 hover:shadow-lg"
               >
-                Agregar al Carrito
+                🛒 Agregar al Carrito
               </button>
               <button 
                 @click="toggleWishlist"
-                class="p-3 border border-white/20 rounded-xl text-white hover:bg-white/10"
+                class="p-3 border border-white/20 rounded-xl text-white hover:bg-white/10 hover:border-purple-500/50 transition-all transform hover:scale-105"
               >
-                {{ isInWishlist ? 'Favorito' : 'Agregar a Favoritos' }}
+                {{ isInWishlist ? '❤️' : '🤍' }} {{ isInWishlist ? 'Favorito' : 'Favoritos' }}
               </button>
             </div>
 
             <!-- Product Details -->
-            <div class="bg-white/5 rounded-xl p-6 space-y-3">
-              <h3 class="text-white font-semibold text-lg">Detalles del Producto</h3>
+            <div class="bg-white/5 rounded-xl p-6 space-y-3 border border-white/10 hover:border-purple-500/30 transition-all">
+              <h3 class="text-white font-semibold text-lg flex items-center gap-2">
+                <span>📋</span> Detalles del Producto
+              </h3>
               <div class="grid grid-cols-2 gap-2 text-sm">
                 <span class="text-gray-400">Categoria:</span>
                 <span class="text-white">{{ product.category }}</span>
@@ -99,18 +112,20 @@
             </div>
 
             <!-- Shipping Info -->
-            <div class="bg-white/5 rounded-xl p-6 space-y-3">
-              <h3 class="text-white font-semibold text-lg">Informacion de Envio</h3>
-              <div class="flex items-center gap-3 text-gray-300">
-                <span class="text-xl">Envio</span>
+            <div class="bg-white/5 rounded-xl p-6 space-y-3 border border-white/10 hover:border-purple-500/30 transition-all">
+              <h3 class="text-white font-semibold text-lg flex items-center gap-2">
+                <span>🚚</span> Informacion de Envio
+              </h3>
+              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+                <span class="text-xl">📦</span>
                 <span>Envio en 24-48 horas</span>
               </div>
-              <div class="flex items-center gap-3 text-gray-300">
-                <span class="text-xl">Paquete</span>
+              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+                <span class="text-xl">🎁</span>
                 <span>Envio gratis en pedidos mayores a S/ 100</span>
               </div>
-              <div class="flex items-center gap-3 text-gray-300">
-                <span class="text-xl">Cambio</span>
+              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
+                <span class="text-xl">🔄</span>
                 <span>30 dias para cambios y devoluciones</span>
               </div>
             </div>
@@ -118,21 +133,27 @@
         </div>
 
         <!-- Reviews Section -->
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-12">
-          <h2 class="text-2xl font-bold text-white mb-6">Reseñas del Producto</h2>
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-12 border border-white/20 hover:border-purple-500/30 transition-all animate-fade-in-up" style="animation-delay: 0.4s;">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <span>⭐</span> Reseñas del Producto
+          </h2>
           
           <div v-if="reviews.length === 0" class="text-center py-8">
+            <div class="text-5xl mb-4">💬</div>
             <p class="text-gray-400">No hay reseñas aun. Se el primero en opinar!</p>
           </div>
 
           <div v-else class="space-y-6">
-            <div v-for="review in reviews" :key="review.id" class="border-b border-white/10 pb-6">
+            <div v-for="review in reviews" :key="review.id" class="border-b border-white/10 pb-6 hover:bg-white/5 p-4 rounded-xl transition-all">
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
+                  <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                    {{ (review.user?.name || review.user?.username || review.userId || 'U')[0].toUpperCase() }}
+                  </div>
                   <span class="text-white font-semibold">{{ review.user?.name || review.user?.username || review.userId || 'Usuario' }}</span>
-                  <span v-if="review.isVerified || review.purchaseVerified" class="text-green-400 text-sm">Verificado</span>
+                  <span v-if="review.isVerified || review.purchaseVerified" class="text-green-400 text-sm flex items-center gap-1">✓ Verificado</span>
                 </div>
-                <div class="text-yellow-400">
+                <div class="text-yellow-400 text-lg">
                   {{ '★'.repeat(review.rating || 5) }}{{ '☆'.repeat(5 - (review.rating || 5)) }}
                 </div>
               </div>
@@ -147,7 +168,9 @@
 
           <!-- Add Review Form -->
           <div v-if="isLoggedIn && reviewsError === ''" class="mt-8 pt-6 border-t border-white/10">
-            <h3 class="text-white font-semibold text-lg mb-4">Escribir una Resena</h3>
+            <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+              <span>✍️</span> Escribir una Resena
+            </h3>
             <div class="space-y-4">
               <div>
                 <label class="text-gray-400 text-sm mb-1 block">Calificacion</label>
@@ -156,7 +179,7 @@
                     v-for="star in 5" 
                     :key="star"
                     @click="newReview.rating = star"
-                    class="text-2xl"
+                    class="text-3xl transition-transform hover:scale-125"
                     :class="star <= newReview.rating ? 'text-yellow-400' : 'text-gray-500'"
                   >
                     {{ star <= newReview.rating ? '★' : '☆' }}
@@ -167,7 +190,7 @@
                 <input 
                   v-model="newReview.title" 
                   placeholder="Titulo de tu resena"
-                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400"
+                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               </div>
               <div>
@@ -175,37 +198,39 @@
                   v-model="newReview.comment" 
                   placeholder="Escribe tu resena..."
                   rows="3"
-                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400"
+                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                 ></textarea>
               </div>
               <button 
                 @click="submitReview"
-                class="px-6 py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700"
+                class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all"
               >
-                Enviar Resena
+                📤 Enviar Resena
               </button>
             </div>
           </div>
         </div>
 
         <!-- Related Products -->
-        <div v-if="relatedProducts.length > 0" class="mb-12">
-          <h2 class="text-2xl font-bold text-white mb-6">Productos Relacionados</h2>
+        <div v-if="relatedProducts.length > 0" class="mb-12 animate-fade-in-up" style="animation-delay: 0.6s;">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <span>🔗</span> Productos Relacionados
+          </h2>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div 
               v-for="related in relatedProducts" 
               :key="related.id"
-              class="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20 hover:shadow-2xl transition-all"
+              class="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20 hover:shadow-2xl hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-2 group"
             >
-              <div class="h-48 bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center">
-                <span class="text-5xl">{{ getProductEmoji(related) }}</span>
+              <div class="h-48 bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <span class="text-5xl transform group-hover:rotate-12 transition-transform duration-300">{{ getProductEmoji(related) }}</span>
               </div>
               <div class="p-4">
-                <h3 class="text-white font-semibold mb-1 line-clamp-1">{{ related.name }}</h3>
+                <h3 class="text-white font-semibold mb-1 line-clamp-1 group-hover:text-purple-400 transition-colors">{{ related.name }}</h3>
                 <p class="text-purple-400 font-bold">S/ {{ Number(related.price).toFixed(2) }}</p>
                 <RouterLink 
                   :to="`/product/${related.id}`"
-                  class="block mt-2 text-center py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-white/20"
+                  class="block mt-2 text-center py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-purple-600 transition-all"
                 >
                   Ver Detalle
                 </RouterLink>
@@ -369,3 +394,36 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+}
+</style>

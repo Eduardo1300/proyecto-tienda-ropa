@@ -51,7 +51,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-green-100 text-sm font-medium mb-1">Total Gastado</p>
-              <p class="text-3xl font-bold">${{ stats.totalSpent.toFixed(2) }}</p>
+              <p class="text-3xl font-bold">S/ {{ stats.totalSpent.toFixed(2) }}</p>
               <p class="text-green-200 text-xs mt-1">En compras</p>
             </div>
             <div class="text-4xl opacity-80">💰</div>
@@ -94,29 +94,29 @@
           </div>
 
           <div v-if="recentOrders.length > 0" class="space-y-4">
-            <div v-for="order in recentOrders" :key="order.id" class="bg-white/80 backdrop-blur-sm rounded-xl p-4">
+            <div v-for="order in recentOrders" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
-                    <h3 class="font-bold text-gray-800">#{{ order.orderNumber }}</h3>
+                    <h3 class="font-bold text-white">#{{ order.orderNumber }}</h3>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" :class="getStatusBadge(order.status)">
                       {{ getStatusDisplayName(order.status) }}
                     </span>
                   </div>
-                  <p class="text-sm text-gray-600 mb-1">📅 {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
-                  <p class="text-sm text-gray-600">📦 {{ order.items?.length || 0 }} artículos</p>
+                  <p class="text-sm text-gray-300 mb-1">📅 {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
+                  <p class="text-sm text-gray-300">📦 {{ order.items?.length || 0 }} artículos</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-2xl text-gray-800">${{ Number(order.total).toFixed(2) }}</p>
-                  <RouterLink :to="`/orders/${order.id}`" class="text-sm text-purple-600 hover:underline mt-2 block">Ver detalles</RouterLink>
+                  <p class="font-bold text-2xl text-white">S/ {{ Number(order.total).toFixed(2) }}</p>
+                  <RouterLink :to="`/orders/${order.id}`" class="text-sm text-purple-400 hover:text-purple-300 mt-2 block">Ver detalles</RouterLink>
                 </div>
               </div>
             </div>
           </div>
           <div v-else class="text-center py-12">
             <div class="text-6xl mb-4">📋</div>
-            <h3 class="text-xl font-bold text-gray-700 mb-2">No tienes pedidos recientes</h3>
-            <p class="text-gray-500 mb-6">¡Es el momento perfecto para hacer tu primera compra!</p>
+            <h3 class="text-xl font-bold text-white mb-2">No tienes pedidos recientes</h3>
+            <p class="text-gray-400 mb-6">¡Es el momento perfecto para hacer tu primera compra!</p>
             <RouterLink to="/products" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
               Explorar productos
             </RouterLink>
@@ -135,19 +135,19 @@
           </div>
 
           <div v-if="wishlistItems.length > 0" class="grid grid-cols-2 gap-4">
-            <div v-for="item in wishlistItems.slice(0, 4)" :key="item.id" class="bg-white/80 backdrop-blur-sm rounded-xl p-3 group">
-              <div class="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center text-5xl">
+            <div v-for="item in wishlistItems.slice(0, 4)" :key="item.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 group hover:bg-white/20 transition-all">
+              <div class="aspect-square bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-lg mb-3 overflow-hidden relative flex items-center justify-center text-5xl">
                 <span v-if="item.product">{{ getProductEmoji(item.product) }}</span>
                 <span v-else>👕</span>
               </div>
-              <h3 class="font-medium text-gray-800 text-sm mb-1 line-clamp-1">{{ item.product?.name }}</h3>
-              <span class="text-sm font-bold text-purple-600">${{ item.product?.price }}</span>
+              <h3 class="font-medium text-white text-sm mb-1 line-clamp-1">{{ item.product?.name }}</h3>
+              <span class="text-sm font-bold text-purple-400">S/ {{ item.product?.price }}</span>
             </div>
           </div>
           <div v-else class="text-center py-12">
             <div class="text-6xl mb-4">❤️</div>
-            <h3 class="text-xl font-bold text-gray-700 mb-2">Tu lista de deseos está vacía</h3>
-            <p class="text-gray-500 mb-6">Guarda productos que te gusten para comprarlos más tarde</p>
+            <h3 class="text-xl font-bold text-white mb-2">Tu lista de deseos está vacía</h3>
+            <p class="text-gray-400 mb-6">Guarda productos que te gusten para comprarlos más tarde</p>
             <RouterLink to="/products" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
               Explorar productos
             </RouterLink>
@@ -163,20 +163,20 @@
           </div>
 
           <div v-if="pendingOrders.length > 0" class="space-y-4">
-            <div v-for="order in pendingOrders" :key="order.id" class="bg-white/80 backdrop-blur-sm rounded-xl p-4">
+            <div v-for="order in pendingOrders" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
-                    <h3 class="font-bold text-gray-800">#{{ order.orderNumber }}</h3>
+                    <h3 class="font-bold text-white">#{{ order.orderNumber }}</h3>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" :class="getStatusBadge(order.status)">
                       {{ getStatusDisplayName(order.status) }}
                     </span>
                   </div>
-                  <p class="text-sm text-gray-600 mb-1">📅 Pedido: {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
-                  <p class="text-sm text-green-600 font-medium">🚚 Llegada estimada: {{ order.estimatedDelivery }}</p>
+                  <p class="text-sm text-gray-300 mb-1">📅 Pedido: {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
+                  <p class="text-sm text-green-400 font-medium">🚚 Llegada estimada: {{ order.estimatedDelivery }}</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-xl text-gray-800 mb-2">S/ {{ Number(order.total).toFixed(2) }}</p>
+                  <p class="font-bold text-xl text-white mb-2">S/ {{ Number(order.total).toFixed(2) }}</p>
                   <RouterLink :to="`/order-tracking/${order.id}`" class="inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
                     📍 Rastrear
                   </RouterLink>
@@ -186,8 +186,8 @@
           </div>
           <div v-else class="text-center py-12">
             <div class="text-6xl mb-4">⏳</div>
-            <h3 class="text-xl font-bold text-gray-700 mb-2">No tienes pedidos pendientes</h3>
-            <p class="text-gray-500 mb-6">Todos tus pedidos han sido entregados</p>
+            <h3 class="text-xl font-bold text-white mb-2">No tienes pedidos pendientes</h3>
+            <p class="text-gray-400 mb-6">Todos tus pedidos han sido entregados</p>
             <RouterLink to="/products" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
               Hacer nuevo pedido
             </RouterLink>
@@ -225,7 +225,7 @@
         </div>
       </div>
 
-      <RouterLink to="/admin" class="inline-flex items-center px-6 py-3 mt-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all">
+      <RouterLink v-if="userRole === 'admin'" to="/admin" class="inline-flex items-center px-6 py-3 mt-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all">
         Panel de Admin →
       </RouterLink>
     </div>
@@ -233,11 +233,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ordersAPI, loyaltyAPI, wishlistAPI } from '../api'
 
+const router = useRouter()
 const authStore = useAuthStore()
+
+const userRole = computed(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      const userData = JSON.parse(userStr)
+      return userData.role || 'user'
+    } catch {
+      return 'user'
+    }
+  }
+  return 'user'
+})
+
 const user = ref<any>(null)
 const stats = ref({ totalOrders: 0, totalSpent: 0, loyaltyPoints: 0, wishlistItems: 0 })
 const recentOrders = ref<any[]>([])
@@ -248,12 +264,12 @@ const loyaltyPoints = ref(0)
 
 const getStatusBadge = (status: string) => {
   const colors: Record<string, string> = {
-    delivered: 'bg-green-100 text-green-800',
-    shipped: 'bg-purple-100 text-purple-800',
-    processing: 'bg-yellow-100 text-yellow-800',
-    pending: 'bg-gray-100 text-gray-800',
+    delivered: 'bg-green-500/30 text-green-300 border border-green-400/30',
+    shipped: 'bg-purple-500/30 text-purple-300 border border-purple-400/30',
+    processing: 'bg-yellow-500/30 text-yellow-300 border border-yellow-400/30',
+    pending: 'bg-gray-500/30 text-gray-300 border border-gray-400/30',
   }
-  return colors[status] || 'bg-gray-100 text-gray-800'
+  return colors[status] || 'bg-gray-500/30 text-gray-300 border border-gray-400/30'
 }
 
 const getStatusDisplayName = (status: string) => {

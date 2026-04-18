@@ -9,14 +9,14 @@
     <section class="relative z-10 overflow-hidden pt-20 pb-32 px-4">
       <div class="max-w-7xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-8">
+          <div class="space-y-8 animate-fade-in-up">
             <div class="space-y-4">
-              <div class="inline-block px-4 py-2 bg-purple-600/30 rounded-full text-purple-300 text-sm mb-6 backdrop-blur-md">
+              <div class="inline-block px-4 py-2 bg-purple-600/30 rounded-full text-purple-300 text-sm mb-6 backdrop-blur-md animate-float">
                 Coleccion Premium 2024
               </div>
               <h1 class="text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight">
                 Estilo que
-                <span class="block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
+                <span class="block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">
                   Define tu Ser
                 </span>
               </h1>
@@ -28,47 +28,49 @@
             <div class="flex flex-col sm:flex-row gap-4">
               <RouterLink 
                 to="/products"
-                class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full text-center transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+                class="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full text-center overflow-hidden"
               >
-                Explorar Coleccion
+                <span class="relative z-10 group-hover:scale-110 transition-transform duration-300 block">Explorar Coleccion</span>
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </RouterLink>
               <RouterLink 
                 to="/products"
-                class="px-8 py-4 border border-white/30 text-white font-bold rounded-full text-center hover:bg-white/10 transition-all duration-300 backdrop-blur-md"
+                class="group px-8 py-4 border border-white/30 text-white font-bold rounded-full text-center hover:bg-white/10 transition-all duration-300 backdrop-blur-md"
               >
-                Ver Ofertas
+                <span class="group-hover:scale-110 transition-transform duration-300 inline-block">Ver Ofertas</span>
               </RouterLink>
             </div>
 
             <div class="grid grid-cols-3 gap-6 pt-8">
               <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 transition-transform">
+                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
                   2000+
                 </div>
-                <p class="text-gray-400 text-sm">Productos</p>
+                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Productos</p>
               </div>
               <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 transition-transform">
+                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
                   5000+
                 </div>
-                <p class="text-gray-400 text-sm">Clientes</p>
+                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Clientes</p>
               </div>
               <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 transition-transform">
+                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
                   24h
                 </div>
-                <p class="text-gray-400 text-sm">Envio</p>
+                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Envio</p>
               </div>
             </div>
           </div>
 
-          <div class="relative h-96 md:h-full">
+          <div class="relative h-96 md:h-full animate-scale-in">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-600/40 via-pink-600/40 to-transparent rounded-3xl blur-3xl animate-pulse"></div>
-            <div class="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl h-96 flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5">
-              <div class="text-center space-y-4">
+            <div class="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl h-96 flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5 group">
+              <div class="text-center space-y-4 transform group-hover:scale-110 transition-transform duration-500">
                 <div class="text-9xl animate-bounce">{{ String.fromCodePoint(0x1F457) }}</div>
                 <p class="text-white/60 font-semibold">Moda Premium</p>
               </div>
+              <div class="absolute inset-0 ring-1 ring-white/20 rounded-3xl"></div>
             </div>
           </div>
         </div>
@@ -77,7 +79,7 @@
 
     <section class="relative z-10 py-16 px-4">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
             Explora por Categoria
           </h2>
@@ -85,15 +87,18 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div v-for="(category, index) in categories" :key="index" class="cursor-pointer group">
+          <div v-for="(category, index) in categories" :key="index" 
+            class="cursor-pointer group animate-fade-in-up"
+            :style="{ animationDelay: `${index * 100}ms` }"
+          >
             <div 
-              class="bg-gradient-to-br rounded-xl p-6 text-white text-center transform hover:scale-110 transition-all duration-300"
+              class="bg-gradient-to-br rounded-xl p-6 text-white text-center transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl"
               :class="category.color"
             >
-              <div class="text-5xl group-hover:scale-125 transition-transform duration-300 mb-3">
+              <div class="text-5xl group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300 mb-3">
                 {{ category.icon }}
               </div>
-              <h3 class="font-bold text-sm">{{ category.name }}</h3>
+              <h3 class="font-bold text-sm group-hover:text-white transition-colors">{{ category.name }}</h3>
             </div>
           </div>
         </div>
@@ -102,7 +107,7 @@
 
     <section class="relative z-10 py-20 px-4">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
             Ventajas Exclusivas
           </h2>
@@ -111,13 +116,14 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div v-for="(feature, index) in features" :key="index" 
-            class="bg-gradient-to-br rounded-xl p-6 text-white hover:shadow-2xl transition-all duration-300 group"
+            class="group bg-gradient-to-br rounded-xl p-6 text-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
             :class="feature.color"
+            :style="{ animationDelay: `${index * 150}ms` }"
           >
-            <div class="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
+            <div class="text-4xl mb-4 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300">
               {{ feature.icon }}
             </div>
-            <h3 class="text-lg font-bold mb-2">{{ feature.title }}</h3>
+            <h3 class="text-lg font-bold mb-2 group-hover:text-white transition-colors">{{ feature.title }}</h3>
             <p class="text-white/90 text-sm">{{ feature.description }}</p>
           </div>
         </div>
@@ -126,8 +132,8 @@
 
     <section class="relative z-10 py-20 px-4">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <span class="inline-block px-4 py-2 bg-red-600/30 rounded-full text-red-300 text-sm mb-4">
+        <div class="text-center mb-16 animate-fade-in-up">
+          <span class="inline-block px-4 py-2 bg-red-600/30 rounded-full text-red-300 text-sm mb-4 animate-pulse">
             Tendencias Actuales
           </span>
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -141,24 +147,32 @@
           <p class="text-gray-400 text-xl">Cargando productos...</p>
         </div>
 
-        <div v-else-if="error" class="text-center py-12">
-          <div class="text-6xl mb-4"> Loading</div>
+        <div v-else-if="error" class="text-center py-12 animate-fade-in-up">
+          <div class="text-6xl mb-4 animate-wiggle"> Loading</div>
           <h2 class="text-2xl font-bold text-white mb-2">Conectando con el backend</h2>
           <p class="text-gray-400 mb-6">Esto puede tardar unos segundos</p>
-          <button @click="fetchProducts" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700">
+          <button @click="fetchProducts" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transform hover:scale-105 transition-all">
             Reintentar
           </button>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <div v-for="(product, index) in products.slice(0, 6)" :key="product.id" class="group cursor-pointer">
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500">
-              <div class="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden flex items-center justify-center">
-                <span class="text-6xl">{{ getProductEmoji(product) }}</span>
+          <div v-for="(product, index) in products.slice(0, 6)" :key="product.id" 
+            class="group cursor-pointer animate-fade-in-up"
+            :style="{ animationDelay: `${index * 100}ms` }"
+          >
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hover:shadow-2xl hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
+              <div class="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <span class="text-6xl transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">{{ getProductEmoji(product) }}</span>
+                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2">
+                  <span v-if="product.stock <= 5 && product.stock > 0" class="px-2 py-1 bg-yellow-600 text-white text-xs rounded-full">
+                    ¡Solo {{ product.stock }}!
+                  </span>
+                </div>
               </div>
               
               <div class="p-6 space-y-3">
-                <h3 class="text-lg font-bold text-white line-clamp-2">
+                <h3 class="text-lg font-bold text-white line-clamp-2 group-hover:text-purple-400 transition-colors">
                   {{ product.name }}
                 </h3>
                 <p class="text-gray-400 text-sm line-clamp-2">{{ product.description }}</p>
@@ -179,13 +193,13 @@
                 <div class="flex gap-2 pt-2">
                   <RouterLink 
                     :to="`/product/${product.id}`"
-                    class="flex-1 px-4 py-2 border border-white/30 text-white text-center rounded-lg hover:bg-white/10 text-sm"
+                    class="flex-1 px-4 py-2 border border-white/30 text-white text-center rounded-lg hover:bg-white/10 hover:border-purple-500/50 text-sm transition-all"
                   >
                     Detalles
                   </RouterLink>
                   <button 
                     @click.prevent="addToCart(product)"
-                    class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 text-sm"
+                    class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 text-sm transform hover:scale-105 transition-all"
                   >
                     Carrito
                   </button>
@@ -195,12 +209,12 @@
           </div>
         </div>
 
-        <div class="text-center">
+        <div class="text-center animate-fade-in-up">
           <RouterLink 
             to="/products"
-            class="inline-block px-8 py-4 bg-white text-purple-900 font-bold rounded-full hover:bg-gray-100 transition-all"
+            class="group inline-block px-8 py-4 bg-white text-purple-900 font-bold rounded-full hover:bg-gray-100 transition-all transform hover:scale-105"
           >
-            Ver Todos los Productos
+            <span class="group-hover:scale-110 transition-transform inline-block">Ver Todos los Productos</span>
           </RouterLink>
         </div>
       </div>
@@ -208,18 +222,19 @@
 
     <section class="relative z-10 py-20 px-4 bg-black/20">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
             Lo que dicen nuestros clientes
           </h2>
         </div>
         <div class="grid md:grid-cols-3 gap-6">
           <div v-for="(testimonial, index) in testimonials" :key="index" 
-            class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20"
+            class="group bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up"
+            :style="{ animationDelay: `${index * 150}ms` }"
           >
-            <div class="text-yellow-400 mb-4">*****</div>
-            <p class="text-gray-300 mb-4">"{{ testimonial.text }}"</p>
-            <p class="font-semibold text-white">- {{ testimonial.name }}</p>
+            <div class="text-yellow-400 mb-4 text-xl">★★★★★</div>
+            <p class="text-gray-300 mb-4 group-hover:text-white transition-colors">"{{ testimonial.text }}"</p>
+            <p class="font-semibold text-white group-hover:text-purple-400 transition-colors">- {{ testimonial.name }}</p>
           </div>
         </div>
       </div>
@@ -324,5 +339,64 @@ onMounted(() => {
 
 .animate-bounce {
   animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes gradientX {
+  0%, 100% { background-size: 200% 200%; background-position: 0% 50%; }
+  50% { background-size: 200% 200%; background-position: 100% 50%; }
+}
+
+.animate-gradient-x {
+  animation: gradientX 3s ease infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
 }
 </style>

@@ -6,8 +6,10 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-12 relative z-10">
-      <div class="mb-12">
-        <h1 class="text-5xl font-bold text-white mb-3">📋 Mis Pedidos</h1>
+      <div class="mb-12 animate-fade-in-up">
+        <h1 class="text-5xl font-black text-white mb-3">
+          📋 <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Mis Pedidos</span>
+        </h1>
         <p class="text-gray-300 text-lg">Gestiona y rastrea todos tus pedidos</p>
       </div>
 
@@ -16,21 +18,24 @@
         <p class="mt-4 text-gray-300">Cargando pedidos...</p>
       </div>
 
-      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-        <p class="text-red-700">{{ error }}</p>
+      <div v-else-if="error" class="bg-red-500/20 border border-red-400/30 text-red-300 p-4 rounded-xl mb-6">
+        <p>{{ error }}</p>
       </div>
 
-      <div v-else-if="orders.length === 0" class="text-center py-20">
-        <div class="text-gray-400 text-6xl mb-4">📦</div>
+      <div v-else-if="orders.length === 0" class="text-center py-20 animate-fade-in-up">
+        <div class="text-gray-400 text-6xl mb-4 animate-bounce">📦</div>
         <h3 class="text-xl font-medium text-white mb-2">No tienes pedidos aún</h3>
         <p class="text-gray-400 mb-6">Cuando realices tu primer pedido, aparecerá aquí</p>
-        <RouterLink to="/products" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+        <RouterLink to="/products" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-all hover:scale-105">
           Explorar Productos
         </RouterLink>
       </div>
 
       <div v-else class="space-y-6">
-        <div v-for="order in orders" :key="order.id" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+        <div v-for="(order, index) in orders" :key="order.id" 
+          class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 animate-fade-in-up"
+          :style="{ animationDelay: `${index * 100}ms` }"
+        >
           <div class="p-6">
             <div class="flex items-center justify-between mb-4">
               <div>
@@ -90,17 +95,17 @@
         </div>
       </div>
 
-      <div v-if="showCancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-gray-900">
+      <div v-if="showCancelModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+        <div class="relative mx-auto p-6 border w-96 shadow-2xl rounded-2xl bg-gray-900 border-white/20 animate-scale-in">
           <div class="mt-3">
-            <h3 class="text-lg font-medium text-white mb-4">
+            <h3 class="text-lg font-bold text-white mb-4">
               Cancelar Pedido #{{ selectedOrder?.orderNumber }}
             </h3>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-300 mb-2">
                 Motivo de cancelación *
               </label>
-              <select v-model="cancelReason" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+              <select v-model="cancelReason" class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                 <option value="">Selecciona un motivo</option>
                 <option value="changed_mind">Cambié de opinión</option>
                 <option value="found_better_price">Encontré mejor precio</option>
@@ -110,10 +115,10 @@
               </select>
             </div>
             <div class="flex space-x-3">
-              <button @click="handleCancelOrder" :disabled="!cancelReason.trim() || cancelling" class="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button @click="handleCancelOrder" :disabled="!cancelReason.trim() || cancelling" class="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105">
                 {{ cancelling ? 'Cancelando...' : 'Confirmar Cancelación' }}
               </button>
-              <button @click="closeCancelModal" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-500">
+              <button @click="closeCancelModal" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-all transform hover:scale-105">
                 Cerrar
               </button>
             </div>
@@ -234,3 +239,23 @@ const getProductEmoji = (product: any): string => {
   return String.fromCodePoint(0x1F455)
 }
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scaleIn 0.3s ease-out forwards; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bounce { animation: bounce 2s ease-in-out infinite; }
+</style>

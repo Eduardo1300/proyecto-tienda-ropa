@@ -18,23 +18,34 @@
           <RouterLink to="/products" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             👕 Productos
           </RouterLink>
-          <RouterLink v-if="hasLocalAuth" to="/dashboard" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
+          <!-- Solo admin -->
+          <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/dashboard" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📊 Dashboard
           </RouterLink>
+          <!-- Todos los usuarios autenticados -->
           <RouterLink v-if="hasLocalAuth" to="/orders" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📦 Mis Pedidos
           </RouterLink>
           <RouterLink v-if="hasLocalAuth" to="/profile" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             👤 Perfil
           </RouterLink>
-          <RouterLink v-if="hasLocalAuth" to="/loyalty" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
+          <!-- Solo user (cliente regular) -->
+          <RouterLink v-if="hasLocalAuth && userRole === 'user'" to="/loyalty" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             🏆 Lealtad
           </RouterLink>
+          <!-- Solo admin -->
           <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/admin" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             ⚙️ Admin
           </RouterLink>
           <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/inventory" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📦 Inventario
+          </RouterLink>
+          <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/analytics" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
+            📈 Analytics
+          </RouterLink>
+          <!-- Solo supplier -->
+          <RouterLink v-if="hasLocalAuth && userRole === 'supplier'" to="/supplier" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
+            🚚 Proveedor
           </RouterLink>
         </nav>
 
@@ -85,7 +96,7 @@
             🛒 Carrito ({{ cartStore.itemCount }})
           </RouterLink>
           <template v-if="hasLocalAuth">
-            <RouterLink to="/dashboard" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            <RouterLink v-if="userRole === 'admin'" to="/dashboard" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
               📊 Dashboard
             </RouterLink>
             <RouterLink to="/orders" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
@@ -94,7 +105,7 @@
             <RouterLink to="/profile" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
               👤 Perfil
             </RouterLink>
-            <RouterLink to="/loyalty" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            <RouterLink v-if="userRole === 'user'" to="/loyalty" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
               🏆 Lealtad
             </RouterLink>
             <RouterLink v-if="userRole === 'admin'" to="/admin" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
@@ -102,6 +113,12 @@
             </RouterLink>
             <RouterLink v-if="userRole === 'admin'" to="/inventory" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
               📦 Inventario
+            </RouterLink>
+            <RouterLink v-if="userRole === 'admin'" to="/analytics" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+              📈 Analytics
+            </RouterLink>
+            <RouterLink v-if="userRole === 'supplier'" to="/supplier" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
+              🚚 Proveedor
             </RouterLink>
             <button @click="handleLogout" class="py-2 px-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-left">
               🚪 Cerrar Sesion

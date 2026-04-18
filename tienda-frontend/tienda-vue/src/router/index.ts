@@ -88,19 +88,19 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../pages/Dashboard.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresRole: 'admin' }
   },
   {
     path: '/analytics',
     name: 'Analytics',
     component: () => import('../pages/Analytics.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresRole: 'admin' }
   },
   {
     path: '/loyalty',
     name: 'Loyalty',
     component: () => import('../pages/Loyalty.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresRole: 'user' }
   },
   {
     path: '/inventory',
@@ -125,6 +125,12 @@ const routes = [
     name: 'ProductImageManager',
     component: () => import('../pages/ProductImageManager.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/supplier',
+    name: 'Supplier',
+    component: () => import('../pages/SupplierManagement.vue'),
+    meta: { requiresAuth: true, requiresRole: 'supplier' }
   }
 ]
 
@@ -144,6 +150,15 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
     next({ name: 'Home' })
     return
+  }
+
+  if (to.meta.requiresRole) {
+    const requiredRole = to.meta.requiresRole as string
+    // Permitir acceso si el rol del usuario coincide o si es admin
+    if (authStore.user?.role !== requiredRole && authStore.user?.role !== 'admin') {
+      next({ name: 'Home' })
+      return
+    }
   }
   
   next()

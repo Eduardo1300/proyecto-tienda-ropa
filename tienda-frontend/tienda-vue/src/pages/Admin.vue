@@ -6,20 +6,20 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-12 relative z-10">
-      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl mb-12">
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl mb-12 animate-fade-in-up">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div class="flex items-center gap-6">
-            <span class="text-6xl drop-shadow-lg">⚙️</span>
+            <span class="text-6xl drop-shadow-lg animate-bounce">⚙️</span>
             <div>
-              <h1 class="text-5xl font-extrabold drop-shadow-md">Panel de Administración</h1>
+              <h1 class="text-5xl font-extrabold drop-shadow-md">Panel de <span class="text-transparent bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text">Administración</span></h1>
               <p class="text-blue-100 text-lg mt-2">Gestiona tu tienda en un solo lugar</p>
             </div>
           </div>
           <div class="flex gap-3 flex-wrap">
-            <RouterLink to="/inventory" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all">
+            <RouterLink to="/inventory" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
               📦 Inventario
             </RouterLink>
-            <RouterLink to="/analytics" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all">
+            <RouterLink to="/analytics" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
               📊 Analytics
             </RouterLink>
           </div>
@@ -27,7 +27,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.1s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Productos</p>
@@ -36,7 +36,7 @@
             <div class="text-4xl">{{ String.fromCodePoint(0x1F4E6) }}</div>
           </div>
         </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.2s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Pedidos</p>
@@ -45,7 +45,7 @@
             <div class="text-4xl">{{ String.fromCodePoint(0x1F6D2) }}</div>
           </div>
         </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.3s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Usuarios</p>
@@ -54,11 +54,11 @@
             <div class="text-4xl">{{ String.fromCodePoint(0x1F465) }}</div>
           </div>
         </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.4s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Ingresos</p>
-              <p class="text-3xl font-bold text-yellow-400">${{ stats.revenue.toFixed(2) }}</p>
+              <p class="text-3xl font-bold text-yellow-400">S/ {{ stats.revenue.toFixed(2) }}</p>
             </div>
             <div class="text-4xl">{{ String.fromCodePoint(0x1F4B0) }}</div>
           </div>
@@ -151,3 +151,17 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bounce { animation: bounce 2s ease-in-out infinite; }
+</style>
