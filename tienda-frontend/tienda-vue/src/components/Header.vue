@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+  <header class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100 dark:border-gray-700">
     <div class="container mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
         <!-- Logo -->
