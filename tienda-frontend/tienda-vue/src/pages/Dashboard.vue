@@ -285,59 +285,46 @@ const getStatusDisplayName = (status: string) => {
 onMounted(async () => {
   // Ensure auth is initialized from localStorage
   authStore.initAuth()
-  user.value = authStore.user
+  user.value = authStore.user || JSON.parse(localStorage.getItem('user') || 'null')
   
   if (user.value) {
-    const userStr = localStorage.getItem('user')
-    if (userStr) {
-      try {
-        const userData = JSON.parse(userStr)
-        memberSince.value = new Date(userData.createdAt || Date.now()).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-      } catch {
-        memberSince.value = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-      }
-    }
+    memberSince.value = user.value.createdAt 
+      ? new Date(user.value.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+      : new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
   }
   
+  // Load orders
   try {
-    console.log('Fetching dashboard data...')
-    
-    const [ordersRes, loyaltyRes, wishlistRes] = await Promise.all([
-      ordersAPI.getAll(),
-      loyaltyAPI.getProgram().catch((e) => { console.log('Loyalty API error:', e); return { data: { availablePoints: 0, totalPoints: 0 } } }),
-      wishlistAPI.get().catch((e) => { console.log('Wishlist API error:', e); return { data: [] } })
-    ])
-    
-    console.log('Orders response:', ordersRes.data)
-    console.log('Wishlist response:', wishlistRes.data)
-    console.log('Loyalty response:', loyaltyRes.data)
-    
+    const ordersRes = await ordersAPI.getAll()
     const orders = ordersRes.data || []
     recentOrders.value = orders.slice(0, 5)
     pendingOrders.value = orders.filter((o: any) => o.status === 'shipped' || o.status === 'processing')
-    
-    const totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+    stats.value.totalOrders = orders.length
+    stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+  } catch (err) {
+    console.error('Error loading orders:', err)
+  }
+  
+  // Load loyalty
+  try {
+    const loyaltyRes = await loyaltyAPI.getProgram()
     loyaltyPoints.value = loyaltyRes.data?.availablePoints || 0
-    
-    // Get wishlist items - handle different response formats
+    stats.value.loyaltyPoints = loyaltyPoints.value
+  } catch (err) {
+    console.error('Error loading loyalty:', err)
+  }
+  
+  // Load wishlist
+  try {
+    const wishlistRes = await wishlistAPI.get()
     let wishlist: any[] = []
     if (wishlistRes.data) {
-      if (Array.isArray(wishlistRes.data)) {
-        wishlist = wishlistRes.data
-      } else if (wishlistRes.data.items) {
-        wishlist = wishlistRes.data.items
-      }
+      wishlist = Array.isArray(wishlistRes.data) ? wishlistRes.data : (wishlistRes.data.items || [])
     }
     wishlistItems.value = wishlist
-    
-    stats.value = {
-      totalOrders: orders.length,
-      totalSpent,
-      loyaltyPoints: loyaltyPoints.value,
-      wishlistItems: wishlist.length
-    }
+    stats.value.wishlistItems = wishlist.length
   } catch (err) {
-    console.error('Error loading dashboard:', err)
+    console.error('Error loading wishlist:', err)
   }
 })
 
