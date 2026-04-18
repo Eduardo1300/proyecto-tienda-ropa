@@ -40,7 +40,7 @@
             </button>
           </div>
           <div v-for="(item, index) in cartStore.items" :key="item.id" 
-            class="group bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/20 flex items-center gap-4 hover:shadow-xl hover:border-purple-500/50 transition-all duration-300 animate-fade-in-up"
+            class="group bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/20 flex items-center gap-4 hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-500/50 transition-all duration-300 animate-fade-in-up"
             :style="{ animationDelay: `${index * 100}ms` }"
           >
             <!-- Image -->
