@@ -36,7 +36,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-blue-100 text-sm font-medium mb-1">Total Pedidos</p>
@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-green-100 text-sm font-medium mb-1">Total Gastado</p>
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-purple-100 text-sm font-medium mb-1">Puntos Fidelidad</p>
@@ -69,7 +69,7 @@
           </div>
         </div>
 
-        <div class="bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div class="bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-pink-500/30 transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-pink-100 text-sm font-medium mb-1">Lista de Deseos</p>
