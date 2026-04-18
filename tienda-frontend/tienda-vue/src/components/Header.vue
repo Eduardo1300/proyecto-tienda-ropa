@@ -4,8 +4,8 @@
       <div class="flex items-center justify-between">
         <!-- Logo -->
         <RouterLink to="/" class="flex items-center space-x-2 group">
-          <div class="text-3xl transform group-hover:scale-110 transition-transform duration-300">👗</div>
-          <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-500">
+          <div class="text-3xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">👗</div>
+          <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-500 hover:from-indigo-700 hover:via-purple-600 hover:to-pink-600 transition-all">
             Fashion Store
           </span>
         </RouterLink>
