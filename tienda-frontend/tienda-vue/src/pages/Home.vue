@@ -142,18 +142,36 @@
           <p class="text-gray-300 text-lg">Descubre lo que todos estan comprando</p>
         </div>
 
-        <div v-if="loading" class="text-center py-12">
-          <div class="w-20 h-20 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p class="text-gray-400 text-xl">Cargando productos...</p>
+        <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div v-for="i in 6" :key="i" class="animate-pulse">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden">
+              <div class="h-72 bg-white/5"></div>
+              <div class="p-6 space-y-3">
+                <div class="h-6 bg-white/10 rounded w-3/4"></div>
+                <div class="h-4 bg-white/5 rounded w-full"></div>
+                <div class="flex justify-between pt-2">
+                  <div class="h-8 bg-white/10 rounded w-24"></div>
+                  <div class="h-8 bg-white/10 rounded w-20"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div v-else-if="error" class="text-center py-12 animate-fade-in-up">
-          <div class="text-6xl mb-4 animate-wiggle"> Loading</div>
-          <h2 class="text-2xl font-bold text-white mb-2">Conectando con el backend</h2>
-          <p class="text-gray-400 mb-6">Esto puede tardar unos segundos</p>
-          <button @click="fetchProducts" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transform hover:scale-105 transition-all">
-            Reintentar
-          </button>
+        <div v-else-if="error" class="text-center py-16 animate-fade-in-up">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 max-w-lg mx-auto">
+            <div class="text-6xl mb-6 animate-wiggle">🌐</div>
+            <h2 class="text-3xl font-bold text-white mb-4">Servidor Desconectado</h2>
+            <p class="text-gray-300 mb-8 text-lg">El servidor está iniciando. Esto puede tomar 1-2 minutos.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button @click="fetchProducts" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all">
+                🔄 Reintentar
+              </button>
+              <RouterLink to="/products" class="px-8 py-4 border border-white/30 text-white rounded-full font-bold hover:bg-white/10 transition-all">
+                Explorar Productos
+              </RouterLink>
+            </div>
+          </div>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

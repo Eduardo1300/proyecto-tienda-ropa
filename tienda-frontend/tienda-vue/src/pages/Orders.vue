@@ -13,9 +13,25 @@
         <p class="text-gray-300 text-lg">Gestiona y rastrea todos tus pedidos</p>
       </div>
 
-      <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto"></div>
-        <p class="mt-4 text-gray-300">Cargando pedidos...</p>
+      <div v-if="loading" class="space-y-6">
+        <div v-for="i in 3" :key="i" class="animate-pulse bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="space-y-2">
+              <div class="h-6 bg-white/10 rounded w-32"></div>
+              <div class="h-4 bg-white/5 rounded w-24"></div>
+            </div>
+            <div class="h-8 bg-white/10 rounded w-20"></div>
+          </div>
+          <div class="space-y-3 pt-4 border-t border-white/10">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 bg-white/5 rounded-md"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-4 bg-white/5 rounded w-1/2"></div>
+                <div class="h-3 bg-white/5 rounded w-1/3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="error" class="bg-red-500/20 border border-red-400/30 text-red-300 p-4 rounded-xl mb-6">

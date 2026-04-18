@@ -10,14 +10,31 @@
         ← Volver a Mis Pedidos
       </RouterLink>
 
-      <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto"></div>
-        <p class="mt-4 text-gray-300">Cargando detalles del pedido...</p>
+      <div v-if="loading" class="max-w-4xl mx-auto px-4 space-y-6">
+        <div class="animate-pulse space-y-6">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+            <div class="h-8 bg-white/10 rounded w-1/3 mb-4"></div>
+            <div class="h-4 bg-white/5 rounded w-1/4"></div>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+            <div class="h-6 bg-white/10 rounded w-1/4 mb-4"></div>
+            <div class="space-y-3">
+              <div class="h-16 bg-white/5 rounded"></div>
+              <div class="h-16 bg-white/5 rounded"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div v-else-if="error" class="bg-red-500/20 border border-red-400/50 rounded-xl p-6 text-center">
-        <p class="text-red-300">{{ error }}</p>
-        <RouterLink to="/orders" class="text-purple-300 hover:text-white mt-4 inline-block">Volver a pedidos</RouterLink>
+      <div v-else-if="error" class="max-w-4xl mx-auto px-4">
+        <div class="bg-red-500/20 border border-red-400/50 rounded-2xl p-8 text-center">
+          <div class="text-6xl mb-4">😞</div>
+          <h2 class="text-2xl font-bold text-white mb-2">Error al cargar el pedido</h2>
+          <p class="text-gray-300 mb-6">{{ error }}</p>
+          <RouterLink to="/orders" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all">
+            ← Volver a Mis Pedidos
+          </RouterLink>
+        </div>
       </div>
 
       <div v-else-if="order" class="space-y-6">

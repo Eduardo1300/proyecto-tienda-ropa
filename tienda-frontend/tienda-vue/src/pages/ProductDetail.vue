@@ -13,15 +13,30 @@
         </RouterLink>
       </div>
 
-      <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto"></div>
-        <p class="mt-4 text-gray-300">Cargando producto...</p>
-      </div>
+      <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div class="animate-pulse space-y-4">
+            <div class="aspect-square bg-white/10 rounded-2xl"></div>
+            <div class="grid grid-cols-4 gap-4">
+              <div v-for="i in 4" :key="i" class="aspect-square bg-white/5 rounded-lg"></div>
+            </div>
+          </div>
+          <div class="space-y-6 animate-pulse">
+            <div class="h-8 bg-white/10 rounded w-1/3"></div>
+            <div class="h-12 bg-white/10 rounded w-3/4"></div>
+            <div class="h-10 bg-white/10 rounded w-1/4"></div>
+            <div class="h-20 bg-white/5 rounded w-full"></div>
+          </div>
+        </div>
 
-      <div v-else-if="!product" class="text-center py-12 animate-fade-in-up">
-        <div class="text-6xl mb-4">😕</div>
-        <h2 class="text-2xl font-bold text-white mb-2">Producto no encontrado</h2>
-        <RouterLink to="/products" class="text-purple-400 hover:underline">Volver a productos</RouterLink>
+      <div v-else-if="!product" class="text-center py-20 animate-fade-in-up">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 max-w-lg mx-auto">
+          <div class="text-8xl mb-6">😕</div>
+          <h2 class="text-3xl font-bold text-white mb-4">Producto no encontrado</h2>
+          <p class="text-gray-300 mb-8">El producto que buscas no existe o fue eliminado.</p>
+          <RouterLink to="/products" class="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+            ← Ver Productos
+          </RouterLink>
+        </div>
       </div>
 
       <div v-else>

@@ -13,9 +13,18 @@
         </p>
       </div>
 
-      <div v-if="loading" class="text-center py-12">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-4"></div>
-        <p class="text-gray-300 text-lg">💝 Cargando tus favoritos...</p>
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div v-for="i in 4" :key="i" class="animate-pulse bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl overflow-hidden">
+          <div class="h-64 bg-white/5"></div>
+          <div class="p-6 space-y-3">
+            <div class="h-6 bg-white/10 rounded w-3/4"></div>
+            <div class="h-4 bg-white/5 rounded w-full"></div>
+            <div class="flex justify-between pt-2">
+              <div class="h-8 bg-white/10 rounded w-24"></div>
+              <div class="h-8 bg-white/10 rounded w-20"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="error" class="text-center py-12">
