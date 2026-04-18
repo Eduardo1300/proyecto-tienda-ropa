@@ -299,35 +299,44 @@ onMounted(async () => {
     console.log('Orders API response:', ordersRes.data)
     
     const orders = ordersRes.data || []
-    recentOrders.value = orders.slice(0, 5)
-    
-    // Show orders that are not delivered
-    pendingOrders.value = orders.filter((o: any) => o.status && o.status !== 'delivered')
-    console.log('Pending orders:', pendingOrders.value)
-    
-    stats.value.totalOrders = orders.length
-    stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+    if (orders.length > 0) {
+      recentOrders.value = orders.slice(0, 5)
+      pendingOrders.value = orders.filter((o: any) => o.status && o.status !== 'delivered')
+      stats.value.totalOrders = orders.length
+      stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+    }
   } catch (err) {
     console.error('Error loading orders:', err)
-    // Demo data fallback
-    stats.value.totalOrders = 5
-    stats.value.totalSpent = 1250.00
+  }
+
+  // Always set demo data if not loaded from API
+  if (stats.value.totalOrders === 0) {
+    stats.value.totalOrders = 4
+    stats.value.totalSpent = 1255.50
     recentOrders.value = [
-      { id: 1, orderNumber: 'ORD-2025-00001', status: 'delivered', createdAt: new Date().toISOString(), total: 350.00, items: [{ id: 1, product: { name: 'Camisa Formal' }, quantity: 2 }] },
-      { id: 2, orderNumber: 'ORD-2025-00002', status: 'shipped', createdAt: new Date().toISOString(), total: 450.00, items: [{ id: 2, product: { name: 'Pantalón Jeans' }, quantity: 1 }] },
+      { id: 1, orderNumber: 'ORD-2025-00001', status: 'delivered', createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), total: 350.00, items: [{ id: 1, product: { name: 'Camisa Formal' }, quantity: 2 }] },
+      { id: 2, orderNumber: 'ORD-2025-00002', status: 'shipped', createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), total: 450.00, items: [{ id: 2, product: { name: 'Pantalón Jeans' }, quantity: 3 }] },
     ]
-    pendingOrders.value = [{ id: 3, orderNumber: 'ORD-2025-00003', status: 'processing', createdAt: new Date().toISOString(), total: 450.00 }]
+    pendingOrders.value = [
+      { id: 3, orderNumber: 'ORD-2025-00003', status: 'processing', createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), total: 280.00, estimatedDelivery: '5 Feb 2025' },
+      { id: 4, orderNumber: 'ORD-2025-00004', status: 'pending', createdAt: new Date().toISOString(), total: 175.50, estimatedDelivery: 'Pending' },
+    ]
   }
   
   // Load loyalty
   try {
     const loyaltyRes = await loyaltyAPI.getProgram()
     console.log('Loyalty API response:', loyaltyRes.data)
-    loyaltyPoints.value = loyaltyRes.data?.availablePoints || 0
-    stats.value.loyaltyPoints = loyaltyPoints.value
+    if (loyaltyRes.data?.availablePoints) {
+      loyaltyPoints.value = loyaltyRes.data.availablePoints
+      stats.value.loyaltyPoints = loyaltyPoints.value
+    }
   } catch (err) {
     console.error('Error loading loyalty:', err)
-    // Demo data fallback
+  }
+
+  // Always set demo loyalty if not loaded from API
+  if (stats.value.loyaltyPoints === 0) {
     loyaltyPoints.value = 1250
     stats.value.loyaltyPoints = 1250
   }
@@ -340,16 +349,23 @@ onMounted(async () => {
     if (wishlistRes.data) {
       wishlist = Array.isArray(wishlistRes.data) ? wishlistRes.data : (wishlistRes.data.items || [])
     }
-    wishlistItems.value = wishlist
-    stats.value.wishlistItems = wishlist.length
+    if (wishlist.length > 0) {
+      wishlistItems.value = wishlist
+      stats.value.wishlistItems = wishlist.length
+    }
   } catch (err) {
     console.error('Error loading wishlist:', err)
-    // Demo data fallback
+  }
+
+  // Always set demo wishlist if not loaded from API
+  if (stats.value.wishlistItems === 0) {
     wishlistItems.value = [
-      { id: 1, productId: 1, product: { name: 'Camisa Algodón', description: 'Camisa de algodón premium', price: 89.99, category: 'camisas' } },
-      { id: 2, productId: 2, product: { name: 'Pantalón Formal', description: 'Pantalón de tela italiana', price: 129.99, category: 'pantalones' } },
+      { id: 1, productId: 1, product: { name: 'Camisa Algodón Premium', description: 'Camisa de algodón premium', price: 89.99, category: 'hombre' } },
+      { id: 2, productId: 2, product: { name: 'Vestido Casual Verano', description: 'Vestido ligero y fresco', price: 69.90, category: 'mujer' } },
+      { id: 3, productId: 3, product: { name: 'Reloj Elegante Acero', description: 'Reloj de pulsera minimalista', price: 149.95, category: 'accesorios' } },
+      { id: 4, productId: 4, product: { name: 'Sneakers Deportivos', description: 'Zapatillas cómodas', price: 89.95, category: 'zapatos' } },
     ]
-    stats.value.wishlistItems = 2
+    stats.value.wishlistItems = 4
   }
 })
 
