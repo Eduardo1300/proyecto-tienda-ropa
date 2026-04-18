@@ -10,12 +10,8 @@ const getApiBaseUrl = (): string => {
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname
     
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
       return 'http://localhost:3002'
-    }
-    
-    if (hostname.includes('onrender.com') || hostname.includes('vercel.app') || hostname.includes('christophervaldivia.me')) {
-      return 'https://proyecto-tienda-ropa.onrender.com'
     }
   }
 
