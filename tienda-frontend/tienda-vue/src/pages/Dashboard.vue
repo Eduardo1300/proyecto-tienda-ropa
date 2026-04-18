@@ -16,7 +16,7 @@
               <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
-              <h1 class="text-4xl font-bold mb-2">¡Hola, {{ user?.name || 'Usuario' }}! 👋</h1>
+              <h1 class="text-4xl font-bold mb-2">¡Hola, {{ getUserName() }}! 👋</h1>
               <p class="text-purple-100 text-lg mb-2">Miembro desde {{ memberSince }}</p>
               <span class="inline-flex items-center px-3 py-1 bg-white/20 text-white rounded-full text-sm">
                 ✨ {{ loyaltyPoints }} puntos de fidelidad
@@ -283,17 +283,34 @@ const getStatusDisplayName = (status: string) => {
 }
 
 onMounted(async () => {
+  // Ensure auth is initialized from localStorage
+  authStore.initAuth()
   user.value = authStore.user
+  
   if (user.value) {
-    memberSince.value = new Date(user.value.createdAt || Date.now()).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+    const userStr = localStorage.getItem('user')
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr)
+        memberSince.value = new Date(userData.createdAt || Date.now()).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+      } catch {
+        memberSince.value = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+      }
+    }
   }
   
   try {
+    console.log('Fetching dashboard data...')
+    
     const [ordersRes, loyaltyRes, wishlistRes] = await Promise.all([
       ordersAPI.getAll(),
-      loyaltyAPI.getProgram().catch(() => ({ data: { availablePoints: 0, totalPoints: 0 } })),
-      wishlistAPI.get().catch(() => ({ data: [] }))
+      loyaltyAPI.getProgram().catch((e) => { console.log('Loyalty API error:', e); return { data: { availablePoints: 0, totalPoints: 0 } } }),
+      wishlistAPI.get().catch((e) => { console.log('Wishlist API error:', e); return { data: [] } })
     ])
+    
+    console.log('Orders response:', ordersRes.data)
+    console.log('Wishlist response:', wishlistRes.data)
+    console.log('Loyalty response:', loyaltyRes.data)
     
     const orders = ordersRes.data || []
     recentOrders.value = orders.slice(0, 5)
@@ -302,11 +319,22 @@ onMounted(async () => {
     const totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
     loyaltyPoints.value = loyaltyRes.data?.availablePoints || 0
     
+    // Get wishlist items - handle different response formats
+    let wishlist: any[] = []
+    if (wishlistRes.data) {
+      if (Array.isArray(wishlistRes.data)) {
+        wishlist = wishlistRes.data
+      } else if (wishlistRes.data.items) {
+        wishlist = wishlistRes.data.items
+      }
+    }
+    wishlistItems.value = wishlist
+    
     stats.value = {
       totalOrders: orders.length,
       totalSpent,
       loyaltyPoints: loyaltyPoints.value,
-      wishlistItems: (wishlistRes.data || []).length
+      wishlistItems: wishlist.length
     }
   } catch (err) {
     console.error('Error loading dashboard:', err)
@@ -320,5 +348,22 @@ const getProductEmoji = (product: any): string => {
   if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
   if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
   return String.fromCodePoint(0x1F455)
+}
+
+const getUserName = (): string => {
+  if (user.value?.username) return user.value.username
+  if (user.value?.name) return user.value.name
+  if (user.value?.email) return user.value.email.split('@')[0]
+  
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      const userData = JSON.parse(userStr)
+      return userData.username || userData.name || userData.email?.split('@')[0] || 'Usuario'
+    } catch {
+      return 'Usuario'
+    }
+  }
+  return 'Usuario'
 }
 </script>
