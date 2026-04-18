@@ -148,12 +148,16 @@ const cartStore = useCartStore()
 const isMenuOpen = ref(false)
 
 const hasLocalAuth = computed(() => {
+  // Use authStore for reactivity + localStorage fallback
+  if (authStore.isAuthenticated) return true
   const token = localStorage.getItem('access_token') || localStorage.getItem('token')
   const userStr = localStorage.getItem('user')
   return !!(token && userStr)
 })
 
 const userRole = computed(() => {
+  // Use authStore for reactivity + localStorage fallback
+  if (authStore.user?.role) return authStore.user.role
   const userStr = localStorage.getItem('user')
   if (userStr) {
     try {
