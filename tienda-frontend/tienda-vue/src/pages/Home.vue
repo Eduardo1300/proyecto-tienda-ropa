@@ -115,7 +115,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div v-for="(feature, index) in features" :key="index" 
-            class="group bg-gradient-to-br rounded-xl p-6 text-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
+            class="group bg-gradient-to-br rounded-xl p-6 text-white hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 hover:-translate-y-2 border border-transparent hover:border-white/20 animate-fade-in-up"
             :class="feature.color"
             :style="{ animationDelay: `${index * 150}ms` }"
           >
