@@ -24,9 +24,6 @@
           <RouterLink v-if="hasLocalAuth" to="/orders" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📦 Mis Pedidos
           </RouterLink>
-          <RouterLink v-if="hasLocalAuth" to="/wishlist" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
-            ❤️ Wishlist
-          </RouterLink>
           <RouterLink v-if="hasLocalAuth" to="/profile" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             👤 Perfil
           </RouterLink>
@@ -93,9 +90,6 @@
             </RouterLink>
             <RouterLink to="/orders" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
               📦 Pedidos
-            </RouterLink>
-            <RouterLink to="/wishlist" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
-              ❤️ Favoritos
             </RouterLink>
             <RouterLink to="/profile" @click="isMenuOpen = false" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
               👤 Perfil

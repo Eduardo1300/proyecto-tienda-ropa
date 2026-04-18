@@ -222,6 +222,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productsAPI, reviewsAPI } from '../api'
+import api from '../api'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import type { Product, Review } from '../types'
@@ -311,34 +312,21 @@ const loadReviews = async () => {
   if (!product.value) return
   reviewsError.value = ''
   try {
-    // Try different API approaches
+    const response = await api.get(`/reviews`, { params: { productId: product.value.id, limit: 50 } })
+    console.log('API Response:', response.data)
+    
+    // API returns { reviews: [...], total, pages, averageRating, ... }
     let reviewsData = []
-    
-    // Try with product ID directly
-    const response1 = await api.get(`/reviews`, { params: { productId: product.value.id, limit: 50 } })
-    console.log('API Response 1:', response1.data)
-    
-    if (response1.data?.data) {
-      reviewsData = response1.data.data
-    } else if (Array.isArray(response1.data)) {
-      reviewsData = response1.data
-    } else if (response1.data?.reviews) {
-      reviewsData = response1.data.reviews
-    }
-    
-    // If still empty, try direct endpoint
-    if (reviewsData.length === 0) {
-      const response2 = await api.get(`/products/${product.value.id}/reviews`)
-      console.log('API Response 2:', response2.data)
-      if (Array.isArray(response2.data)) {
-        reviewsData = response2.data
-      } else if (response2.data?.reviews) {
-        reviewsData = response2.data.reviews
-      }
+    if (response.data?.reviews) {
+      reviewsData = response.data.reviews
+    } else if (response.data?.data) {
+      reviewsData = response.data.data
+    } else if (Array.isArray(response.data)) {
+      reviewsData = response.data
     }
     
     reviews.value = reviewsData
-    console.log('Final reviews data:', reviews.value)
+    console.log('Final reviews:', reviews.value)
   } catch (err: any) {
     console.error('Error loading reviews:', err)
     reviewsError.value = err.response?.status === 404 ? '' : 'No se pudieron cargar las reseñas'

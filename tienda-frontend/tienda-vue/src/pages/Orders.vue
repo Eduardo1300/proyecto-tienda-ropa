@@ -46,7 +46,7 @@
                   {{ getStatusDisplayName(order.status) }}
                 </span>
                 <span class="text-lg font-bold text-white">
-                  ${{ Number(order.total).toFixed(2) }}
+                  S/ {{ Number(order.total).toFixed(2) }}
                 </span>
               </div>
             </div>
@@ -63,7 +63,7 @@
                       {{ item.product?.name }}
                     </p>
                     <p class="text-sm text-gray-400">
-                      Cantidad: {{ item.quantity }} × ${{ Number(item.price).toFixed(2) }}
+                      Cantidad: {{ item.quantity }} × S/ {{ Number(item.price).toFixed(2) }}
                     </p>
                   </div>
                 </div>
@@ -72,13 +72,13 @@
 
             <div class="flex items-center justify-between pt-4 border-t border-white/10">
               <div class="flex space-x-3">
-                <RouterLink :to="`/orders/${order.id}/tracking`" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
+                <RouterLink :to="`/order-tracking/${order.id}`" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
                   🔍 Rastrear
                 </RouterLink>
-                <button @click="downloadInvoice(order.id, order.orderNumber)" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
-                  📄 Factura
-                </button>
-                <RouterLink v-if="order.status === 'delivered'" :to="`/orders/${order.id}/return`" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
+                <RouterLink :to="`/orders/${order.id}`" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
+                  📋 Ver Detalle
+                </RouterLink>
+                <RouterLink v-if="order.status === 'delivered'" :to="`/return-request/${order.id}`" class="inline-flex items-center px-3 py-2 border border-white/20 text-sm leading-4 font-medium rounded-md text-white bg-white/10 hover:bg-white/20">
                   ↩️ Devolver
                 </RouterLink>
               </div>

@@ -101,6 +101,7 @@ export const ordersAPI = {
   getById: (id: number) => api.get<Order>(`/orders/${id}`),
   create: (data: any) => api.post<Order>('/orders', data),
   updateStatus: (id: number, status: string) => api.patch<Order>(`/orders/${id}/status`, { status }),
+  createReturn: (orderId: number, data: any) => api.post(`/orders/${orderId}/returns`, data),
 }
 
 export const cartAPI = {

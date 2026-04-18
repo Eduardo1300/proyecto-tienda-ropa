@@ -176,8 +176,8 @@
                   <p class="text-sm text-green-600 font-medium">🚚 Llegada estimada: {{ order.estimatedDelivery }}</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-xl text-gray-800 mb-2">${{ Number(order.total).toFixed(2) }}</p>
-                  <RouterLink :to="`/orders/${order.id}/tracking`" class="inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
+                  <p class="font-bold text-xl text-gray-800 mb-2">S/ {{ Number(order.total).toFixed(2) }}</p>
+                  <RouterLink :to="`/order-tracking/${order.id}`" class="inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
                     📍 Rastrear
                   </RouterLink>
                 </div>

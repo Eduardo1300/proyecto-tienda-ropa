@@ -31,7 +31,7 @@
               <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold" :class="getStatusColor(order.status)">
                 {{ getStatusDisplayName(order.status) }}
               </span>
-              <p class="text-3xl font-bold text-white mt-2">${{ Number(order.total).toFixed(2) }}</p>
+              <p class="text-3xl font-bold text-white mt-2">S/ {{ Number(order.total).toFixed(2) }}</p>
             </div>
           </div>
 
@@ -63,10 +63,10 @@
               </div>
               <div class="flex-1">
                 <h3 class="font-semibold text-white">{{ item.product?.name }}</h3>
-                <p class="text-gray-400 text-sm">Cantidad: {{ item.quantity }} × ${{ Number(item.price).toFixed(2) }}</p>
+                <p class="text-gray-400 text-sm">Cantidad: {{ item.quantity }} × S/ {{ Number(item.price).toFixed(2) }}</p>
               </div>
               <div class="text-right">
-                <p class="font-bold text-white">${{ (Number(item.price) * item.quantity).toFixed(2) }}</p>
+                <p class="font-bold text-white">S/ {{ (Number(item.price) * item.quantity).toFixed(2) }}</p>
               </div>
             </div>
           </div>
@@ -77,31 +77,31 @@
           <div class="space-y-3">
             <div class="flex justify-between text-gray-300">
               <span>Subtotal</span>
-              <span>${{ Number(order.subtotal || order.total).toFixed(2) }}</span>
+              <span>S/ {{ Number(order.subtotal || order.total).toFixed(2) }}</span>
             </div>
             <div class="flex justify-between text-gray-300">
               <span>Envío</span>
-              <span>${{ Number(order.shipping || 0).toFixed(2) }}</span>
+              <span>S/ {{ Number(order.shipping || 0).toFixed(2) }}</span>
             </div>
             <div class="flex justify-between text-gray-300">
               <span>Impuestos</span>
-              <span>${{ Number(order.tax || 0).toFixed(2) }}</span>
+              <span>S/ {{ Number(order.tax || 0).toFixed(2) }}</span>
             </div>
             <div class="flex justify-between text-white font-bold text-xl pt-3 border-t border-white/20">
               <span>Total</span>
-              <span>${{ Number(order.total).toFixed(2) }}</span>
+              <span>S/ {{ Number(order.total).toFixed(2) }}</span>
             </div>
           </div>
         </div>
 
         <div class="flex flex-wrap gap-3">
-          <RouterLink v-if="order.status !== 'delivered'" :to="`/orders/${order.id}/tracking`" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all">
+          <RouterLink v-if="order.status !== 'delivered'" :to="`/order-tracking/${order.id}`" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all">
             📍 Rastrear Pedido
           </RouterLink>
-          <button @click="downloadInvoice" class="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-all">
-            📄 Descargar Factura
-          </button>
-          <button v-if="order.status === 'delivered'" class="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-all">
+          <RouterLink :to="`/orders/${order.id}`" class="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-all">
+            📋 Ver Detalle
+          </RouterLink>
+          <button v-if="order.status === 'delivered'" @click="router.push(`/return-request/${order.id}`)" class="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-all">
             ↩️ Solicitar Devolución
           </button>
         </div>
@@ -112,12 +112,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ordersAPI } from '../api'
+import { useAuthStore } from '../stores/auth'
 import type { Order } from '../types'
-import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
 const order = ref<Order | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)

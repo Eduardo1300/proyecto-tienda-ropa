@@ -226,10 +226,6 @@ async function seed() {
     await dataSource.initialize();
     const reviewRepository = dataSource.getRepository('Review');
     
-    // Delete existing reviews first
-    await reviewRepository.query('DELETE FROM reviews');
-    console.log('🗑️ Deleted existing reviews');
-    
     // Sample review data
     const reviewTemplates = [
       { rating: 5, title: 'Excelente producto', comment: 'Muy buena calidad, me encantó. Lo recomiendo totalmente.', isVerified: true },
@@ -254,35 +250,23 @@ async function seed() {
         // Alternate between users
         const userId = i % 2 === 0 ? testUser?.id : adminUser?.id;
         
-        // Check if review already exists
-        const existingReview = await reviewRepository.findOne({
-          where: { userId: userId || 2, productId: product.id }
+        // Create review using save with proper data
+        await reviewRepository.save({
+          rating: template.rating,
+          title: template.title,
+          comment: template.comment,
+          userId: userId || 2,
+          productId: product.id,
+          isVerified: template.isVerified,
+          isActive: true,
+          purchaseVerified: template.isVerified,
+          helpfulVotes: 0,
+          unhelpfulVotes: 0,
+          images: null,
+          adminResponse: null,
+          createdAt: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
+          updatedAt: new Date(),
         });
-        
-        if (!existingReview) {
-          // Generate random date within last 90 days
-          const randomDate = new Date();
-          randomDate.setDate(randomDate.getDate() - Math.floor(Math.random() * 90));
-          
-          // Ensure proper date format
-          const dateString = randomDate.toISOString();
-          
-          await reviewRepository.query(
-            `INSERT INTO reviews (rating, title, comment, "userId", "productId", "isVerified", "isActive", "purchaseVerified", "createdAt", "updatedAt") 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
-            [
-              template.rating,
-              template.title,
-              template.comment,
-              userId || 2,
-              product.id,
-              template.isVerified,
-              true,
-              template.isVerified,
-              dateString
-            ]
-          );
-        }
       }
     }
     

@@ -107,6 +107,24 @@ const routes = [
     name: 'Inventory',
     component: () => import('../pages/Inventory.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/return-request/:orderId',
+    name: 'ReturnRequest',
+    component: () => import('../pages/ReturnRequest.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/suppliers',
+    name: 'SupplierManagement',
+    component: () => import('../pages/SupplierManagement.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/product-images',
+    name: 'ProductImageManager',
+    component: () => import('../pages/ProductImageManager.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 ]
 
