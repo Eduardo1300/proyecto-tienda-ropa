@@ -7,6 +7,7 @@ import {
   Body, 
   UseGuards, 
   Request, 
+  Query,
   ParseIntPipe,
   Res,
   HttpStatus,
@@ -52,29 +53,35 @@ export class OrderController {
   }
 
   @Get()
-  async findUserOrders(@Request() req) {
-    console.log('🔍 Finding orders for user:', req.user.id, 'Role:', req.user.role);
+  async findUserOrders(@Request() req, @Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    console.log('🔍 Finding orders for user:', req.user.id, 'Role:', req.user.role, 'Page:', page, 'Limit:', limit);
     
-    let orders;
+    let result;
     
     if (req.user.role === 'admin') {
       // Admins see ALL orders in the system
       console.log('👑 Admin user - fetching ALL orders');
-      orders = await this.orderService.findAllOrders();
+      result = await this.orderService.findAllOrders(page, limit);
     } else {
       // Regular users see only their own orders
       console.log('👤 Regular user - fetching personal orders only');
-      orders = await this.orderService.findOrdersByUser(req.user.id);
+      result = await this.orderService.findOrdersByUser(req.user.id, page, limit);
     }
     
-    console.log('📋 Found orders:', orders.length);
-    console.log('📋 First order sample:', orders[0] ? {
-      id: orders[0].id,
-      orderNumber: orders[0].orderNumber,
-      user: orders[0].user ? { id: orders[0].user.id, username: orders[0].user.username } : 'no user'
+    console.log('📋 Found orders:', result.data.length, 'Total:', result.total);
+    console.log('📋 First order sample:', result.data[0] ? {
+      id: result.data[0].id,
+      orderNumber: result.data[0].orderNumber,
+      user: result.data[0].user ? { id: result.data[0].user.id, username: result.data[0].user.username } : 'no user'
     } : 'no orders');
     
-    return orders;
+    return {
+      data: result.data,
+      total: result.total,
+      page,
+      limit,
+      totalPages: Math.ceil(result.total / limit)
+    };
   }
 
   @Get('all')

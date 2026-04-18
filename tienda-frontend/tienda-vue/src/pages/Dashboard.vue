@@ -151,10 +151,12 @@
             <RouterLink to="/products" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
               Explorar productos
             </RouterLink>
-          </div>
-        </div>
+</div>
+      </div>
 
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
+      <!-- Pedidos Pendientes - Full width -->
+      <div class="w-full mt-8">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl max-w-3xl mx-auto">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">⏳ Pedidos Pendientes</h2>
@@ -163,7 +165,7 @@
           </div>
 
           <div v-if="pendingOrders.length > 0" class="space-y-4">
-            <div v-for="order in pendingOrders" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
+            <div v-for="order in pendingOrders.slice(0, 4)" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
@@ -184,45 +186,44 @@
               </div>
             </div>
           </div>
-          <div v-else class="text-center py-12">
-            <div class="text-6xl mb-4">⏳</div>
-            <h3 class="text-xl font-bold text-white mb-2">No tienes pedidos pendientes</h3>
-            <p class="text-gray-400 mb-6">Todos tus pedidos han sido entregados</p>
-            <RouterLink to="/products" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-              Hacer nuevo pedido
-            </RouterLink>
+          <div v-else class="text-center py-8">
+            <div class="text-5xl mb-3">✅</div>
+            <h3 class="text-lg font-bold text-white mb-2">Sin pedidos pendientes</h3>
+            <p class="text-gray-400">Todos tus pedidos han sido entregados</p>
           </div>
         </div>
+      </div>
 
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
-          <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold text-white mb-2">⚡ Acciones Rápidas</h2>
-            <p class="text-gray-400">Todo lo que necesitas en un solo lugar</p>
-          </div>
+<!-- Acciones Rápidas -->
+<div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl mx-auto mt-8 w-full">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-white mb-2">⚡ Acciones Rápidas</h2>
+      <p class="text-gray-400">Todo lo que necesitas en un solo lugar</p>
+    </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <RouterLink to="/products" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-4 text-center hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
-              <span class="text-3xl block mb-2">🛒</span>
-              <span class="font-bold">Comprar</span>
-              <span class="text-sm opacity-90 block">Explorar productos</span>
-            </RouterLink>
-            <RouterLink to="/orders" class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl p-4 text-center hover:from-green-600 hover:to-teal-600 transition-all duration-300">
-              <span class="text-3xl block mb-2">📋</span>
-              <span class="font-bold">Mis Pedidos</span>
-              <span class="text-sm opacity-90 block">Ver historial</span>
-            </RouterLink>
-            <RouterLink to="/wishlist" class="bg-white/10 border border-white/20 text-white rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300">
-              <span class="text-3xl block mb-2">❤️</span>
-              <span class="font-bold">Favoritos</span>
-              <span class="text-sm opacity-90 block">Lista de deseos</span>
-            </RouterLink>
-            <RouterLink to="/profile" class="bg-white/10 border border-white/20 text-white rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300">
-              <span class="text-3xl block mb-2">👤</span>
-              <span class="font-bold">Perfil</span>
-              <span class="text-sm opacity-90 block">Mi cuenta</span>
-            </RouterLink>
-          </div>
-        </div>
+    <div class="grid grid-cols-2 gap-4">
+      <RouterLink to="/products" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-4 text-center hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
+        <span class="text-3xl block mb-2">🛒</span>
+        <span class="font-bold">Comprar</span>
+        <span class="text-sm opacity-90 block">Explorar productos</span>
+      </RouterLink>
+      <RouterLink to="/orders" class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl p-4 text-center hover:from-green-600 hover:to-teal-600 transition-all duration-300">
+        <span class="text-3xl block mb-2">📋</span>
+        <span class="font-bold">Mis Pedidos</span>
+        <span class="text-sm opacity-90 block">Ver historial</span>
+      </RouterLink>
+      <RouterLink to="/wishlist" class="bg-white/10 border border-white/20 text-white rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300">
+        <span class="text-3xl block mb-2">❤️</span>
+        <span class="font-bold">Favoritos</span>
+        <span class="text-sm opacity-90 block">Lista de deseos</span>
+      </RouterLink>
+      <RouterLink to="/profile" class="bg-white/10 border border-white/20 text-white rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300">
+        <span class="text-3xl block mb-2">👤</span>
+        <span class="font-bold">Perfil</span>
+        <span class="text-sm opacity-90 block">Mi cuenta</span>
+      </RouterLink>
+    </div>
+</div>
       </div>
 
       <RouterLink v-if="userRole === 'admin'" to="/admin" class="inline-flex items-center px-6 py-3 mt-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all">

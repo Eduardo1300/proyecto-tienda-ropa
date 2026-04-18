@@ -93,7 +93,13 @@ export const productsAPI = {
 }
 
 export const ordersAPI = {
-  getAll: () => api.get<Order[]>('/orders'),
+  getAll: (params?: any) => api.get<{ 
+    data: Order[], 
+    total: number,
+    page: number,
+    limit: number,
+    totalPages: number
+  }>('/orders', { params }),
   getById: (id: number) => api.get<Order>(`/orders/${id}`),
   create: (data: any) => api.post<Order>('/orders', data),
   updateStatus: (id: number, status: string) => api.patch<Order>(`/orders/${id}/status`, { status }),

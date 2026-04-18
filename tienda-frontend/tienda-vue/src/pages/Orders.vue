@@ -111,6 +111,33 @@
         </div>
       </div>
 
+      <!-- Pagination Controls -->
+      <div v-if="totalPages > 1" class="flex justify-center items-center mt-8 space-x-2">
+        <button 
+          @click="goToPreviousPage" 
+          :disabled="currentPage === 1"
+          class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+        >
+          ← Anterior
+        </button>
+        
+        <span class="mx-4 text-white">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+        
+        <button 
+          @click="goToNextPage" 
+          :disabled="currentPage === totalPages"
+          class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all"
+        >
+          Siguiente →
+        </button>
+      </div>
+      
+      <div v-else-if="totalPages === 1 && totalOrders > 0" class="text-center text-white mt-6">
+        Mostrando 1 de 1 página ({{ totalOrders }} pedido{{ totalOrders !== 1 ? 's' : ''}})
+      </div>
+
       <div v-if="showCancelModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center">
         <div class="relative mx-auto p-6 border w-96 shadow-2xl rounded-2xl bg-gray-900 border-white/20 animate-scale-in">
           <div class="mt-3">
@@ -158,6 +185,10 @@ const showCancelModal = ref(false)
 const selectedOrder = ref<Order | null>(null)
 const cancelReason = ref('')
 const cancelling = ref(false)
+const currentPage = ref(1)
+const limit = ref(1)
+const totalPages = ref(1)
+const totalOrders = ref(0)
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -183,21 +214,44 @@ const getStatusDisplayName = (status: string) => {
   return names[status] || status
 }
 
-const fetchOrders = async () => {
+const fetchOrders = async (page: number = 1) => {
   try {
     loading.value = true
-    const response = await ordersAPI.getAll()
-    orders.value = response.data || []
+    console.log('Fetching orders with page:', page, 'limit:', limit.value)
+    const response = await ordersAPI.getAll({ page, limit: limit.value })
+    console.log('API response:', response)
+    orders.value = response.data?.data || []
+    totalPages.value = Math.ceil(response.data?.total / limit.value)
+    totalOrders.value = response.data?.total || 0
+    console.log('Processed orders:', orders.value, 'totalPages:', totalPages.value, 'totalOrders:', totalOrders.value)
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Error fetching orders'
+    console.error('Error in fetchOrders:', err)
   } finally {
     loading.value = false
   }
 }
 
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchOrders(currentPage.value)
+  }
+}
+
+const goToNextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchOrders(currentPage.value)
+  }
+}
+
 const downloadInvoice = async (orderId: number, orderNumber: string) => {
   try {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      throw new Error('No access token found')
+    }
     const response = await axios.get(`https://proyecto-tienda-ropa.onrender.com/orders/${orderId}/invoice`, {
       headers: { Authorization: `Bearer ${token}` },
       responseType: 'blob'
@@ -212,6 +266,8 @@ const downloadInvoice = async (orderId: number, orderNumber: string) => {
     window.URL.revokeObjectURL(url)
   } catch (err) {
     console.error('Error downloading invoice:', err)
+    // Show user-friendly error
+    alert('Error downloading invoice: ' + (err.message || 'Unknown error'))
   }
 }
 

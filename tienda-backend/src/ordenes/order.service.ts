@@ -135,31 +135,47 @@ export class OrderService {
     return order;
   }
 
-  async findOrdersByUser(userId: number): Promise<Order[]> {
-    const orders = await this.orderRepo.find({
+  async findOrdersByUser(userId: number, page: number = 1, limit: number = 10): Promise<{ data: Order[], total: number, page: number, limit: number, totalPages: number }> {
+    const [orders, total] = await this.orderRepo.findAndCount({
       where: { user: { id: userId } },
       relations: ['user', 'items', 'items.product'],
       order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     // Ensure user information is properly included
-    return orders.map(order => ({
+    const ordersWithUserId = orders.map(order => ({
       ...order,
       userId: order.user?.id,
     })) as Order[];
+
+    const totalPages = Math.ceil(total / limit);
+    return { data: ordersWithUserId, total, page, limit, totalPages };
   }
 
-  async findAllOrders(): Promise<Order[]> {
-    const orders = await this.orderRepo.find({
+  async findAllOrders(page: number = 1, limit: number = 10): Promise<{ data: Order[], total: number, page: number, limit: number, totalPages: number }> {
+    const [orders, total] = await this.orderRepo.findAndCount({
       relations: ['user', 'items', 'items.product', 'statusHistory'],
       order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     // Ensure user information is properly included
-    return orders.map(order => ({
+    const ordersWithUserId = orders.map(order => ({
       ...order,
       userId: order.user?.id,
     })) as Order[];
+
+    const totalPages = Math.ceil(total / limit);
+    return { data: ordersWithUserId, total, page, limit, totalPages };
+  }
+
+  // Deprecated: Use findAllOrders(page, limit) instead
+  async findAllOrdersLegacy(): Promise<Order[]> {
+    const paginatedResult = await this.findAllOrders(1, 1000); // Get all orders with high limit
+    return paginatedResult.data;
   }
 
   async updateOrderStatus(orderId: number, dto: UpdateOrderStatusDto, changedBy: User): Promise<Order> {
