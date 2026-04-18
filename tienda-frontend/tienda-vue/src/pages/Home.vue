@@ -178,7 +178,7 @@
             class="group cursor-pointer animate-fade-in-up"
             :style="{ animationDelay: `${index * 100}ms` }"
           >
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hover:shadow-2xl hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/30 hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
               <div class="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                 <span class="text-6xl transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">{{ getProductEmoji(product) }}</span>
                 <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2">
