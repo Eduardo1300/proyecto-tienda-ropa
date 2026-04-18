@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd tienda-vue && npm install && npm run build && mv dist ../dist",
+  "buildCommand": "cd tienda-vue && npm install && npm run build && copy-item -Path dist -Destination ../dist -Recurse",
   "devCommand": "cd tienda-vue && npm run dev",
-  "installCommand": "npm ci",
+  "installCommand": "cd tienda-vue && npm install",
   "outputDirectory": "dist",
   "rewrites": [
     {
