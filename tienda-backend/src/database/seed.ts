@@ -2,12 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const usersService = app.get(UsersService);
   const productsService = app.get(ProductsService);
+  const dataSource = app.get(DataSource);
 
   try {
     console.log('🌱 Starting database seed...');
@@ -212,6 +214,60 @@ async function seed() {
     }
 
     console.log('✅ Products created successfully');
+
+    // Get all products to add reviews
+    const allProducts = await productsService.findAll({});
+    
+    // Create reviews for products
+    const reviewsData = [
+      { rating: 5, title: 'Excelente producto', comment: 'Muy buena calidad, me encantó. Lo recomiendo totalmente.', isVerified: true },
+      { rating: 4, title: 'Muy bueno', comment: 'Buena relación precio-calidad. El material es bueno.', isVerified: true },
+      { rating: 5, title: 'Perfecto para mí', comment: 'Exactly lo que buscaba. El tamaño es correcto y la tela es muy cómoda.', isVerified: true },
+      { rating: 3, title: 'Bueno pero', comment: 'El producto está bien, pero el envío tardó más de lo esperado.', isVerified: false },
+      { rating: 5, title: 'Increíble', comment: 'Superó mis expectativas. La calidad es premium y el diseño es moderno.', isVerified: true },
+      { rating: 4, title: 'Recomendable', comment: 'Buen producto, lo volvería a comprar. El color es exactamente como en la foto.', isVerified: true },
+      { rating: 5, title: 'Lo amo', comment: 'Perfecto para mi guardarropa. Muy versátil y fácil de combinar.', isVerified: true },
+      { rating: 2, title: 'No me convenció', comment: 'La tela es más delgada de lo que esperaba. Pero el estilo está bien.', isVerified: false },
+      { rating: 5, title: 'Mejor compra', comment: 'Sin duda la mejor compra del año. La calidad es excepcional.', isVerified: true },
+      { rating: 4, title: 'Buena opción', comment: 'Buen producto, llegò en perfecto estado. El empaque era muy seguro.', isVerified: true },
+    ];
+
+    const reviewRepository = dataSource.getRepository('Review');
+    
+    // Add 3-5 reviews to each product
+    const productsList = allProducts.slice(0, 20);
+    for (let i = 0; i < productsList.length; i++) {
+      const product = productsList[i];
+      const numReviews = Math.floor(Math.random() * 3) + 3; // 3-5 reviews per product
+      
+      for (let j = 0; j < numReviews; j++) {
+        const reviewData = reviewsData[Math.floor(Math.random() * reviewsData.length)];
+        const randomDate = new Date();
+        randomDate.setDate(randomDate.getDate() - Math.floor(Math.random() * 90)); // Random date in last 90 days
+        
+        await reviewRepository.save({
+          productId: product.id,
+          userId: customerUser.id,
+          rating: reviewData.rating,
+          title: reviewData.title,
+          comment: reviewData.comment,
+          isVerified: reviewData.isVerified,
+          isActive: true,
+          purchaseVerified: reviewData.isVerified,
+          createdAt: randomDate,
+        });
+      }
+      
+      // Update product review count and average rating
+      const reviews = await reviewRepository.find({ where: { productId: product.id, isActive: true } });
+      const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+      await productsService.update(product.id, {
+        reviewCount: reviews.length,
+        averageRating: Math.round(avgRating * 100) / 100,
+      });
+    }
+
+    console.log('✅ Reviews created successfully');
     console.log('🎉 Database seed completed!');
   } catch (error) {
     console.error('❌ Error during seeding:', error);

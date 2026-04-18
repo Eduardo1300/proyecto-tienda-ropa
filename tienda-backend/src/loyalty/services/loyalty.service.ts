@@ -97,7 +97,7 @@ export class LoyaltyService {
     program.availablePoints += points;
     program.lastActivityAt = new Date();
 
-    if (orderAmount) {
+    if (orderAmount && typeof orderAmount === 'number') {
       program.lifetimeSpent += orderAmount;
     }
 

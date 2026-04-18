@@ -191,36 +191,121 @@ async function seed() {
       console.log(`✅ Created order: ${orderData.orderNumber}`);
     }
 
-    // Crear reseñas de ejemplo
+// Crear reseñas de ejemplo
     console.log('⭐ Creating reviews...');
-    const mockReviews = [
-      {
-        rating: 5,
-        comment: 'Excelente producto, muy recomendado.',
-        title: 'Gran calidad',
-        userId: testUser?.id || 2, // user@example.com
-        productId: 1, // Camiseta Básica Blanca
-        createdAt: new Date(),
-      },
-      {
-        rating: 4,
-        comment: 'Buena calidad, pero el envío fue lento.',
-        title: 'Satisfecho',
-        userId: adminUser?.id || 1, // admin@example.com
-        productId: 2, // Vestido Elegante Negro
-        createdAt: new Date(),
-      },
+    
+    // Get all products
+    const allProducts = await productsService.findAll();
+    
+    // Use TypeORM directly with a simple connection
+    const DataSource = require('typeorm').DataSource;
+    const databaseUrl = process.env.DATABASE_URL;
+    
+    let dataSource: any;
+    if (databaseUrl) {
+      dataSource = new DataSource({
+        type: 'postgres',
+        url: databaseUrl,
+        synchronize: false,
+        ssl: { rejectUnauthorized: false },
+        entities: [__dirname + '/../src/**/*.entity.ts'],
+      });
+    } else {
+      dataSource = new DataSource({
+        type: 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432'),
+        username: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || 'postgres',
+        database: process.env.DB_NAME || 'tienda_ropa',
+        synchronize: false,
+        entities: [__dirname + '/../src/**/*.entity.ts'],
+      });
+    }
+    
+    await dataSource.initialize();
+    const reviewRepository = dataSource.getRepository('Review');
+    
+    // Delete existing reviews first
+    await reviewRepository.query('DELETE FROM reviews');
+    console.log('🗑️ Deleted existing reviews');
+    
+    // Sample review data
+    const reviewTemplates = [
+      { rating: 5, title: 'Excelente producto', comment: 'Muy buena calidad, me encantó. Lo recomiendo totalmente.', isVerified: true },
+      { rating: 4, title: 'Muy bueno', comment: 'Buena relación precio-calidad. El material es bueno.', isVerified: true },
+      { rating: 5, title: 'Perfecto para mí', comment: 'Exactamente lo que buscaba. El tamaño es correcto y la tela es muy cómoda.', isVerified: true },
+      { rating: 3, title: 'Bueno pero', comment: 'El producto está bien, pero el envío tardó más de lo esperado.', isVerified: false },
+      { rating: 5, title: 'Increíble', comment: 'Superó mis expectativas. La calidad es premium y el diseño es moderno.', isVerified: true },
+      { rating: 4, title: 'Recomendable', comment: 'Buen producto, lo volvería a comprar. El color es exactamente como en la foto.', isVerified: true },
+      { rating: 5, title: 'Lo amo', comment: 'Perfecto para mi guardarropa. Muy versátil y fácil de combinar.', isVerified: true },
+      { rating: 2, title: 'No me convenció', comment: 'La tela es más delgada de lo que esperaba. Pero el estilo está bien.', isVerified: false },
+      { rating: 5, title: 'Mejor compra', comment: 'Sin duda la mejor compra del año. La calidad es excepcional.', isVerified: true },
+      { rating: 4, title: 'Buena opción', comment: 'Buen producto, llegó en perfecto estado. El empaque era muy seguro.', isVerified: true },
     ];
 
-    for (const reviewData of mockReviews) {
-      const existingReview = await reviewsService.findByUserAndProduct(reviewData.userId, reviewData.productId);
-      if (!existingReview) {
-        await reviewsService.create(reviewData.userId, reviewData);
-        console.log(`✅ Created review for product ID: ${reviewData.productId}`);
-      } else {
-        console.log(`⚠️ Review already exists for user ID: ${reviewData.userId} and product ID: ${reviewData.productId}`);
+    // Create 3-5 reviews for each product
+    for (const product of allProducts) {
+      const numReviews = Math.floor(Math.random() * 3) + 3; // 3-5 reviews
+      
+      for (let i = 0; i < numReviews; i++) {
+        const template = reviewTemplates[Math.floor(Math.random() * reviewTemplates.length)];
+        
+        // Alternate between users
+        const userId = i % 2 === 0 ? testUser?.id : adminUser?.id;
+        
+        // Check if review already exists
+        const existingReview = await reviewRepository.findOne({
+          where: { userId: userId || 2, productId: product.id }
+        });
+        
+        if (!existingReview) {
+          // Generate random date within last 90 days
+          const randomDate = new Date();
+          randomDate.setDate(randomDate.getDate() - Math.floor(Math.random() * 90));
+          
+          // Ensure proper date format
+          const dateString = randomDate.toISOString();
+          
+          await reviewRepository.query(
+            `INSERT INTO reviews (rating, title, comment, "userId", "productId", "isVerified", "isActive", "purchaseVerified", "createdAt", "updatedAt") 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
+            [
+              template.rating,
+              template.title,
+              template.comment,
+              userId || 2,
+              product.id,
+              template.isVerified,
+              true,
+              template.isVerified,
+              dateString
+            ]
+          );
+        }
       }
     }
+    
+    // Update all products with review count and average rating
+    console.log('📊 Updating product review stats...');
+    for (const product of allProducts) {
+      const reviews = await reviewRepository.find({ 
+        where: { productId: product.id, isActive: true }
+      });
+      
+      const totalReviews = reviews.length;
+      const avgRating = totalReviews > 0 
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews 
+        : 0;
+      
+      await productsService.update(product.id, {
+        reviewCount: totalReviews,
+        averageRating: Math.round(avgRating * 100) / 100
+      } as any);
+    }
+
+    await dataSource.destroy();
+    console.log('✅ Reviews created for all products');
 
     // Crear listas de deseos de ejemplo
     console.log('💖 Creating wishlists...');
