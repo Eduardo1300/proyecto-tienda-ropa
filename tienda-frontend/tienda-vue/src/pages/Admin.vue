@@ -26,7 +26,18 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div v-if="loading" class="animate-pulse space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="i in 4" :key="i" class="h-28 bg-white/10 rounded-2xl"></div>
+        </div>
+        <div class="h-64 bg-white/5 rounded-3xl"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="h-72 bg-white/5 rounded-3xl"></div>
+          <div class="h-72 bg-white/5 rounded-3xl"></div>
+        </div>
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.1s;">
           <div class="flex items-center justify-between">
             <div>
@@ -124,6 +135,7 @@ import { productsAPI, ordersAPI, usersAPI } from '../api'
 const stats = ref({ products: 0, orders: 0, users: 0, revenue: 0 })
 const recentOrders = ref<any[]>([])
 const lowStockProducts = ref<any[]>([])
+const loading = ref(true)
 
 onMounted(async () => {
   try {
@@ -148,6 +160,8 @@ onMounted(async () => {
     lowStockProducts.value = products.filter((p: any) => p.stock < 10).slice(0, 5)
   } catch (err) {
     console.error('Error loading admin data:', err)
+  } finally {
+    loading.value = false
   }
 })
 </script>

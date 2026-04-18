@@ -13,10 +13,21 @@
         <p v-if="order" class="text-gray-300 text-lg mt-2">Pedido #{{ order.orderNumber }}</p>
       </div>
 
-      <div v-if="loading" class="flex items-center justify-center py-20">
-        <div class="text-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-          <p class="text-gray-400 mt-4">Cargando información del pedido...</p>
+      <div v-if="loading" class="animate-pulse space-y-6">
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+          <div class="space-y-4">
+            <div v-for="i in 3" :key="i" class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+              <div class="flex items-center gap-4">
+                <div class="w-5 h-5 bg-white/10 rounded"></div>
+                <div class="w-12 h-12 bg-white/5 rounded"></div>
+                <div class="space-y-2">
+                  <div class="h-4 bg-white/5 rounded w-32"></div>
+                  <div class="h-3 bg-white/5 rounded w-24"></div>
+                </div>
+              </div>
+              <div class="h-4 bg-white/5 rounded w-16"></div>
+            </div>
+          </div>
         </div>
       </div>
 

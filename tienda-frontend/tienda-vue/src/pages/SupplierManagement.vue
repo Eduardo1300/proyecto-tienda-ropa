@@ -40,8 +40,10 @@
         </button>
       </div>
 
-      <div v-if="loading" class="flex items-center justify-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      <div v-if="loading" class="animate-pulse space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="i in 6" :key="i" class="h-48 bg-white/10 rounded-2xl"></div>
+        </div>
       </div>
 
       <div v-else-if="activeTab === 'list'" class="space-y-4">
