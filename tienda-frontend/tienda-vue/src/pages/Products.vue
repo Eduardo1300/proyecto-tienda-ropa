@@ -43,7 +43,7 @@
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Filters Sidebar -->
         <div class="w-full lg:w-1/4">
-          <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 sticky top-24 hover:border-purple-500/30 transition-all duration-300 animate-slide-in-left">
+          <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 sticky top-24 hover:border-purple-500/30 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 animate-slide-in-left">
             <div class="flex items-center justify-between mb-6">
               <h3 class="font-bold text-white text-lg flex items-center gap-2">
                 <span class="text-xl">⚙️</span> Filtros
