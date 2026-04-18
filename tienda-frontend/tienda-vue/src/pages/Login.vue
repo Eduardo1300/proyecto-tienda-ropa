@@ -37,7 +37,7 @@
         </p>
       </div>
 
-      <div class="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in-up hover:shadow-3xl transition-all duration-500">
+      <div class="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in-up hover:shadow-3xl hover:shadow-purple-500/20 hover:border-purple-400/30 transition-all duration-500">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Demo credentials -->
           <div class="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-400/30 mb-4 shadow-xl">
