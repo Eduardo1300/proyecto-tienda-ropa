@@ -87,12 +87,11 @@
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div v-for="(category, index) in categories" :key="index" 
-            class="cursor-pointer group animate-fade-in-up"
+          <div v-for="(category, index) in categories" :key="index" class="cursor-pointer group animate-fade-in-up"
             :style="{ animationDelay: `${index * 100}ms` }"
           >
             <div 
-              class="bg-gradient-to-br rounded-xl p-6 text-white text-center transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl"
+              class="bg-gradient-to-br rounded-xl p-6 text-white text-center transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-purple-500/25 border border-transparent hover:border-white/20"
               :class="category.color"
             >
               <div class="text-5xl group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300 mb-3">
