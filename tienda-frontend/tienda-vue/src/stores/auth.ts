@@ -150,6 +150,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     isAdmin,
+    initAuth,
     login,
     register,
     logout,
