@@ -77,9 +77,13 @@
               </div>
             </div>
 
+            <div v-if="profileMessage" :class="profileMessage.includes('Error') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'" class="mb-4 px-4 py-2 rounded-lg text-sm">
+              {{ profileMessage }}
+            </div>
             <div class="mt-6 flex justify-end">
-              <button class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
-                💾 Guardar Cambios
+              <button @click="saveProfile" :disabled="savingProfile" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50">
+                <span v-if="savingProfile">Guardando...</span>
+                <span v-else>💾 Guardar Cambios</span>
               </button>
             </div>
           </div>
@@ -134,18 +138,22 @@
             <div class="space-y-6">
               <div>
                 <label class="block text-sm text-gray-400 mb-2">Contrasena actual</label>
-                <input type="password" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+                <input type="password" v-model="passwordForm.current" placeholder="Contrasena actual" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
               </div>
               <div>
                 <label class="block text-sm text-gray-400 mb-2">Nueva contrasena</label>
-                <input type="password" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+                <input type="password" v-model="passwordForm.new" placeholder="Nueva contrasena" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
               </div>
               <div>
                 <label class="block text-sm text-gray-400 mb-2">Confirmar contrasena</label>
-                <input type="password" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
+                <input type="password" v-model="passwordForm.confirm" placeholder="Confirmar contrasena" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" />
               </div>
-              <button class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
-                🔒 Actualizar Contrasena
+              <div v-if="passwordMessage" :class="passwordMessage.includes('Error') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'" class="px-4 py-2 rounded-lg text-sm">
+                {{ passwordMessage }}
+              </div>
+              <button @click="updatePassword" :disabled="savingPassword" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50">
+                <span v-if="savingPassword">Actualizando...</span>
+                <span v-else>🔒 Actualizar Contrasena</span>
               </button>
             </div>
           </div>
@@ -258,7 +266,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { ordersAPI } from '../api'
+import { ordersAPI, authAPI, usersAPI } from '../api'
 import type { Order } from '../types'
 
 const router = useRouter()
@@ -271,6 +279,10 @@ const showLogoutModal = ref(false)
 const showAddressModal = ref(false)
 const editingAddress = ref<any>(null)
 const addresses = ref<any[]>([])
+const savingProfile = ref(false)
+const savingPassword = ref(false)
+const profileMessage = ref('')
+const passwordMessage = ref('')
 
 const profile = ref({
   username: authStore.user?.username || '',
@@ -287,6 +299,12 @@ const addressForm = ref({
   zipCode: '',
   country: '',
   type: 'home'
+})
+
+const passwordForm = ref({
+  current: '',
+  new: '',
+  confirm: ''
 })
 
 const tabs = [
@@ -335,13 +353,83 @@ const closeAddressModal = () => {
   editingAddress.value = null
 }
 
-const saveAddress = () => {
-  if (editingAddress.value) {
-    addresses.value = addresses.value.map(a => a.id === editingAddress.value.id ? { ...addressForm.value, id: a.id } : a)
-  } else {
-    addresses.value.push({ ...addressForm.value, id: Date.now() })
+const saveAddress = async () => {
+  try {
+    const addressData = {
+      ...addressForm.value,
+      userId: authStore.user?.id
+    }
+    const response = await usersAPI.updateAddress(addressForm.value.id || 0, addressData)
+    if (editingAddress.value) {
+      addresses.value = addresses.value.map(a => a.id === editingAddress.value.id ? { ...response.data } : a)
+    } else {
+      addresses.value.push(response.data)
+    }
+    closeAddressModal()
+  } catch (err) {
+    console.error('Error saving address:', err)
   }
-  closeAddressModal()
+}
+
+const deleteAddress = async (id: number) => {
+  if (confirm('¿Eliminar esta dirección?')) {
+    try {
+      await usersAPI.deleteAddress(id)
+      addresses.value = addresses.value.filter(a => a.id !== id)
+    } catch (err) {
+      console.error('Error deleting address:', err)
+    }
+  }
+}
+
+const saveProfile = async () => {
+  try {
+    savingProfile.value = true
+    profileMessage.value = ''
+    const response = await authAPI.updateProfile(profile.value)
+    if (response.data) {
+      authStore.setUser(response.data)
+      profileMessage.value = 'Perfil actualizado correctamente'
+      setTimeout(() => { profileMessage.value = '' }, 3000)
+    }
+  } catch (err: any) {
+    console.error('Error saving profile:', err)
+    profileMessage.value = err.response?.data?.message || 'Error al guardar perfil'
+  } finally {
+    savingProfile.value = false
+  }
+}
+
+const updatePassword = async () => {
+  try {
+    savingPassword.value = true
+    passwordMessage.value = ''
+    
+    if (!passwordForm.value.current || !passwordForm.value.new || !passwordForm.value.confirm) {
+      passwordMessage.value = 'Por favor completa todos los campos'
+      return
+    }
+    
+    if (passwordForm.value.new !== passwordForm.value.confirm) {
+      passwordMessage.value = 'Las contraseñas no coinciden'
+      return
+    }
+    
+    if (passwordForm.value.new.length < 6) {
+      passwordMessage.value = 'La contraseña debe tener al menos 6 caracteres'
+      return
+    }
+    
+    await authAPI.updatePassword(passwordForm.value.current, passwordForm.value.new)
+    passwordMessage.value = 'Contraseña actualizada correctamente'
+    passwordForm.value = { current: '', new: '', confirm: '' }
+    setTimeout(() => { passwordMessage.value = '' }, 3000)
+  } catch (err: any) {
+    console.error('Error updating password:', err)
+    passwordMessage.value = err.response?.data?.message || 'Error al actualizar contraseña'
+  } finally {
+    savingPassword.value = false
+  }
 }
 
 const deleteAddress = (id: number) => {
@@ -350,10 +438,20 @@ const deleteAddress = (id: number) => {
   }
 }
 
+const loadAddresses = async () => {
+  try {
+    const response = await usersAPI.getAddresses()
+    addresses.value = response.data || []
+  } catch (err) {
+    console.error('Error loading addresses:', err)
+  }
+}
+
 onMounted(async () => {
   try {
-    const response = await ordersAPI.getAll()
-    orders.value = response.data || []
+    const ordersResponse = await ordersAPI.getAll()
+    orders.value = ordersResponse.data?.data || []
+    await loadAddresses()
   } catch (err) {
     console.error(err)
   } finally {

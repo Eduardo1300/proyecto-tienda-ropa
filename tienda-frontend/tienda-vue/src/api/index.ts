@@ -80,6 +80,8 @@ export const authAPI = {
   forgotPassword: (email: string) => api.post<ApiResponse<{ message: string }>>('/auth/forgot-password', { email }),
   resetPassword: (token: string, newPassword: string) => api.post<ApiResponse<{ message: string }>>('/auth/reset-password', { token, newPassword }),
   getProfile: () => api.get<User>('/auth/profile'),
+  updateProfile: (data: any) => api.patch<ApiResponse<User>>('/auth/profile', data),
+  updatePassword: (currentPassword: string, newPassword: string) => api.post<ApiResponse<{ message: string }>>('/auth/password', { currentPassword, newPassword }),
 }
 
 export const productsAPI = {
@@ -136,6 +138,10 @@ export const usersAPI = {
   getAll: () => api.get<any[]>('/users'),
   getById: (id: number) => api.get<any>(`/users/${id}`),
   update: (id: number, data: any) => api.patch<any>(`/users/${id}`, data),
+  getAddresses: () => api.get<any[]>('/users/addresses'),
+  updateAddress: (id: number, data: any) => api.patch<any>(`/users/addresses/${id}`, data),
+  createAddress: (data: any) => api.post<any>('/users/addresses', data),
+  deleteAddress: (id: number) => api.delete<any>(`/users/addresses/${id}`),
 }
 
 export const wishlistAPI = {
