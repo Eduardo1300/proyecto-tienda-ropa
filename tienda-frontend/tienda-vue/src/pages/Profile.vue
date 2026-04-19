@@ -142,7 +142,7 @@
                   <img :src="item.product?.image || item.image || '/placeholder.png'" :alt="item.product?.name" class="w-20 h-20 object-cover rounded-lg" />
                   <div class="flex-1">
                     <h3 class="text-white font-bold">{{ item.product?.name }}</h3>
-                    <p class="text-purple-400 font-bold">S/ {{ item.product?.price?.toFixed(2) }}</p>
+                    <p class="text-purple-400 font-bold">S/ {{ Number(item.product?.price || 0).toFixed(2) }}</p>
                     <div class="flex gap-2 mt-2">
                       <button @click="addToCart(item.product)" class="text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700">Agregar al carrito</button>
                       <button @click="removeFromWishlist(item.productId)" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">Quitar</button>

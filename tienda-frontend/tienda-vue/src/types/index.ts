@@ -7,6 +7,31 @@ export interface User {
   lastName?: string
   phone?: string
   avatar?: string
+  addresses?: Address[]
+}
+
+export interface Address {
+  id: number
+  label: string
+  street: string
+  city: string
+  state: string
+  zipCode: string
+  country?: string
+  type: 'home' | 'work' | 'other'
+}
+
+export interface WishlistItem {
+  id: number
+  productId: number
+  product: Product
+}
+
+export interface LoyaltyProgram {
+  id: number
+  availablePoints: number
+  totalPoints: number
+  tier: string
 }
 
 export interface Product {

@@ -26,6 +26,13 @@ export const useAuthStore = defineStore('auth', () => {
     if (savedUser && savedToken) {
       try {
         user.value = JSON.parse(savedUser)
+        if (!user.value.addresses) {
+          user.value.addresses = [
+            { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+            { id: 2, label: 'Oficina', street: 'Jr. Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' },
+            { id: 3, label: 'Departamento', street: 'Av. Spa 789', city: 'Lima', state: 'Lima', zipCode: '15003', type: 'other' }
+          ]
+        }
         console.log('initAuth - user loaded:', user.value)
       } catch (e) {
         console.error('Error parsing saved user:', e)
@@ -132,6 +139,18 @@ export const useAuthStore = defineStore('auth', () => {
     console.log('User logged out')
   }
 
+  const setUser = (userData: User) => {
+    if (!userData.addresses) {
+      userData.addresses = [
+        { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+        { id: 2, label: 'Oficina', street: 'Jr. Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' },
+        { id: 3, label: 'Departamento', street: 'Av. Spa 789', city: 'Lima', state: 'Lima', zipCode: '15003', type: 'other' }
+      ]
+    }
+    user.value = userData
+    localStorage.setItem('user', JSON.stringify(user.value))
+  }
+
   const fetchProfile = async () => {
     try {
       const response = await authAPI.getProfile()
@@ -154,6 +173,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
-    fetchProfile
+    fetchProfile,
+    setUser
   }
 })
