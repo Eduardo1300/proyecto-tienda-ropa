@@ -62,14 +62,14 @@
             <!-- Quantity Controls -->
             <div class="flex items-center gap-2">
               <button 
-                @click="updateQuantity(item.id!, item.quantity - 1)" 
+                @click="cartStore.decrementQuantity(item.productId)" 
                 class="w-10 h-10 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 hover:border-purple-500/50 transition-all"
               >
                 −
               </button>
               <span class="w-12 text-center text-white font-bold bg-white/5 rounded-lg py-1">{{ item.quantity }}</span>
               <button 
-                @click="updateQuantity(item.id!, item.quantity + 1)" 
+                @click="cartStore.incrementQuantity(item.productId)" 
                 class="w-10 h-10 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 hover:border-purple-500/50 transition-all"
               >
                 +
@@ -80,7 +80,7 @@
             <div class="text-right">
               <p class="text-xl font-bold text-white">S/ {{ (Number(item.price) * item.quantity).toFixed(2) }}</p>
               <button 
-                @click="removeItem(item.id!)" 
+                @click="cartStore.removeItem(item.productId)" 
                 class="text-red-400 text-sm hover:text-red-300 mt-2 hover:underline transition-all"
               >
                 🗑️ Eliminar

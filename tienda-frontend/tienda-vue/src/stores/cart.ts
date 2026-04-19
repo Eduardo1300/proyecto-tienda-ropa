@@ -52,30 +52,53 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  const updateQuantity = async (itemId: number, quantity: number) => {
-    const item = items.value.find(i => i.id === itemId)
+  const updateQuantity = async (productId: number, quantity: number) => {
+    const item = items.value.find(i => i.productId === productId)
     if (!item) return
 
     if (quantity <= 0) {
-      await removeItem(itemId)
+      await removeItem(productId)
       return
     }
 
-    try {
-      await cartAPI.update(itemId, quantity)
-      item.quantity = quantity
-    } catch (err) {
-      console.error('Error updating quantity:', err)
+    if (item.id && item.id > 0 && item.id < 2147483647) {
+      try {
+        await cartAPI.update(item.id, quantity)
+      } catch (err) {
+        console.error('Error updating in API:', err)
+      }
+    }
+    item.quantity = quantity
+  }
+
+  const incrementQuantity = async (productId: number) => {
+    const item = items.value.find(i => i.productId === productId)
+    if (item) {
+      await updateQuantity(productId, item.quantity + 1)
     }
   }
 
-  const removeItem = async (itemId: number) => {
-    try {
-      await cartAPI.remove(itemId)
-      items.value = items.value.filter(item => item.id !== itemId)
-    } catch (err) {
-      console.error('Error removing item:', err)
+  const decrementQuantity = async (productId: number) => {
+    const item = items.value.find(i => i.productId === productId)
+    if (item && item.quantity > 1) {
+      await updateQuantity(productId, item.quantity - 1)
+    } else {
+      await removeItem(productId)
     }
+  }
+
+  const removeItem = async (productId: number) => {
+    const item = items.value.find(i => i.productId === productId)
+    if (!item) return
+    
+    if (item.id && item.id > 0 && item.id < 2147483647) {
+      try {
+        await cartAPI.remove(item.id)
+      } catch (err) {
+        console.error('Error removing from API:', err)
+      }
+    }
+    items.value = items.value.filter(i => i.productId !== productId)
   }
 
   const clearCart = async () => {
@@ -108,6 +131,8 @@ export const useCartStore = defineStore('cart', () => {
     fetchCart,
     addItem,
     updateQuantity,
+    incrementQuantity,
+    decrementQuantity,
     removeItem,
     clearCart,
     applyDiscount
