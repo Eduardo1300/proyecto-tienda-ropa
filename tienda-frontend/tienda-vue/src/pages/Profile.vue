@@ -465,15 +465,17 @@ const loadAddresses = async () => {
     
     if (addresses.value.length === 0) {
       addresses.value = [
-        { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
-        { id: 2, label: 'Oficina', street: 'Calle Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' }
+        { id: 1, label: 'Casa', street: 'Av. Principal 123, District', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+        { id: 2, label: 'Oficina', street: 'Jr. Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' },
+        { id: 3, label: 'Departamento', street: 'Av. Spa 789', city: 'Lima', state: 'Lima', zipCode: '15003', type: 'other' }
       ]
     }
   } catch (err) {
     console.error('Error loading addresses:', err)
     addresses.value = [
-      { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
-      { id: 2, label: 'Oficina', street: 'Calle Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' }
+      { id: 1, label: 'Casa', street: 'Av. Principal 123, District', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+      { id: 2, label: 'Oficina', street: 'Jr. Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' },
+      { id: 3, label: 'Departamento', street: 'Av. Spa 789', city: 'Lima', state: 'Lima', zipCode: '15003', type: 'other' }
     ]
   }
 }
@@ -486,14 +488,20 @@ const loadWishlist = async () => {
     if (wishlist.value.length === 0) {
       wishlist.value = [
         { id: 1, productId: 1, product: { id: 1, name: 'Camisa Algodón Premium', price: 79.99, image: '' } },
-        { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim', price: 129.99, image: '' } }
+        { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim Fit', price: 129.99, image: '' } },
+        { id: 3, productId: 3, product: { id: 3, name: 'Zapatillas Urbanas', price: 199.99, image: '' } },
+        { id: 4, productId: 4, product: { id: 4, name: 'Chaqueta de Cuero', price: 349.99, image: '' } },
+        { id: 5, productId: 5, product: { id: 5, name: 'Vestido Elegante', price: 159.99, image: '' } }
       ]
     }
   } catch (err) {
     console.error('Error loading wishlist:', err)
     wishlist.value = [
       { id: 1, productId: 1, product: { id: 1, name: 'Camisa Algodón Premium', price: 79.99, image: '' } },
-      { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim', price: 129.99, image: '' } }
+      { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim Fit', price: 129.99, image: '' } },
+      { id: 3, productId: 3, product: { id: 3, name: 'Zapatillas Urbanas', price: 199.99, image: '' } },
+      { id: 4, productId: 4, product: { id: 4, name: 'Chaqueta de Cuero', price: 349.99, image: '' } },
+      { id: 5, productId: 5, product: { id: 5, name: 'Vestido Elegante', price: 159.99, image: '' } }
     ]
   }
 }
