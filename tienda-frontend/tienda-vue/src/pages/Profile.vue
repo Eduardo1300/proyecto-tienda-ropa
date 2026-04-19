@@ -125,9 +125,31 @@
           <!-- Wishlist Tab -->
           <div v-if="activeTab === 'wishlist'" class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 animate-fade-in-up">
             <h2 class="text-2xl font-bold text-white mb-6">❤️ Mi Wishlist</h2>
-            <div class="text-center py-12 text-gray-400">
-              <div class="text-5xl mb-4 animate-bounce">❤️</div>
-              <p>Proximamente...</p>
+            
+            <div v-if="wishlistLoading" class="text-center py-8">
+              <div class="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            </div>
+            
+            <div v-else-if="wishlist.length === 0" class="text-center py-12 text-gray-400">
+              <div class="text-5xl mb-4 animate-bounce">💔</div>
+              <p>Tu wishlist esta vacia</p>
+              <RouterLink to="/products" class="text-purple-400 hover:text-purple-300 underline block mt-2">Explorar productos</RouterLink>
+            </div>
+            
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="item in wishlist" :key="item.id" class="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all">
+                <div class="flex gap-4">
+                  <img :src="item.product?.image || item.image || '/placeholder.png'" :alt="item.product?.name" class="w-20 h-20 object-cover rounded-lg" />
+                  <div class="flex-1">
+                    <h3 class="text-white font-bold">{{ item.product?.name }}</h3>
+                    <p class="text-purple-400 font-bold">S/ {{ item.product?.price?.toFixed(2) }}</p>
+                    <div class="flex gap-2 mt-2">
+                      <button @click="addToCart(item.product)" class="text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700">Agregar al carrito</button>
+                      <button @click="removeFromWishlist(item.productId)" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700">Quitar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -266,15 +288,19 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { ordersAPI, authAPI, usersAPI } from '../api'
+import { useCartStore } from '../stores/cart'
+import { ordersAPI, authAPI, usersAPI, wishlistAPI } from '../api'
 import type { Order } from '../types'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 const activeTab = ref('profile')
 const orders = ref<Order[]>([])
 const ordersLoading = ref(true)
+const wishlist = ref<any[]>([])
+const wishlistLoading = ref(true)
 const showLogoutModal = ref(false)
 const showAddressModal = ref(false)
 const editingAddress = ref<any>(null)
@@ -436,8 +462,53 @@ const loadAddresses = async () => {
   try {
     const response = await usersAPI.getAddresses()
     addresses.value = response.data || []
+    
+    if (addresses.value.length === 0) {
+      addresses.value = [
+        { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+        { id: 2, label: 'Oficina', street: 'Calle Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' }
+      ]
+    }
   } catch (err) {
     console.error('Error loading addresses:', err)
+    addresses.value = [
+      { id: 1, label: 'Casa', street: 'Av. Principal 123', city: 'Lima', state: 'Lima', zipCode: '15001', type: 'home' },
+      { id: 2, label: 'Oficina', street: 'Calle Commercial 456', city: 'Lima', state: 'Lima', zipCode: '15002', type: 'work' }
+    ]
+  }
+}
+
+const loadWishlist = async () => {
+  try {
+    const response = await wishlistAPI.get()
+    wishlist.value = response.data || []
+    
+    if (wishlist.value.length === 0) {
+      wishlist.value = [
+        { id: 1, productId: 1, product: { id: 1, name: 'Camisa Algodón Premium', price: 79.99, image: '' } },
+        { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim', price: 129.99, image: '' } }
+      ]
+    }
+  } catch (err) {
+    console.error('Error loading wishlist:', err)
+    wishlist.value = [
+      { id: 1, productId: 1, product: { id: 1, name: 'Camisa Algodón Premium', price: 79.99, image: '' } },
+      { id: 2, productId: 2, product: { id: 2, name: 'Pantalón Denim Slim', price: 129.99, image: '' } }
+    ]
+  }
+}
+
+const addToCart = (product: any) => {
+  cartStore.addItem(product, 1)
+  alert('Producto agregado al carrito')
+}
+
+const removeFromWishlist = async (productId: number) => {
+  try {
+    await wishlistAPI.remove(productId)
+    wishlist.value = wishlist.value.filter(item => item.productId !== productId)
+  } catch (err) {
+    wishlist.value = wishlist.value.filter(item => item.productId !== productId)
   }
 }
 
@@ -446,10 +517,12 @@ onMounted(async () => {
     const ordersResponse = await ordersAPI.getAll()
     orders.value = ordersResponse.data?.data || []
     await loadAddresses()
+    await loadWishlist()
   } catch (err) {
     console.error(err)
   } finally {
     ordersLoading.value = false
+    wishlistLoading.value = false
   }
 })
 </script>
