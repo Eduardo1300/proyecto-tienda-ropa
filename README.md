@@ -1,6 +1,6 @@
 # 🛍️ Tienda de Ropa - E-commerce Full Stack
 
-Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y **Vue 3 + TypeScript** (frontend), con autenticación robusta, gestión de productos, carrito de compras, sistema de órdenes, analytics, programa de lealtad y gestión de inventario.
+Un sistema completo de tienda en línea desarrollado con **NestJS** (backend) y **Vue 3 + TypeScript** (frontend Vue), con autenticación robusta, gestión de productos, carrito de compras, sistema de órdenes, analytics, programa de lealtad y gestión de inventario.
 
 ## 📊 Tabla de Contenidos
 
@@ -1699,7 +1699,7 @@ CMD ["node", "dist/main.js"]
 - [ ] **Búsqueda avanzada** - Elasticsearch
 - [ ] **Multi-idioma** - i18n
 - [ ] **OAuth Social** - Google, Facebook login
-- [ ] **App móvil** - React Native
+- [ ] **App móvil** - Vue Native
 
 ### Técnicas
 

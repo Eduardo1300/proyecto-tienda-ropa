@@ -18,22 +18,22 @@
           <RouterLink to="/products" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             👕 Productos
           </RouterLink>
+          
+          <!-- Links visibles para todos (logueados o no) - muestran mensaje si no están logueados -->
+          <RouterLink to="/orders" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm" @click.prevent="checkAuth($event, '/orders')">
+            📦 Mis Pedidos
+          </RouterLink>
+          <RouterLink to="/profile" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm" @click.prevent="checkAuth($event, '/profile')">
+            👤 Perfil
+          </RouterLink>
+          <RouterLink to="/loyalty" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm" @click.prevent="checkAuth($event, '/loyalty')">
+            🏆 Lealtad
+          </RouterLink>
+          
           <!-- Solo admin -->
           <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/dashboard" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📊 Dashboard
           </RouterLink>
-          <!-- Todos los usuarios autenticados -->
-          <RouterLink v-if="hasLocalAuth" to="/orders" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
-            📦 Mis Pedidos
-          </RouterLink>
-          <RouterLink v-if="hasLocalAuth" to="/profile" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
-            👤 Perfil
-          </RouterLink>
-          <!-- Solo user (cliente regular) -->
-          <RouterLink v-if="hasLocalAuth && userRole === 'user'" to="/loyalty" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
-            🏆 Lealtad
-          </RouterLink>
-          <!-- Solo admin -->
           <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/admin" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             ⚙️ Admin
           </RouterLink>
@@ -43,6 +43,7 @@
           <RouterLink v-if="hasLocalAuth && userRole === 'admin'" to="/analytics" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             📈 Analytics
           </RouterLink>
+          
           <!-- Solo supplier -->
           <RouterLink v-if="hasLocalAuth && userRole === 'supplier'" to="/supplier" class="py-2 px-3 rounded-full text-gray-600 dark:text-gray-300 hover:bg-indigo-100 hover:text-indigo-600 transition-all duration-300 text-sm">
             🚚 Proveedor
@@ -186,5 +187,12 @@ const getUserName = () => {
 const handleLogout = () => {
   authStore.logout()
   router.push('/login')
+}
+
+const checkAuth = (event: Event, path: string) => {
+  if (!hasLocalAuth.value) {
+    event.preventDefault()
+    router.push({ name: 'Login', query: { redirect: path } })
+  }
 }
 </script>

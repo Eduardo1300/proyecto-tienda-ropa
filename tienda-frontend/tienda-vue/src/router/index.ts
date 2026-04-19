@@ -40,38 +40,32 @@ const routes = [
   {
     path: '/checkout',
     name: 'Checkout',
-    component: () => import('../pages/Checkout.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/Checkout.vue')
   },
   {
     path: '/order-confirmation',
     name: 'OrderConfirmation',
-    component: () => import('../pages/OrderConfirmation.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/OrderConfirmation.vue')
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: () => import('../pages/Profile.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/Profile.vue')
   },
   {
     path: '/admin',
     name: 'Admin',
-    component: () => import('../pages/Admin.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    component: () => import('../pages/Admin.vue')
   },
   {
     path: '/orders',
     name: 'Orders',
-    component: () => import('../pages/Orders.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/Orders.vue')
   },
   {
     path: '/orders/:orderId',
     name: 'OrderDetail',
-    component: () => import('../pages/OrderDetail.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/OrderDetail.vue')
   },
   {
     path: '/order-tracking/:orderId',
@@ -81,56 +75,47 @@ const routes = [
   {
     path: '/wishlist',
     name: 'Wishlist',
-    component: () => import('../pages/Wishlist.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/Wishlist.vue')
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../pages/Dashboard.vue'),
-    meta: { requiresAuth: true, requiresRole: 'admin' }
+    component: () => import('../pages/Dashboard.vue')
   },
   {
     path: '/analytics',
     name: 'Analytics',
-    component: () => import('../pages/Analytics.vue'),
-    meta: { requiresAuth: true, requiresRole: 'admin' }
+    component: () => import('../pages/Analytics.vue')
   },
   {
     path: '/loyalty',
     name: 'Loyalty',
-    component: () => import('../pages/Loyalty.vue'),
-    meta: { requiresAuth: true, requiresRole: 'user' }
+    component: () => import('../pages/Loyalty.vue')
   },
   {
     path: '/inventory',
     name: 'Inventory',
-    component: () => import('../pages/Inventory.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    component: () => import('../pages/Inventory.vue')
   },
   {
     path: '/return-request/:orderId',
     name: 'ReturnRequest',
-    component: () => import('../pages/ReturnRequest.vue'),
-    meta: { requiresAuth: true }
+    component: () => import('../pages/ReturnRequest.vue')
   },
   {
     path: '/suppliers',
     name: 'SupplierManagement',
-    component: () => import('../pages/SupplierManagement.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    component: () => import('../pages/SupplierManagement.vue')
   },
   {
     path: '/product-images',
     name: 'ProductImageManager',
-    component: () => import('../pages/ProductImageManager.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    component: () => import('../pages/ProductImageManager.vue')
   },
   {
     path: '/supplier',
     name: 'Supplier',
-    component: () => import('../pages/SupplierManagement.vue'),
-    meta: { requiresAuth: true, requiresRole: 'supplier' }
+    component: () => import('../pages/SupplierManagement.vue')
   }
 ]
 
@@ -139,23 +124,46 @@ const router = createRouter({
   routes
 })
 
+// Navigation guard - only blocks admin pages when not admin
 router.beforeEach((to, _from, next) => {
-  const authStore = useAuthStore()
+  const token = localStorage.getItem('access_token') || localStorage.getItem('token')
+  const userStr = localStorage.getItem('user')
+  let userRole = 'user'
   
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (userStr) {
+    try {
+      const userData = JSON.parse(userStr)
+      userRole = userData.role || 'user'
+    } catch {
+      userRole = 'user'
+    }
+  }
+  
+  const isAuthenticated = !!(token && userStr)
+  
+  // Allow access to all public pages
+  if (['Home', 'Products', 'ProductDetail', 'Cart', 'Login', 'Register', 'ForgotPassword', 'OrderTracking'].includes(to.name as string)) {
+    next()
+    return
+  }
+  
+  // For protected pages, check if authenticated
+  if (!isAuthenticated) {
+    // Redirect to login with redirect parameter
     next({ name: 'Login', query: { redirect: to.fullPath } })
     return
   }
   
-  if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
+  // For admin-only pages, check if user is admin
+  if (to.meta.requiresAdmin && userRole !== 'admin') {
     next({ name: 'Home' })
     return
   }
-
+  
+  // For role-specific pages, check if user has correct role
   if (to.meta.requiresRole) {
     const requiredRole = to.meta.requiresRole as string
-    // Permitir acceso si el rol del usuario coincide o si es admin
-    if (authStore.user?.role !== requiredRole && authStore.user?.role !== 'admin') {
+    if (userRole !== requiredRole && userRole !== 'admin') {
       next({ name: 'Home' })
       return
     }

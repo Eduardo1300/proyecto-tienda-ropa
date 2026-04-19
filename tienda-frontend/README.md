@@ -1,11 +1,14 @@
-# React + TypeScript + Vite
+# Vue 3 + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a minimal setup to get Vue 3 working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+Currently, the official Vue plugin is available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [@vitejs/plugin-vue](https://github.com/vitejs/vite-plugin-vue) uses Vue 3 for HMR (Hot Module Replacement)
+
+## Recommended IDE Support
+
+We recommend using [VS Code](https://code.visualstudio.com/) with the [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) extension for the best Vue development experience.
 
 ## Expanding the ESLint configuration
 
@@ -15,17 +18,17 @@ If you are developing a production application, we recommend updating the config
 export default tseslint.config([
   globalIgnores(['dist']),
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.ts', '**/*.tsx'],
     extends: [
       // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
+      
+      // Use recommended TypeScript configs
       ...tseslint.configs.recommendedTypeChecked,
       // Alternatively, use this for stricter rules
       ...tseslint.configs.strictTypeChecked,
       // Optionally, add this for stylistic rules
       ...tseslint.configs.stylisticTypeChecked,
-
+      
       // Other configs...
     ],
     languageOptions: {
@@ -39,31 +42,14 @@ export default tseslint.config([
 ])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This Vue 3 frontend includes:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Vue 3** with Composition API and `<script setup>` syntax
+- **TypeScript** for type safety
+- **Vite** for fast development and building
+- **Vue Router** for navigation
+- **Pinia** for state management
+- **TailwindCSS** for styling
+- **Axios** for API requests

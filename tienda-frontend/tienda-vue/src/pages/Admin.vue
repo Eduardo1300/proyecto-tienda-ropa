@@ -138,32 +138,33 @@ const lowStockProducts = ref<any[]>([])
 const loading = ref(true)
 
 onMounted(async () => {
-  try {
-    const [productsRes, ordersRes, usersRes] = await Promise.all([
-      productsAPI.getAll(),
-      ordersAPI.getAll(),
-      usersAPI.getAll().catch(() => ({ data: [] }))
-    ])
-    
-    const products = productsRes.data || []
-    const orders = ordersRes.data || []
-    const users = usersRes.data || []
-    
-    stats.value = {
-      products: products.length,
-      orders: orders.length,
-      users: users.length,
-      revenue: orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+    try {
+      const [productsRes, ordersRes, usersRes] = await Promise.all([
+        productsAPI.getAll(),
+        ordersAPI.getAll(),
+        usersAPI.getAll().catch(() => ({ data: [] }))
+      ])
+      
+      const products = productsRes.data || []
+      const ordersResponse = ordersRes.data || {}
+      const orders = ordersResponse.data || []
+      const users = usersRes.data || []
+      
+      stats.value = {
+        products: products.length,
+        orders: ordersResponse.total || 0,
+        users: users.length,
+        revenue: orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+      }
+      
+      recentOrders.value = orders.slice(0, 5)
+      lowStockProducts.value = products.filter((p: any) => p.stock < 10).slice(0, 5)
+    } catch (err) {
+      console.error('Error loading admin data:', err)
+    } finally {
+      loading.value = false
     }
-    
-    recentOrders.value = orders.slice(0, 5)
-    lowStockProducts.value = products.filter((p: any) => p.stock < 10).slice(0, 5)
-  } catch (err) {
-    console.error('Error loading admin data:', err)
-  } finally {
-    loading.value = false
-  }
-})
+  })
 </script>
 
 <style scoped>

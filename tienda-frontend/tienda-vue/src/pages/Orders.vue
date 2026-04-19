@@ -186,7 +186,7 @@ const selectedOrder = ref<Order | null>(null)
 const cancelReason = ref('')
 const cancelling = ref(false)
 const currentPage = ref(1)
-const limit = ref(1)
+const limit = ref(10)
 const totalPages = ref(1)
 const totalOrders = ref(0)
 

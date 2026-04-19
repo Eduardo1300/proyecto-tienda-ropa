@@ -2,23 +2,65 @@
 node_modules/
 dist/
 .env
+.env.local
+.env.*.local
 
-# React/Vite
+# Logs
 *.log
-.vite
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite
+.vite/
 coverage/
+
+# Build outputs
 build/
 
-# Mac/Windows/Linux
-.DS_Store
-Thumbs.db
-# Bases de datos locales y dumps
+# Database
 *.sqlite
 *.sqlite3
 *.db
 *.db3
 
+# Dumps and backups
 *.bak
 *.dump
+*.sql
+*.backup
 
+# Database schema files
 database_schema.sql
+database_full_dump.sql
+backup.sql
+schema_export.sql
+seed-db.js
+
+# Documentación
+*.md
+!README.md
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS specific
+$RECYCLE.BIN/
+
+# Test
+coverage/
+
+# Temp files
+*.tmp
+*.temp
+*~
