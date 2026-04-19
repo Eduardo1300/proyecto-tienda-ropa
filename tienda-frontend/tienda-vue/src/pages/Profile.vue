@@ -432,12 +432,6 @@ const updatePassword = async () => {
   }
 }
 
-const deleteAddress = (id: number) => {
-  if (confirm('¿Eliminar esta dirección?')) {
-    addresses.value = addresses.value.filter(a => a.id !== id)
-  }
-}
-
 const loadAddresses = async () => {
   try {
     const response = await usersAPI.getAddresses()
