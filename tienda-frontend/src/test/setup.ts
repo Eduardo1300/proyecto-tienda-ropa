@@ -1,35 +1,49 @@
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 
-HTMLCanvasElement.prototype.getContext = vi.fn();
-HTMLCanvasElement.prototype.toDataURL = vi.fn();
+// Setup Pinia for testing
+const pinia = createPinia()
+setActivePinia(pinia)
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
-
-Object.defineProperty(window, 'localStorage', {
-  writable: true,
+// Mock window.location
+Object.defineProperty(window, 'location', {
   value: {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
+    href: 'http://localhost',
+    origin: 'http://localhost',
+    pathname: '/',
+    assign: vi.fn(),
+    replace: vi.fn()
   },
-});
+  writable: true
+})
 
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn()
+}
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true
+})
+
+// Mock sessionStorage
+const sessionStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn()
+}
+Object.defineProperty(window, 'sessionStorage', {
+  value: sessionStorageMock,
+  writable: true
+})
+
+// Mock scrollTo
+window.scrollTo = vi.fn()
+
+// Spy on console.error to suppress noise in tests
+vi.spyOn(console, 'error').mockImplementation(() => {})
+vi.spyOn(console, 'warn').mockImplementation(() => {})
