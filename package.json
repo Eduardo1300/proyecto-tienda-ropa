@@ -1,9 +1,36 @@
 {
-  "devDependencies": {
-    "@types/node": "^24.1.0"
+  "name": "tienda-ropa-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "tienda-backend",
+    "tienda-frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run start:dev --workspace=tienda-backend",
+    "dev:frontend": "npm run dev --workspace=tienda-frontend",
+    "build": "npm run build --workspaces",
+    "build:backend": "npm run build --workspace=tienda-backend",
+    "build:frontend": "npm run build --workspace=tienda-frontend",
+    "start:prod": "concurrently \"npm run start:prod --workspace=tienda-backend\" \"npm run preview --workspace=tienda-frontend\"",
+    "test": "npm run test --workspaces",
+    "test:backend": "npm run test --workspace=tienda-backend",
+    "test:frontend": "npm run test --workspace=tienda-frontend",
+    "lint": "npm run lint --workspaces",
+    "db:seed": "npm run seed --workspace=tienda-backend",
+    "db:seed:loyalty": "npm run seed:loyalty --workspace=tienda-backend",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down",
+    "docker:logs": "docker-compose -f docker/docker-compose.yml logs -f"
   },
-  "dependencies": {
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2"
-  }
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "concurrently": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.8.0"
 }

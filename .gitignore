@@ -1,6 +1,7 @@
 # Node
 node_modules/
 dist/
+build/
 .env
 .env.local
 .env.*.local
@@ -16,8 +17,12 @@ pnpm-debug.log*
 .vite/
 coverage/
 
-# Build outputs
-build/
+# TypeScript compiled files
+*.js
+*.js.map
+*.d.ts
+!*.config.js
+!*.config.ts
 
 # Database
 *.sqlite
@@ -25,22 +30,10 @@ build/
 *.db
 *.db3
 
-# Dumps and backups
+# Dumps and backups (root level only)
 *.bak
 *.dump
-*.sql
 *.backup
-
-# Database schema files
-database_schema.sql
-database_full_dump.sql
-backup.sql
-schema_export.sql
-seed-db.js
-
-# Documentación
-*.md
-!README.md
 
 # OS
 .DS_Store
@@ -64,3 +57,6 @@ coverage/
 *.tmp
 *.temp
 *~
+
+# Docker
+docker-compose.override.yml
