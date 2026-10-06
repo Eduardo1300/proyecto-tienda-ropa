@@ -148,7 +148,7 @@ export class AuthService {
 
     const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
     const jwtRefreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || 'claverefresh456';
-    const jwtExpiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '24h';
+    const jwtExpiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') || '24h') as `${number}${'' | 's' | 'm' | 'h' | 'd'}`;
 
     const access_token = this.jwtService.sign(payload, {
       secret: jwtSecret,
@@ -157,7 +157,7 @@ export class AuthService {
 
     const refresh_token = this.jwtService.sign(payload, {
       secret: jwtRefreshSecret,
-      expiresIn: '7d',
+      expiresIn: '7d' as const,
     });
 
     await this.usersService.updateRefreshToken(user.id, refresh_token);
@@ -173,7 +173,7 @@ export class AuthService {
     try {
       const jwtRefreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET') || 'claverefresh456';
       const jwtSecret = this.configService.get<string>('JWT_SECRET') || 'clave_secreta_acceso';
-      const jwtExpiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '24h';
+      const jwtExpiresIn = (this.configService.get<string>('JWT_EXPIRES_IN') || '24h') as `${number}${'' | 's' | 'm' | 'h' | 'd'}`;
 
       const payload = this.jwtService.verify(refreshToken, {
         secret: jwtRefreshSecret,
@@ -218,7 +218,7 @@ export class AuthService {
       { sub: user.id, purpose: 'password-reset' },
       {
         secret: jwtSecret,
-        expiresIn: '1h', // Token válido por 1 hora
+        expiresIn: '1h' as const,
       },
     );
 

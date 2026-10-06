@@ -15,7 +15,7 @@ export enum ReviewStatus {
   REJECTED = 'rejected',
 }
 
-@Entity()
+@Entity('product_review')
 export class ProductReview {
   @PrimaryGeneratedColumn()
   id: number;
