@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: tienda-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tienda_ropa
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/backups:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend NestJS (Development)
+  backend:
+    build:
+      context: ../tienda-backend
+      dockerfile: Dockerfile.dev
+    container_name: tienda-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=tienda_ropa
+      - JWT_SECRET=dev-secret-change-in-production
+      - JWT_EXPIRES_IN=7d
+      - PORT=3002
+      - FRONTEND_URL=http://localhost:5173
+    ports:
+      - "3002:3002"
+    volumes:
+      - ../tienda-backend/src:/app/src
+      - ../tienda-backend/test:/app/test
+      - ../tienda-backend/package*.json:/app/
+      - ../tienda-backend/tsconfig*.json:/app/
+      - ../tienda-backend/nest-cli.json:/app/
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npm run start:dev
+
+  # Frontend Vue 3 (Development)
+  frontend:
+    build:
+      context: ../tienda-frontend
+      dockerfile: Dockerfile.dev
+    container_name: tienda-frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3002
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../tienda-frontend/src:/app/src
+      - ../tienda-frontend/public:/app/public
+      - ../tienda-frontend/index.html:/app/index.html
+      - ../tienda-frontend/vite.config.ts:/app/vite.config.ts
+      - ../tienda-frontend/package*.json:/app/
+      - ../tienda-frontend/tsconfig*.json:/app/
+      - ../tienda-frontend/tailwind.config.js:/app/
+      - ../tienda-frontend/postcss.config.js:/app/
+    depends_on:
+      - backend
+    command: npm run dev
+
+volumes:
+  postgres_data:

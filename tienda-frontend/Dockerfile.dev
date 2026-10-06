@@ -1,0 +1,23 @@
+# Development Dockerfile for Vue 3 + Vite
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies (including devDependencies for Vite)
+COPY package*.json ./
+RUN npm ci
+
+# Copy config files
+COPY vite.config.ts ./
+COPY tsconfig*.json ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY index.html ./
+
+# Copy source and public
+COPY src ./src
+COPY public ./public
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

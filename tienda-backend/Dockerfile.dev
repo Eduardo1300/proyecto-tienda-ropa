@@ -1,0 +1,18 @@
+# Development Dockerfile for NestJS
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies for development (including devDependencies)
+COPY package*.json ./
+RUN npm ci
+
+# Copy TypeScript config and source
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+COPY src ./src
+COPY test ./test
+
+EXPOSE 3002
+
+CMD ["npm", "run", "start:dev"]
