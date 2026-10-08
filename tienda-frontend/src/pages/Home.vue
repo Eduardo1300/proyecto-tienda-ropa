@@ -402,7 +402,23 @@ const fetchProducts = async () => {
   error.value = ''
   try {
     const response = await productsAPI.getAll()
-    products.value = response.data || []
+    const backendProducts = response.data || []
+    products.value = backendProducts.map(product => ({
+      ...product,
+      price: typeof product.price === 'string' ? parseFloat(product.price) : (product.price || 0),
+      stock: typeof product.stock === 'string' ? parseInt(product.stock) : (product.stock || 0),
+      imageUrl: getProductImage(product.name, product.category, product.imageUrl || product.image),
+      brand: product.brand || 'Sin marca',
+      colors: product.colors || [],
+      sizes: product.sizes || [],
+      isNew: product.isNew || false,
+      isFeatured: product.isFeatured || false,
+      isOnSale: product.isOnSale || false,
+      isBestseller: product.isBestseller || false,
+      rating: product.rating || 0,
+      averageRating: product.averageRating || 0,
+      reviewCount: product.reviewCount || 0
+    }))
   } catch (err) {
     error.value = 'Conectando con el backend. Esto puede tardar unos segundos.'
     console.error(err)

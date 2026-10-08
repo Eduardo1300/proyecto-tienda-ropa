@@ -34,7 +34,7 @@
         </RouterLink>
       </div>
 
-      <Card class="animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 shadow-2xl border border-gray-700/50 animate-fade-in-up" style="animation-delay: 0.1s;">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 class="text-3xl font-bold text-white mb-2">Pedido #{{ order.orderNumber }}</h1>
@@ -46,30 +46,30 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="bg-white/10 rounded-xl p-6 text-center border border-white/10">
+          <div class="bg-gray-800/50 rounded-xl p-6 text-center border border-gray-700/50">
             <p class="text-gray-400 text-sm mb-1">Total</p>
             <p class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
               S/ {{ Number(order.total).toFixed(2) }}
             </p>
           </div>
-          <div class="bg-white/10 rounded-xl p-6 text-center border border-white/10">
+          <div class="bg-gray-800/50 rounded-xl p-6 text-center border border-gray-700/50">
             <p class="text-gray-400 text-sm mb-1">Estado</p>
             <p class="text-2xl font-bold text-white">{{ getStatusDisplayName(order.status) }}</p>
           </div>
-          <div class="bg-white/10 rounded-xl p-6 text-center border border-white/10">
+          <div class="bg-gray-800/50 rounded-xl p-6 text-center border border-gray-700/50">
             <p class="text-gray-400 text-sm mb-1">Artículos</p>
             <p class="text-2xl font-bold text-white">{{ order.items?.length || 0 }}</p>
           </div>
         </div>
 
-        <div class="border-t border-white/20 mb-6 pt-6">
+        <div class="border-t border-gray-700/50 mb-6 pt-6">
           <h2 class="text-2xl font-bold text-white mb-4">📦 Detalles del Envío</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-if="order.shippingAddress" class="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div v-if="order.shippingAddress" class="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
               <h3 class="text-white font-semibold mb-3 flex items-center gap-2">📍 Dirección de Envío</h3>
               <p class="text-gray-300 whitespace-pre-line">{{ order.shippingAddress }}</p>
             </div>
-            <div v-if="order.billingAddress" class="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div v-if="order.billingAddress" class="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
               <h3 class="text-white font-semibold mb-3 flex items-center gap-2">💳 Dirección de Facturación</h3>
               <p class="text-gray-300 whitespace-pre-line">{{ order.billingAddress }}</p>
             </div>
@@ -89,9 +89,13 @@
 
         <h2 class="text-2xl font-bold text-white mb-4">🛍️ Artículos del Pedido</h2>
         <div class="space-y-4">
-          <div v-for="item in order.items" :key="item.id" class="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col md:flex-row items-center md:items-start gap-4">
-            <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center text-3xl flex-shrink-0">
-              📦
+          <div v-for="item in order.items" :key="item.id" class="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 flex flex-col md:flex-row items-center md:items-start gap-4">
+            <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <img
+                :src="getProductImage(item.product?.name || item.name || '', item.product?.category || '', item.product?.imageUrl)"
+                :alt="item.product?.name || item.name || `Producto #${item.productId}`"
+                class="w-full h-full object-cover"
+              />
             </div>
             <div class="flex-1">
               <h4 class="font-bold text-white">{{ item.product?.name || item.name || `Producto #${item.productId}` }}</h4>
@@ -103,7 +107,7 @@
           </div>
         </div>
 
-        <div class="mt-8 border-t border-white/20 pt-6">
+        <div class="mt-8 border-t border-gray-700/50 pt-6">
           <h2 class="text-xl font-bold text-white mb-4">💰 Resumen de Pagos</h2>
           <div class="space-y-3">
             <div class="flex justify-between text-gray-300">
@@ -118,7 +122,7 @@
               <span>Envío</span>
               <Badge variant="success" icon="🚚">GRATIS</Badge>
             </div>
-            <div class="flex justify-between text-xl font-bold text-white pt-3 border-t border-white/20">
+            <div class="flex justify-between text-xl font-bold text-white pt-3 border-t border-gray-700/50">
               <span>Total Pagado</span>
               <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">S/ {{ Number(order.total).toFixed(2) }}</span>
             </div>
@@ -136,10 +140,10 @@
             ❌ Pedido cancelado: {{ order.cancellationReason || 'Sin razón especificada' }}
           </p>
         </div>
-      </Card>
+      </div>
 
       <div class="mt-6 text-center animate-fade-in-up" style="animation-delay: 0.3s;">
-        <RouterLink to="/orders" class="px-6 py-3 bg-white/10 border border-white/30 text-white rounded-xl hover:bg-white/20 transition-all font-semibold">
+        <RouterLink to="/orders" class="px-6 py-3 bg-gray-800 border border-gray-700 text-white rounded-xl hover:bg-gray-700 transition-all font-semibold">
           ← Volver a Mis Pedidos
         </RouterLink>
       </div>
@@ -153,6 +157,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ordersAPI } from '../api'
 import type { Order } from '../types'
 import { Card, Badge, RouterLink } from '../components/ui'
+import { getProductImage } from '../utils/productImages'
 
 const route = useRoute()
 const router = useRouter()

@@ -11,7 +11,7 @@
           Todos los <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Productos</span>
         </h1>
         <p class="text-gray-400 text-lg">Descubre nuestra colección completa</p>
-        
+
         <div class="flex flex-col md:flex-row gap-4 justify-between items-center mt-6">
           <div class="relative flex-1 max-w-md group">
             <input
@@ -37,15 +37,6 @@
       </div>
 
       <div class="flex flex-col lg:flex-row gap-8">
-        <aside class="w-full lg:w-64 flex-shrink-0">
-          <ProductFilters
-            :filters="filters"
-            :filter-options="filterOptions"
-            @update="handleFiltersChange"
-            @clear="clearFilters"
-          />
-        </aside>
-
         <main class="w-full lg:flex-1 min-w-0">
           <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6 flex-wrap">
             <div class="flex items-center gap-4 flex-1">
@@ -61,16 +52,9 @@
                 <option value="newest">🆕 Más Nuevos</option>
               </select>
 
-              <div v-if="getActiveFiltersCount > 0" class="flex items-center gap-2 flex-wrap">
-                <span class="text-sm text-purple-300 bg-purple-900/30 px-3 py-1 rounded-full">
-                  {{ getActiveFiltersCount }} filtro{{ getActiveFiltersCount !== 1 ? 's' : '' }} activo{{ getActiveFiltersCount !== 1 ? 's' : '' }}
-                </span>
-                <button @click="clearFilters" class="text-sm text-purple-400 hover:text-purple-300 font-medium">Limpiar</button>
+              <div class="text-sm text-gray-400">
+                {{ filteredProducts.length }} producto{{ filteredProducts.length !== 1 ? 's' : '' }} encontrado{{ filteredProducts.length !== 1 ? 's' : '' }}
               </div>
-            </div>
-
-            <div class="text-sm text-gray-400">
-              {{ filteredProducts.length }} producto{{ filteredProducts.length !== 1 ? 's' : '' }} encontrado{{ filteredProducts.length !== 1 ? 's' : '' }}
             </div>
           </div>
 
@@ -97,8 +81,8 @@
             <div class="bg-white/5 rounded-2xl p-12 border border-white/10">
               <div class="text-6xl mb-4">🔍</div>
               <h3 class="text-2xl font-bold text-white mb-2">No se encontraron productos</h3>
-              <p class="text-gray-400 mb-6">Intenta cambiar los filtros o el término de búsqueda</p>
-              <Button @click="clearFilters" icon="🔄" class="transform hover:scale-105">Limpiar Filtros</Button>
+              <p class="text-gray-400 mb-6">Intenta cambiar el término de búsqueda</p>
+              <Button @click="clearSearch" icon="🔄" class="transform hover:scale-105">Limpiar Búsqueda</Button>
             </div>
           </div>
 
@@ -153,7 +137,6 @@ import { useCartStore } from '../stores/cart'
 import type { Product } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import ProductQuickView from '../components/ProductQuickView.vue'
-import ProductFilters from '../components/ProductFilters.vue'
 import ProductComparison from '../components/ProductComparison.vue'
 import { getProductImage } from '../utils/productImages'
 import Button from '../components/ui/Button.vue'
@@ -170,25 +153,6 @@ const quickViewProduct = ref<Product | null>(null)
 const comparisonItems = ref<Product[]>([])
 const currentPage = ref(1)
 
-const filters = ref({
-  category: '',
-  priceRange: 1000,
-  inStock: false
-})
-
-const filterOptions = computed(() => {
-  const categories = Array.from(new Set(products.value.map(p => p.category).filter(Boolean)))
-  const prices = products.value.map(p => p.price).filter(p => p > 0)
-  const priceRange: [number, number] = prices.length > 0
-    ? [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))]
-    : [0, 1000]
-
-  return {
-    categories: categories.length > 0 ? categories : ['hombre', 'mujer', 'zapatos', 'accesorios'],
-    priceRange
-  }
-})
-
 const filteredProducts = computed(() => {
   let filtered = [...products.value]
 
@@ -199,16 +163,6 @@ const filteredProducts = computed(() => {
       (product.brand || '').toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   }
-
-  if (filters.value.category) {
-    filtered = filtered.filter(p => p.category === filters.value.category)
-  }
-
-  if (filters.value.inStock) {
-    filtered = filtered.filter(p => p.stock > 0)
-  }
-
-  filtered = filtered.filter(p => p.price >= filterOptions.value.priceRange[0] && p.price <= filters.value.priceRange)
 
   filtered.sort((a, b) => {
     switch (sortBy.value) {
@@ -225,14 +179,6 @@ const filteredProducts = computed(() => {
 
 const sortBy = ref('name')
 
-const getActiveFiltersCount = computed(() => {
-  let count = 0
-  if (filters.value.category) count++
-  if (filters.value.inStock) count++
-  if (filters.value.priceRange !== filterOptions.value.priceRange[1]) count++
-  return count
-})
-
 const sortSelectStyle = computed(() => ({
   backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>\')',
   backgroundPosition: 'right 0.75rem center',
@@ -242,21 +188,6 @@ const sortSelectStyle = computed(() => ({
   mozAppearance: 'none',
   paddingRight: '2.5rem'
 }))
-
-const handleFiltersChange = (newFilters: any) => {
-  filters.value = newFilters
-  currentPage.value = 1
-}
-
-const clearFilters = () => {
-  filters.value = {
-    category: '',
-    priceRange: filterOptions.value.priceRange[1],
-    inStock: false
-  }
-  searchTerm.value = ''
-  currentPage.value = 1
-}
 
 const addToCart = (product: Product) => {
   cartStore.addItem(product, 1)
@@ -296,6 +227,10 @@ const nextPage = () => {
   // pagination logic here
 }
 
+const clearSearch = () => {
+  searchTerm.value = ''
+}
+
 const fetchProducts = async () => {
   loading.value = true
   error.value = ''
@@ -329,12 +264,6 @@ const fetchProducts = async () => {
 onMounted(() => {
   fetchProducts()
 })
-
-watch(() => filterOptions.value.priceRange, (newRange) => {
-  if (filters.value.priceRange === filterOptions.value.priceRange[1] || filters.value.priceRange > newRange[1]) {
-    filters.value.priceRange = newRange[1]
-  }
-}, { immediate: true })
 </script>
 
 <style scoped>

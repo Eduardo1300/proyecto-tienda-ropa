@@ -7,22 +7,22 @@
 
     <div v-if="loading" class="max-w-4xl mx-auto relative z-10">
       <div class="animate-pulse space-y-8">
-        <div class="bg-white/10 rounded-2xl p-8">
-          <div class="h-8 bg-white/20 rounded w-1/3 mb-6"></div>
-          <div class="h-64 bg-white/5 rounded-2xl"></div>
+        <div class="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50">
+          <div class="h-8 bg-gray-700/50 rounded w-1/3 mb-6"></div>
+          <div class="h-64 bg-gray-800/30 rounded-2xl"></div>
         </div>
       </div>
     </div>
 
     <div v-else-if="!order" class="max-w-4xl mx-auto text-center py-20 animate-fade-in-up relative z-10">
-      <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 max-w-lg mx-auto">
+      <div class="bg-gray-800/50 backdrop-blur-md border border-gray-700/50 rounded-3xl p-12 max-w-lg mx-auto">
         <div class="text-8xl mb-6">🔍</div>
         <h2 class="text-3xl font-bold text-white mb-4">Pedido no encontrado</h2>
         <p class="text-gray-300 mb-8">No se encontró información de rastreo para este pedido.</p>
         <RouterLink to="/orders">
-          <Button class="transform hover:scale-105 shadow-xl">← Ver Mis Pedidos</Button>
+          <Button class="transform hover:scale-105 shadow-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold">← Ver Mis Pedidos</Button>
         </RouterLink>
-      </Card>
+      </div>
     </div>
 
     <div v-else class="max-w-4xl mx-auto relative z-10">
@@ -32,7 +32,7 @@
         </RouterLink>
       </div>
 
-      <Card class="animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 shadow-2xl border border-gray-700/50 animate-fade-in-up" style="animation-delay: 0.1s;">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 class="text-3xl font-bold text-white mb-2">Rastreo de Pedido #{{ order.orderNumber }}</h1>
@@ -46,21 +46,21 @@
         <div v-if="order.trackingCode" class="bg-gradient-to-r from-blue-600/30 to-indigo-600/30 border border-blue-400/50 rounded-2xl p-6 mb-8">
           <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">📍 Información de Rastreo</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-white/10 rounded-xl p-4 text-center border border-white/10">
+            <div class="bg-gray-800/50 rounded-xl p-4 text-center border border-gray-700/50">
               <p class="text-blue-300 text-sm mb-1">Código de Rastreo</p>
               <p class="text-white font-bold text-lg font-mono break-all">{{ order.trackingCode }}</p>
             </div>
-            <div class="bg-white/10 rounded-xl p-4 text-center border border-white/10">
+            <div class="bg-gray-800/50 rounded-xl p-4 text-center border border-gray-700/50">
               <p class="text-blue-300 text-sm mb-1">Transportista</p>
               <p class="text-white font-semibold">{{ order.shippingCarrier || 'Por asignar' }}</p>
             </div>
-            <div class="bg-white/10 rounded-xl p-4 text-center border border-white/10">
+            <div class="bg-gray-800/50 rounded-xl p-4 text-center border border-gray-700/50">
               <p class="text-blue-300 text-sm mb-1">Entrega Estimada</p>
               <p class="text-white font-semibold">{{ order.estimatedDeliveryDate ? formatDate(order.estimatedDeliveryDate) : 'Por confirmar' }}</p>
             </div>
           </div>
           <div class="flex items-center gap-4 flex-wrap">
-            <Button variant="outline" class="flex-1 bg-white/10 hover:bg-white/20">📋 Copiar Código</Button>
+            <Button variant="outline" class="flex-1 bg-gray-800/50 hover:bg-gray-700/50">📋 Copiar Código</Button>
             <Button icon="🔄" @click="refreshTracking" class="flex-1 bg-blue-600 hover:bg-blue-700">Actualizar</Button>
           </div>
         </div>
@@ -69,7 +69,7 @@
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">📦 Estado del Envío</h2>
           
           <div class="relative">
-            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-white/20"></div>
+            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-700/50"></div>
             
             <div v-for="(step, index) in trackingSteps" :key="step.status" class="relative pl-16 pb-8 last:pb-0">
               <div class="absolute left-4 top-0 flex items-center justify-center">
@@ -77,14 +77,14 @@
                   'w-8 h-8 rounded-full border-4 flex items-center justify-center z-10 transition-all',
                   step.completed ? 'bg-green-500 border-green-500' : 
                   step.current ? 'bg-purple-500 border-purple-500 animate-pulse' : 
-                  'bg-white/10 border-white/20'
+                  'bg-gray-800 border-gray-600'
                 ]">
                   <span v-if="step.completed" class="text-white text-sm font-bold">✓</span>
                   <span v-else-if="step.current" class="w-2 h-2 bg-white/50 rounded-full animate-pulse"></span>
-                  <span v-else class="w-4 h-4 bg-white/20 rounded-full"></span>
+                  <span v-else class="w-4 h-4 bg-gray-700 rounded-full"></span>
                 </div>
               </div>
-              <div :class="['bg-white/5 rounded-xl p-4 border-l-4 transition-all', step.completed ? 'border-green-500' : step.current ? 'border-purple-500 bg-purple-500/10' : 'border-white/10']">
+              <div :class="['bg-gray-800/50 rounded-xl p-4 border-l-4 transition-all', step.completed ? 'border-green-500' : step.current ? 'border-purple-500 bg-purple-500/10' : 'border-gray-700/50']">
                 <div class="flex items-center gap-3 mb-2">
                   <span class="text-2xl">{{ step.icon }}</span>
                   <h3 class="text-white font-bold text-lg">{{ step.title }}</h3>
@@ -109,14 +109,18 @@
             ❌ Pedido cancelado: {{ order.cancellationReason || 'Sin razón especificada' }}
           </p>
         </div>
-      </Card>
+      </div>
 
-      <Card class="mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="mt-6 bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 shadow-2xl border border-gray-700/50 animate-fade-in-up" style="animation-delay: 0.2s;">
         <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">📦 Artículos del Pedido</h2>
         <div class="space-y-4">
-          <div v-for="item in order.items" :key="item.id" class="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col md:flex-row items-center md:items-start gap-4">
-            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center text-3xl flex-shrink-0">
-              📦
+          <div v-for="item in order.items" :key="item.id" class="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 flex flex-col md:flex-row items-center md:items-start gap-4">
+            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <img
+                :src="getProductImage(item.product?.name || item.name || '', item.product?.category || '', item.product?.imageUrl)"
+                :alt="item.product?.name || item.name || `Producto #${item.productId}`"
+                class="w-full h-full object-cover"
+              />
             </div>
             <div class="flex-1">
               <h4 class="font-bold text-white">{{ item.product?.name || item.name || `Producto #${item.productId}` }}</h4>
@@ -127,7 +131,7 @@
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   </div>
 </template>
@@ -138,6 +142,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ordersAPI } from '../api'
 import type { Order } from '../types'
 import { Card, Badge, Button, RouterLink } from '../components/ui'
+import { getProductImage } from '../utils/productImages'
 
 const route = useRoute()
 const router = useRouter()
