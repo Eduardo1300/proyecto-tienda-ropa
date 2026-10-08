@@ -34,9 +34,6 @@ export class User {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Column({ default: 0 })
-  loyaltyPoints: number;
-
   // Información Personal Adicional
   @Column({ nullable: true })
   phone: string;

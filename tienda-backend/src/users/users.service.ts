@@ -123,14 +123,10 @@ export class UsersService {
 
   // Método getDashboard - obtener datos completos del dashboard del usuario
   async getDashboard(userId: number): Promise<UserDashboardResponse> {
-    // Obtener usuario con relaciones necesarias
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.wishlist', 'wishlist')
-      .leftJoinAndSelect('wishlist.product', 'wishlistProduct')
-      .leftJoinAndSelect('wishlistProduct.images', 'wishlistImages')
-      .where('user.id = :userId', { userId })
-      .getOne();
+    // Obtener usuario
+    const user = await this.userRepository.findOne({
+      where: { id: userId }
+    });
 
     if (!user) {
       throw new Error('Usuario no encontrado');
@@ -214,14 +210,11 @@ export class UsersService {
         name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username,
         email: user.email,
         avatarUrl: user.avatarUrl || undefined,
-        loyaltyPoints: user.loyaltyPoints || 0,
         memberSince: user.createdAt,
       },
       stats: {
         totalOrders: parseInt(orderStats?.totalOrders) || 0,
         totalSpent: parseFloat(orderStats?.totalSpent) || 0,
-        loyaltyPoints: user.loyaltyPoints || 0,
-        wishlistItems: 0,
       },
       recentOrders: recentOrders.map(order => ({
         id: order.id,
@@ -231,7 +224,6 @@ export class UsersService {
         date: order.createdAt,
         itemCount: order.items?.length || 0,
       })),
-      wishlist: [],
       favoriteProducts: favoriteProducts.map(item => ({
         id: item.product_id,
         name: item.product_name,

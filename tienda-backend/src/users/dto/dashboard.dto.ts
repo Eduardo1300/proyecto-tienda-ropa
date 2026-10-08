@@ -44,15 +44,12 @@ export interface UserInfo {
   name: string;
   email: string;
   avatarUrl?: string;
-  loyaltyPoints: number;
   memberSince: Date;
 }
 
 export interface UserStats {
   totalOrders: number;
   totalSpent: number;
-  loyaltyPoints: number;
-  wishlistItems: number;
 }
 
 export interface RecentOrder {
@@ -62,14 +59,6 @@ export interface RecentOrder {
   total: number;
   date: Date;
   itemCount: number;
-}
-
-export interface WishlistItem {
-  id: number;
-  name: string;
-  price: number;
-  discount: number;
-  imageUrl?: string;
 }
 
 export interface FavoriteProduct {
@@ -121,7 +110,6 @@ export interface UserDashboardResponse {
   user: UserInfo;
   stats: UserStats;
   recentOrders: RecentOrder[];
-  wishlist: WishlistItem[];
   favoriteProducts: FavoriteProduct[];
   recentlyViewed: RecentlyViewedProduct[];
   pendingOrders: PendingOrder[];

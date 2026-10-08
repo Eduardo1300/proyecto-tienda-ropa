@@ -17,8 +17,6 @@ import { ReturnItem } from '../ordenes/entities/return-item.entity';
 import { CartItem } from '../carrito/entities/cart-item.entity';
 import { ProductVariant } from '../products/entities/product-variant.entity';
 import { Review } from '../reviews/entities/review.entity';
-import { StockMovement } from '../inventory/entities/stock-movement.entity';
-import { InventoryAlert } from '../inventory/entities/inventory-alert.entity';
 
 @Module({
   imports: [
@@ -33,8 +31,6 @@ import { InventoryAlert } from '../inventory/entities/inventory-alert.entity';
       ReturnItem,
       CartItem,
       Review,
-      StockMovement,
-      InventoryAlert,
     ]),
     OrderModule,
   ],

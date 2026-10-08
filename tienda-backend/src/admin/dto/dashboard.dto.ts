@@ -51,16 +51,6 @@ export interface ReviewStat {
   needsResponse: boolean;
 }
 
-export interface InventoryAlertDto {
-  id: number;
-  type: string;
-  message: string;
-  productId?: number;
-  productName?: string;
-  priority: string;
-  createdAt: Date;
-}
-
 export interface OrdersStatsResponse {
   orders: Array<{
     id: number;

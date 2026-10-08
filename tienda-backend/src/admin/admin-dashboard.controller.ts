@@ -8,7 +8,6 @@ import {
   ProductStat,
   CustomerStat,
   ReviewStat,
-  InventoryAlertDto,
   OrdersStatsResponse 
 } from './dto/dashboard.dto';
 
@@ -38,11 +37,6 @@ export class AdminDashboardController {
   @Get('customers')
   async getCustomersStats(@Query('limit', ParseIntPipe) limit = 10): Promise<CustomerStat[]> {
     return this.adminDashboardService.getCustomersStats(limit);
-  }
-
-  @Get('inventory')
-  async getInventoryAlerts(): Promise<InventoryAlertDto[]> {
-    return this.adminDashboardService.getInventoryAlerts();
   }
 
   @Get('reviews')

@@ -6,12 +6,9 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { StockMovement } from '../../inventory/entities/stock-movement.entity';
-import { SupplierProduct } from '../../inventory/entities/supplier-product.entity';
 import { ProductVariant } from './product-variant.entity';
 import { ProductImage } from './product-image.entity';
 import { ProductReview } from './product-review.entity';
-import { Wishlist } from './wishlist.entity';
 import { RecentlyViewed } from './recently-viewed.entity';
 
 @Entity('products')
@@ -43,7 +40,7 @@ export class Product {
   @Column({ default: true })
   isActive: boolean;
 
-  // Advanced Inventory Fields
+  // Basic Inventory Fields
   @Column({ type: 'varchar', unique: true, length: 50, nullable: true })
   sku: string | null;
 
@@ -52,72 +49,6 @@ export class Product {
 
   @Column({ default: 0 })
   stock: number;
-
-  @Column({ default: 0 })
-  reservedStock: number;
-
-  @Column({ default: 5 })
-  minStockLevel: number;
-
-  @Column({ default: 100 })
-  maxStockLevel: number;
-
-  @Column({ default: 20 })
-  reorderPoint: number;
-
-  @Column({ default: 50 })
-  reorderQuantity: number;
-
-  @Column({ nullable: true })
-  expirationDate: Date;
-
-  @Column({ default: false })
-  trackExpiration: boolean;
-
-  @Column({ default: false })
-  autoRestock: boolean;
-
-  @Column({ default: false })
-  lowStockAlert: boolean;
-
-  @Column({ nullable: true })
-  lastRestockDate: Date;
-
-  @Column({ nullable: true })
-  lastSoldDate: Date;
-
-  @Column({ default: 0 })
-  totalSold: number;
-
-  @Column({ nullable: true, length: 100 })
-  supplier: string;
-
-  @Column({ nullable: true, length: 50 })
-  supplierSku: string;
-
-  @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  supplierPrice: number;
-
-  @Column({ default: 0 })
-  leadTimeDays: number;
-
-  @Column({ nullable: true, length: 200 })
-  location: string;
-
-  @Column({ nullable: true, length: 100 })
-  batch: string;
-
-  @Column({ default: 'kg' })
-  unit: string;
-
-  @Column('decimal', { precision: 10, scale: 3, default: 1 })
-  weight: number;
-
-  @Column({ nullable: true, length: 50 })
-  size: string;
-
-  @Column({ nullable: true, length: 50 })
-  color: string;
 
   // Advanced product features
   @Column({ nullable: true, length: 100 })
@@ -175,47 +106,12 @@ export class Product {
   @OneToMany(() => ProductReview, (review) => review.product)
   reviews: ProductReview[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
-  wishlistItems: Wishlist[];
-
   @OneToMany(() => RecentlyViewed, (recentlyViewed) => recentlyViewed.product)
   recentlyViewedBy: RecentlyViewed[];
-
-  @OneToMany(() => StockMovement, (movement) => movement.product)
-  stockMovements: StockMovement[];
-
-  @OneToMany(() => SupplierProduct, (supplierProduct) => supplierProduct.product)
-  suppliers: SupplierProduct[];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  // Computed properties
-  get availableStock(): number {
-    return this.stock - this.reservedStock;
-  }
-
-  get isLowStock(): boolean {
-    return this.availableStock <= this.minStockLevel;
-  }
-
-  get needsRestock(): boolean {
-    return this.availableStock <= this.reorderPoint;
-  }
-
-  get isExpired(): boolean {
-    if (!this.trackExpiration || !this.expirationDate) return false;
-    return new Date() > this.expirationDate;
-  }
-
-  get isExpiringSoon(): boolean {
-    if (!this.trackExpiration || !this.expirationDate) return false;
-    const daysUntilExpiration = Math.ceil(
-      (this.expirationDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return daysUntilExpiration <= 30 && daysUntilExpiration > 0;
-  }
 }

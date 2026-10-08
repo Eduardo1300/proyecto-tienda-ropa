@@ -6,15 +6,12 @@ import { Product } from '../products/entities/product.entity';
 import { Order } from '../ordenes/entities/order.entity';
 import { OrderItem } from '../ordenes/entities/order-item.entity';
 import { Review } from '../reviews/entities/review.entity';
-import { StockMovement } from '../inventory/entities/stock-movement.entity';
-import { InventoryAlert, AlertStatus } from '../inventory/entities/inventory-alert.entity';
 import { 
   DashboardOverview,
   SalesDataPoint,
   ProductStat,
   CustomerStat,
   ReviewStat,
-  InventoryAlertDto,
   OrdersStatsResponse 
 } from './dto/dashboard.dto';
 
@@ -31,10 +28,6 @@ export class AdminDashboardService {
     private readonly orderItemRepository: Repository<OrderItem>,
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    @InjectRepository(StockMovement)
-    private readonly stockMovementRepository: Repository<StockMovement>,
-    @InjectRepository(InventoryAlert)
-    private readonly inventoryAlertRepository: Repository<InventoryAlert>,
   ) {}
 
   async getOverview(period: string): Promise<DashboardOverview> {
@@ -166,25 +159,6 @@ export class AdminDashboardService {
       orders: parseInt(customer.orders),
       totalSpent: parseFloat(customer.totalSpent),
       lastOrder: customer.lastOrder,
-    }));
-  }
-
-  async getInventoryAlerts(): Promise<InventoryAlertDto[]> {
-    const alerts = await this.inventoryAlertRepository.find({
-      relations: ['product'],
-      where: { status: AlertStatus.ACTIVE },
-      order: { createdAt: 'DESC' },
-      take: 20,
-    });
-
-    return alerts.map(alert => ({
-      id: alert.id,
-      type: alert.type,
-      message: alert.message,
-      productId: alert.product?.id,
-      productName: alert.product?.name,
-      priority: alert.priority,
-      createdAt: alert.createdAt,
     }));
   }
 
