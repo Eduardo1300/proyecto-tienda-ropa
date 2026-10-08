@@ -21,19 +21,6 @@ export interface Address {
   type: 'home' | 'work' | 'other'
 }
 
-export interface WishlistItem {
-  id: number
-  productId: number
-  product: Product
-}
-
-export interface LoyaltyProgram {
-  id: number
-  availablePoints: number
-  totalPoints: number
-  tier: string
-}
-
 export interface Product {
   id: number
   name: string
@@ -45,6 +32,17 @@ export interface Product {
   stock: number
   isActive?: boolean
   sku?: string
+  brand?: string
+  colors?: string[]
+  sizes?: string[]
+  isNew?: boolean
+  isFeatured?: boolean
+  isOnSale?: boolean
+  isBestseller?: boolean
+  rating?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: string
 }
 
 export interface CartItem {
@@ -68,6 +66,10 @@ export interface Order {
   shippingAddress?: string
   billingAddress?: string
   createdAt: string
+  estimatedDelivery?: string
+  trackingCode?: string
+  shippingCarrier?: string
+  actualDeliveryDate?: string
 }
 
 export interface OrderItem {
@@ -91,20 +93,6 @@ export interface Review {
   createdAt: string
 }
 
-export interface Coupon {
-  id: number
-  code: string
-  name: string
-  type: string
-  value: number
-  minimumAmount?: number
-  usageLimit?: number
-  usageCount?: number
-  validFrom?: string
-  validUntil?: string
-  status: string
-}
-
 export interface LoginCredentials {
   email: string
   password: string
@@ -123,20 +111,4 @@ export interface ApiResponse<T> {
   message?: string
   error?: string
   statusCode?: number
-}
-
-export interface LoyaltyProgram {
-  id: number
-  userId: number
-  totalPoints: number
-  availablePoints: number
-  tier: string
-}
-
-export interface WishlistItem {
-  id: number
-  userId: number
-  productId: number
-  product?: Product
-  createdAt: string
 }
