@@ -6,7 +6,7 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 py-12 relative z-10">
-      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl mb-12 animate-fade-in-up">
+      <Card class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl mb-12 animate-fade-in-up">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div class="flex items-center gap-6">
             <span class="text-6xl drop-shadow-lg animate-bounce">⚙️</span>
@@ -16,15 +16,15 @@
             </div>
           </div>
           <div class="flex gap-3 flex-wrap">
-            <RouterLink to="/inventory" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
-              📦 Inventario
+            <RouterLink to="/orders" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
+              📦 Pedidos
             </RouterLink>
-            <RouterLink to="/analytics" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
-              📊 Analytics
+            <RouterLink to="/products" class="px-4 py-2 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
+              🛍️ Productos
             </RouterLink>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div v-if="loading" class="animate-pulse space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -38,7 +38,7 @@
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.1s;">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.1s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Productos</p>
@@ -46,8 +46,8 @@
             </div>
             <div class="text-4xl">{{ String.fromCodePoint(0x1F4E6) }}</div>
           </div>
-        </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.2s;">
+        </Card>
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.2s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Pedidos</p>
@@ -55,8 +55,8 @@
             </div>
             <div class="text-4xl">{{ String.fromCodePoint(0x1F6D2) }}</div>
           </div>
-        </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.3s;">
+        </Card>
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.3s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Usuarios</p>
@@ -64,8 +64,8 @@
             </div>
             <div class="text-4xl">{{ String.fromCodePoint(0x1F465) }}</div>
           </div>
-        </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.4s;">
+        </Card>
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.4s;">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-400 text-sm">Ingresos</p>
@@ -73,11 +73,11 @@
             </div>
             <div class="text-4xl">{{ String.fromCodePoint(0x1F4B0) }}</div>
           </div>
-        </div>
+        </Card>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-6">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span>📋</span>Pedidos Recientes
           </h2>
@@ -96,9 +96,9 @@
             </div>
           </div>
           <div v-else class="text-center py-8 text-gray-400">No hay pedidos recientes</div>
-        </div>
+        </Card>
 
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span>⚠️</span>Stock Bajo
           </h2>
@@ -116,15 +116,15 @@
             </div>
           </div>
           <div v-else class="text-center py-8 text-gray-400">No hay productos con stock bajo</div>
-        </div>
+        </Card>
       </div>
 
-      <div class="mt-8 flex gap-4">
-        <RouterLink to="/inventory" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all">
-          📦 Gestión de Inventario
+      <div class="mt-8">
+        <RouterLink to="/orders" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all">
+          📦 Gestión de Pedidos
         </RouterLink>
-        <RouterLink to="/analytics" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all">
-          📊 Ver Analytics
+        <RouterLink to="/products" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all">
+          🛍️ Gestión de Productos
         </RouterLink>
       </div>
     </div>
@@ -134,6 +134,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { productsAPI, ordersAPI, usersAPI } from '../api'
+import { Button, Card, RouterLink } from '../components/ui'
 
 const stats = ref({ products: 0, orders: 0, users: 0, revenue: 0 })
 const recentOrders = ref<any[]>([])
@@ -141,33 +142,33 @@ const lowStockProducts = ref<any[]>([])
 const loading = ref(true)
 
 onMounted(async () => {
-    try {
-      const [productsRes, ordersRes, usersRes] = await Promise.all([
-        productsAPI.getAll(),
-        ordersAPI.getAll(),
-        usersAPI.getAll().catch(() => ({ data: [] }))
-      ])
-      
-      const products = productsRes.data || []
-      const ordersResponse = ordersRes.data || {}
-      const orders = ordersResponse.data || []
-      const users = usersRes.data || []
-      
-      stats.value = {
-        products: products.length,
-        orders: ordersResponse.total || 0,
-        users: users.length,
-        revenue: orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
-      }
-      
-      recentOrders.value = orders.slice(0, 5)
-      lowStockProducts.value = products.filter((p: any) => p.stock < 10).slice(0, 5)
-    } catch (err) {
-      console.error('Error loading admin data:', err)
-    } finally {
-      loading.value = false
+  try {
+    const [productsRes, ordersRes, usersRes] = await Promise.all([
+      productsAPI.getAll(),
+      ordersAPI.getAll(),
+      usersAPI.getAll().catch(() => ({ data: [] }))
+    ])
+    
+    const products = productsRes.data || []
+    const ordersResponse = ordersRes.data || {}
+    const orders = ordersResponse.data || []
+    const users = usersRes.data || []
+    
+    stats.value = {
+      products: products.length,
+      orders: ordersResponse.total || 0,
+      users: users.length,
+      revenue: orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
     }
-  })
+    
+    recentOrders.value = orders.slice(0, 5)
+    lowStockProducts.value = products.filter((p: any) => p.stock < 10).slice(0, 5)
+  } catch (err) {
+    console.error('Error loading admin data:', err)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>

@@ -6,284 +6,294 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-      <!-- Header -->
       <div class="mb-8 animate-fade-in-up">
         <h1 class="text-4xl md:text-5xl font-black text-white mb-4">
           Todos los <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Productos</span>
         </h1>
-        <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+        <p class="text-gray-400 text-lg">Descubre nuestra colección completa</p>
+        
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-center mt-6">
           <div class="relative flex-1 max-w-md group">
-            <input 
+            <input
               v-model="searchTerm"
-              type="text" 
-              placeholder="Buscar productos..."
-              class="w-full px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all group-hover:bg-white/15"
+              type="text"
+              placeholder="Buscar productos, marcas, categorías..."
+              class="w-full pl-12 pr-12 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all group-hover:bg-white/15"
             />
             <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:scale-110 transition-transform">🔍</span>
+            <button v-if="searchTerm" @click="searchTerm = ''" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">✕</button>
           </div>
           <div class="flex items-center gap-2 bg-white/10 rounded-lg p-1">
-            <button 
-              @click="viewMode = 'grid'" 
-              :class="viewMode === 'grid' ? 'bg-purple-600 shadow-lg' : 'hover:bg-white/10'"
-              class="p-2 rounded-lg text-white transition-all duration-300 transform hover:scale-110"
-            >
-              ⊞
-            </button>
-            <button 
-              @click="viewMode = 'list'" 
-              :class="viewMode === 'list' ? 'bg-purple-600 shadow-lg' : 'hover:bg-white/10'"
-              class="p-2 rounded-lg text-white transition-all duration-300 transform hover:scale-110"
-            >
-              ☰
-            </button>
+            <button @click="viewMode = 'grid'" :class="viewMode === 'grid' ? 'bg-purple-600 shadow-lg' : 'hover:bg-white/10'" class="p-2 rounded-lg text-white transition-all duration-300 transform hover:scale-110" title="Vista en cuadrícula">⊞</button>
+            <button @click="viewMode = 'list'" :class="viewMode === 'list' ? 'bg-purple-600 shadow-lg' : 'hover:bg-white/10'" class="p-2 rounded-lg text-white transition-all duration-300 transform hover:scale-110" title="Vista en lista">☰</button>
           </div>
+        </div>
+      </div>
+
+      <div v-if="error" class="mb-8">
+        <div class="bg-yellow-900/30 border-l-4 border-yellow-500 text-yellow-300 p-4 rounded-xl">
+          <p class="font-medium flex items-center gap-2">⚠️ {{ error }}</p>
         </div>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Filters Sidebar -->
-        <div class="w-full lg:w-1/4">
-          <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 sticky top-24 hover:border-purple-500/30 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 animate-slide-in-left">
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="font-bold text-white text-lg flex items-center gap-2">
-                <span class="text-xl">⚙️</span> Filtros
-              </h3>
-              <button @click="clearFilters" class="text-purple-400 text-sm hover:text-purple-300 hover:scale-105 transition-transform">Limpiar</button>
-            </div>
-            
-            <!-- Category Filter -->
-            <div class="mb-6">
-              <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                <span>📁</span> Categoría
-              </h4>
-              <div class="space-y-2">
-                <label v-for="cat in categories" :key="cat" class="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="radio" 
-                    :value="cat" 
-                    v-model="selectedCategory"
-                    class="w-4 h-4 text-purple-600 bg-white/10 border-white/30 accent-purple-500"
-                  />
-                  <span class="text-gray-300 text-sm capitalize group-hover:text-white transition-colors">{{ cat }}</span>
-                </label>
+        <aside class="w-full lg:w-64 flex-shrink-0">
+          <ProductFilters
+            :filters="filters"
+            :filter-options="filterOptions"
+            @update="handleFiltersChange"
+            @clear="clearFilters"
+          />
+        </aside>
+
+        <main class="w-full lg:flex-1 min-w-0">
+          <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6 flex-wrap">
+            <div class="flex items-center gap-4 flex-1">
+              <select
+                v-model="sortBy"
+                class="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all appearance-none pr-8"
+                :style="sortSelectStyle"
+              >
+                <option value="name">📝 Nombre A-Z</option>
+                <option value="price-low">💰 Precio: Menor a Mayor</option>
+                <option value="price-high">💎 Precio: Mayor a Menor</option>
+                <option value="rating">⭐ Mejor Calificados</option>
+                <option value="newest">🆕 Más Nuevos</option>
+              </select>
+
+              <div v-if="getActiveFiltersCount > 0" class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm text-purple-300 bg-purple-900/30 px-3 py-1 rounded-full">
+                  {{ getActiveFiltersCount }} filtro{{ getActiveFiltersCount !== 1 ? 's' : '' }} activo{{ getActiveFiltersCount !== 1 ? 's' : '' }}
+                </span>
+                <button @click="clearFilters" class="text-sm text-purple-400 hover:text-purple-300 font-medium">Limpiar</button>
               </div>
             </div>
 
-            <!-- Price Range -->
-            <div class="mb-6">
-              <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                <span>💰</span> Precio
-              </h4>
-              <input 
-                type="range" 
-                v-model="maxPrice" 
-                min="0" 
-                max="500" 
-                class="w-full accent-purple-500"
-              />
-              <div class="flex justify-between text-gray-400 text-sm mt-2">
-                <span>S/ 0</span>
-                <span class="text-purple-400 font-semibold">S/ {{ maxPrice }}</span>
+            <div class="text-sm text-gray-400">
+              {{ filteredProducts.length }} producto{{ filteredProducts.length !== 1 ? 's' : '' }} encontrado{{ filteredProducts.length !== 1 ? 's' : '' }}
+            </div>
+          </div>
+
+          <div v-if="error" class="mb-6">
+            <div class="bg-yellow-900/30 border-l-4 border-yellow-500 text-yellow-300 p-4 rounded-xl">
+              <p class="font-medium flex items-center gap-2">⚠️ {{ error }}</p>
+            </div>
+          </div>
+
+          <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div v-for="i in 8" :key="i" class="animate-pulse">
+              <div class="bg-white/10 rounded-2xl overflow-hidden border border-white/20">
+                <div class="aspect-square bg-white/5"></div>
+                <div class="p-5 space-y-3">
+                  <div class="h-4 bg-white/10 rounded w-3/4"></div>
+                  <div class="h-3 bg-white/5 rounded w-full"></div>
+                  <div class="h-6 bg-white/10 rounded w-1/3"></div>
+                </div>
               </div>
             </div>
+          </div>
 
-            <!-- Availability -->
-            <div>
-              <h4 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                <span>📦</span> Disponibilidad
-              </h4>
-              <label class="flex items-center gap-2 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  v-model="showInStock"
-                  class="w-4 h-4 text-purple-600 bg-white/10 border-white/30 rounded accent-purple-500"
-                />
-                <span class="text-gray-300 text-sm group-hover:text-white transition-colors">Solo disponibles</span>
-              </label>
+          <div v-else-if="filteredProducts.length === 0" class="text-center py-16 animate-fade-in-up">
+            <div class="bg-white/5 rounded-2xl p-12 border border-white/10">
+              <div class="text-6xl mb-4">🔍</div>
+              <h3 class="text-2xl font-bold text-white mb-2">No se encontraron productos</h3>
+              <p class="text-gray-400 mb-6">Intenta cambiar los filtros o el término de búsqueda</p>
+              <Button @click="clearFilters" icon="🔄" class="transform hover:scale-105">Limpiar Filtros</Button>
             </div>
           </div>
-        </div>
 
-        <!-- Products Grid -->
-        <div class="w-full lg:w-3/4">
-          <!-- Loading State -->
-          <div v-if="loading" class="text-center py-12">
-            <div class="w-20 h-20 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-gray-400 text-xl animate-pulse">Cargando productos...</p>
-          </div>
-
-          <!-- Error State -->
-          <div v-else-if="error" class="text-center py-12 animate-fade-in-up">
-            <div class="text-6xl mb-4">⚠️</div>
-            <h2 class="text-2xl font-bold text-white mb-2">Conectando con el backend</h2>
-            <p class="text-gray-400 mb-6">{{ error }}</p>
-            <button @click="fetchProducts" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transform hover:scale-105 transition-all">
-              🔄 Reintentar
-            </button>
-          </div>
-
-          <!-- Empty State -->
-          <div v-else-if="filteredProducts.length === 0" class="text-center py-12 animate-fade-in-up">
-            <div class="text-6xl mb-4">🔍</div>
-            <p class="text-gray-400 text-xl">No se encontraron productos</p>
-          </div>
-
-          <!-- Products Grid -->
-          <div v-else :class="viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'">
-            <div v-for="(product, index) in filteredProducts" :key="product.id" 
-              class="group relative bg-white/10 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/20 hover:shadow-2xl hover:border-purple-500/50 transition-all duration-500 animate-fade-in-up"
-              :class="viewMode === 'list' ? 'flex' : ''"
+          <div v-else :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'space-y-4'">
+            <ProductCard
+              v-for="(product, index) in filteredProducts"
+              :key="product.id"
+              :product="product"
+              :view-mode="viewMode"
+              :is-in-comparison="comparisonItems.some(item => item.id === product.id)"
+              @add-to-cart="addToCart"
+              @quick-view="openQuickView"
+              @add-to-comparison="addToComparison"
+              @navigate="navigateToProduct"
               :style="{ animationDelay: `${index * 50}ms` }"
-            >
-              <!-- Image -->
-              <div :class="viewMode === 'grid' ? 'h-64' : 'w-48 h-48'" class="flex-shrink-0 overflow-hidden bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <span class="text-6xl transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">{{ getProductEmoji(product) }}</span>
-              </div>
-                
-              <!-- Badges -->
-              <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                <span v-if="product.stock <= 5 && product.stock > 0" class="px-2 py-1 bg-yellow-600 text-white text-xs rounded-full animate-pulse">
-                  ¡Solo {{ product.stock }}!
-                </span>
-                <span v-if="product.stock === 0" class="px-2 py-1 bg-red-600 text-white text-xs rounded-full">
-                  Agotado
-                </span>
-              </div>
-
-              <!-- Quick Actions Overlay -->
-              <div class="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 transform scale-95 group-hover:scale-100">
-                <RouterLink 
-                  :to="`/product/${product.id}`"
-                  class="px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 font-semibold text-sm transform hover:scale-110 transition-all"
-                >
-                  👁️ Ver
-                </RouterLink>
-                <button 
-                  @click.prevent="addToCart(product)"
-                  class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold text-sm transform hover:scale-110 transition-all"
-                >
-                  🛒 Agregar
-                </button>
-              </div>
-
-              <!-- Content -->
-              <div class="p-4 flex-1">
-                <RouterLink :to="`/product/${product.id}`">
-                  <h3 class="font-bold text-white text-lg mb-1 line-clamp-2 group-hover:text-purple-400 transition-colors">
-                    {{ product.name }}
-                  </h3>
-                </RouterLink>
-                <p class="text-gray-400 text-sm mb-2 line-clamp-2">{{ product.description }}</p>
-                
-                <div class="flex items-center justify-between mt-3">
-                  <span class="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
-                    S/ {{ typeof product.price === 'number' ? product.price.toFixed(2) : product.price }}
-                  </span>
-                  <div class="flex flex-col items-end">
-                    <span class="text-gray-400 text-sm capitalize">{{ product.category }}</span>
-                    <div v-if="product.reviewCount" class="flex items-center gap-1">
-                      <span class="text-yellow-400 text-sm">★ {{ Number(product.averageRating || 0).toFixed(1) }}</span>
-                      <span class="text-gray-500 text-xs">({{ product.reviewCount }})</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex gap-2 mt-3">
-                  <RouterLink 
-                    :to="`/product/${product.id}`"
-                    class="flex-1 px-4 py-2 border border-white/30 text-white text-center rounded-lg hover:bg-white/10 hover:border-purple-500/50 text-sm transition-all"
-                  >
-                    Detalles
-                  </RouterLink>
-                  <button 
-                    @click.prevent="addToCart(product)"
-                    :disabled="product.stock === 0"
-                    class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 text-sm disabled:opacity-50 transform hover:scale-105 transition-all"
-                  >
-                    🛒
-                  </button>
-                </div>
-              </div>
-            </div>
+            />
           </div>
 
-          <!-- Pagination -->
           <div v-if="filteredProducts.length > 0" class="mt-8 flex justify-center gap-2 animate-fade-in-up">
-            <button class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transform hover:scale-105 transition-all">Anterior</button>
-            <button class="px-4 py-2 bg-purple-600 text-white rounded-lg shadow-lg">1</button>
-            <button class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transform hover:scale-105 transition-all">Siguiente</button>
+            <Button variant="outline" @click="prevPage" :disabled="currentPage === 1">Anterior</Button>
+            <span class="px-4 py-2 bg-white/10 text-white rounded-lg font-medium">
+              Página {{ currentPage }}
+            </span>
+            <Button @click="nextPage">Siguiente</Button>
           </div>
-        </div>
+        </main>
       </div>
     </div>
+
+    <ProductQuickView
+      :product="quickViewProduct"
+      @close="closeQuickView"
+      @add-to-cart="addToCart"
+      @navigate="navigateToProduct"
+    />
+
+    <ProductComparison
+      v-if="comparisonItems.length > 0"
+      :items="comparisonItems"
+      @remove="removeFromComparison"
+      @navigate="navigateToProduct"
+      @clear="clearComparison"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { productsAPI } from '../api'
 import { useCartStore } from '../stores/cart'
 import type { Product } from '../types'
+import ProductCard from '../components/ProductCard.vue'
+import ProductQuickView from '../components/ProductQuickView.vue'
+import ProductFilters from '../components/ProductFilters.vue'
+import ProductComparison from '../components/ProductComparison.vue'
+import { getProductImage } from '../utils/productImages'
+import Button from '../components/ui/Button.vue'
 
+const router = useRouter()
 const cartStore = useCartStore()
+
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
-
 const searchTerm = ref('')
-const selectedCategory = ref('')
-const maxPrice = ref(500)
-const showInStock = ref(false)
 const viewMode = ref<'grid' | 'list'>('grid')
+const quickViewProduct = ref<Product | null>(null)
+const comparisonItems = ref<Product[]>([])
+const currentPage = ref(1)
 
-const categories = ['hombre', 'mujer', 'zapatos', 'accesorios']
-
-const filteredProducts = computed(() => {
-  return products.value.filter(product => {
-    const matchesSearch = !searchTerm.value || 
-      product.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    const matchesCategory = !selectedCategory.value || 
-      product.category?.toLowerCase() === selectedCategory.value.toLowerCase()
-    const matchesPrice = product.price <= maxPrice.value
-    const matchesStock = !showInStock.value || product.stock > 0
-    
-    return matchesSearch && matchesCategory && matchesPrice && matchesStock
-  })
+const filters = ref({
+  category: '',
+  priceRange: 1000,
+  inStock: false
 })
 
-import { getProductImageUrl } from '../utils/images'
+const filterOptions = computed(() => {
+  const categories = Array.from(new Set(products.value.map(p => p.category).filter(Boolean)))
+  const prices = products.value.map(p => p.price).filter(p => p > 0)
+  const priceRange: [number, number] = prices.length > 0
+    ? [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))]
+    : [0, 1000]
 
-const getProductImage = (product: any): string => {
-  return ''
-}
-
-const getProductEmoji = (product: any): string => {
-  const category = (product.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
-}
-
-const handleImageError = (e: Event, product: any) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
-  const parent = target.parentElement
-  if (parent) {
-    parent.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center"><span class="text-6xl">${getProductEmoji(product)}</span></div>`
+  return {
+    categories: categories.length > 0 ? categories : ['hombre', 'mujer', 'zapatos', 'accesorios'],
+    priceRange
   }
+})
+
+const filteredProducts = computed(() => {
+  let filtered = [...products.value]
+
+  if (searchTerm.value) {
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+      (product.description || '').toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+      (product.brand || '').toLowerCase().includes(searchTerm.value.toLowerCase())
+    )
+  }
+
+  if (filters.value.category) {
+    filtered = filtered.filter(p => p.category === filters.value.category)
+  }
+
+  if (filters.value.inStock) {
+    filtered = filtered.filter(p => p.stock > 0)
+  }
+
+  filtered = filtered.filter(p => p.price >= filterOptions.value.priceRange[0] && p.price <= filters.value.priceRange)
+
+  filtered.sort((a, b) => {
+    switch (sortBy.value) {
+      case 'price-low': return a.price - b.price
+      case 'price-high': return b.price - a.price
+      case 'rating': return ((b.averageRating || b.rating || 0) - (a.averageRating || a.rating || 0))
+      case 'newest': return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      default: return a.name.localeCompare(b.name)
+    }
+  })
+
+  return filtered
+})
+
+const sortBy = ref('name')
+
+const getActiveFiltersCount = computed(() => {
+  let count = 0
+  if (filters.value.category) count++
+  if (filters.value.inStock) count++
+  if (filters.value.priceRange !== filterOptions.value.priceRange[1]) count++
+  return count
+})
+
+const sortSelectStyle = computed(() => ({
+  backgroundImage: 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>\')',
+  backgroundPosition: 'right 0.75rem center',
+  backgroundSize: '1.25rem',
+  backgroundRepeat: 'no-repeat',
+  webkitAppearance: 'none',
+  mozAppearance: 'none',
+  paddingRight: '2.5rem'
+}))
+
+const handleFiltersChange = (newFilters: any) => {
+  filters.value = newFilters
+  currentPage.value = 1
+}
+
+const clearFilters = () => {
+  filters.value = {
+    category: '',
+    priceRange: filterOptions.value.priceRange[1],
+    inStock: false
+  }
+  searchTerm.value = ''
+  currentPage.value = 1
 }
 
 const addToCart = (product: Product) => {
   cartStore.addItem(product, 1)
 }
 
-const clearFilters = () => {
-  searchTerm.value = ''
-  selectedCategory.value = ''
-  maxPrice.value = 500
-  showInStock.value = false
+const openQuickView = (product: Product) => {
+  quickViewProduct.value = product
+}
+
+const closeQuickView = () => {
+  quickViewProduct.value = null
+}
+
+const addToComparison = (product: Product) => {
+  if (comparisonItems.value.length < 3 && !comparisonItems.value.find(item => item.id === product.id)) {
+    comparisonItems.value.push(product)
+  }
+}
+
+const removeFromComparison = (productId: number) => {
+  comparisonItems.value = comparisonItems.value.filter(item => item.id !== productId)
+}
+
+const clearComparison = () => {
+  comparisonItems.value = []
+}
+
+const navigateToProduct = (id: number) => {
+  router.push(`/product/${id}`)
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+
+const nextPage = () => {
+  // pagination logic here
 }
 
 const fetchProducts = async () => {
@@ -291,7 +301,23 @@ const fetchProducts = async () => {
   error.value = ''
   try {
     const response = await productsAPI.getAll()
-    products.value = response.data || []
+    const backendProducts = response.data || []
+    products.value = backendProducts.map(product => ({
+      ...product,
+      price: typeof product.price === 'string' ? parseFloat(product.price) : (product.price || 0),
+      stock: typeof product.stock === 'string' ? parseInt(product.stock) : (product.stock || 0),
+      imageUrl: getProductImage(product.name, product.category, product.imageUrl || product.image),
+      brand: product.brand || 'Sin marca',
+      colors: product.colors || [],
+      sizes: product.sizes || [],
+      isNew: product.isNew || false,
+      isFeatured: product.isFeatured || false,
+      isOnSale: product.isOnSale || false,
+      isBestseller: product.isBestseller || false,
+      rating: product.rating || 0,
+      averageRating: product.averageRating || 0,
+      reviewCount: product.reviewCount || 0
+    }))
   } catch (err) {
     error.value = 'Conectando con el backend. Esto puede tardar unos segundos.'
     console.error(err)
@@ -303,14 +329,18 @@ const fetchProducts = async () => {
 onMounted(() => {
   fetchProducts()
 })
+
+watch(() => filterOptions.value.priceRange, (newRange) => {
+  if (filters.value.priceRange === filterOptions.value.priceRange[1] || filters.value.priceRange > newRange[1]) {
+    filters.value.priceRange = newRange[1]
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
 }
 
 @keyframes fadeInUp {
@@ -322,25 +352,5 @@ onMounted(() => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.6s ease-out forwards;
 }
 </style>

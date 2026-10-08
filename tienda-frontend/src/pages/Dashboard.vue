@@ -18,9 +18,6 @@
             <div>
               <h1 class="text-4xl font-bold mb-2">¡Hola, {{ getUserName() }}! 👋</h1>
               <p class="text-purple-100 text-lg mb-2">Miembro desde {{ memberSince }}</p>
-              <span class="inline-flex items-center px-3 py-1 bg-white/20 text-white rounded-full text-sm">
-                ✨ {{ loyaltyPoints }} puntos de fidelidad
-              </span>
             </div>
           </div>
 
@@ -35,36 +32,43 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Card class="bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-blue-100 text-sm font-medium mb-1">Total Pedidos</p>
-              <p class="text-3xl font-bold">{{ stats.totalOrders }}</p>
-              <p class="text-blue-200 text-xs mt-1">Pedidos realizados</p>
+              <p class="text-blue-100 text-xs font-medium mb-0.5">Total Pedidos</p>
+              <p class="text-2xl font-bold">{{ stats.totalOrders }}</p>
+              <p class="text-blue-200 text-[10px] mt-0.5">Pedidos realizados</p>
             </div>
-            <div class="text-4xl opacity-80">📦</div>
+            <div class="text-3xl opacity-80">📦</div>
           </div>
-        </div>
+        </Card>
 
-        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-1">
+        <Card class="bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-xl hover:shadow-green-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-green-100 text-sm font-medium mb-1">Total Gastado</p>
-              <p class="text-3xl font-bold">S/ {{ stats.totalSpent.toFixed(2) }}</p>
-              <p class="text-green-200 text-xs mt-1">En compras</p>
+              <p class="text-green-100 text-xs font-medium mb-0.5">Total Gastado</p>
+              <p class="text-2xl font-bold">S/ {{ stats.totalSpent.toFixed(2) }}</p>
+              <p class="text-green-200 text-[10px] mt-0.5">En compras</p>
             </div>
-            <div class="text-4xl opacity-80">💰</div>
+            <div class="text-3xl opacity-80">💰</div>
           </div>
-        </div>
+        </Card>
 
-
-
-
+        <Card class="bg-gradient-to-br from-amber-500 to-orange-500 text-white hover:shadow-xl hover:shadow-amber-500/25 transition-all duration-300 transform hover:-translate-y-0.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-amber-100 text-xs font-medium mb-0.5">Pedidos Pendientes</p>
+              <p class="text-2xl font-bold">{{ pendingOrders.length }}</p>
+              <p class="text-amber-200 text-[10px] mt-0.5">En proceso</p>
+            </div>
+            <div class="text-3xl opacity-80">⏳</div>
+          </div>
+        </Card>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-1 gap-8">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">📋 Pedidos Recientes</h2>
@@ -75,22 +79,20 @@
             </RouterLink>
           </div>
 
-          <div v-if="recentOrders.length > 0" class="space-y-4">
-            <div v-for="order in recentOrders" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
+          <div v-if="recentOrders.length > 0" class="space-y-3">
+            <div v-for="order in recentOrders" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-all">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-2">
-                    <h3 class="font-bold text-white">#{{ order.orderNumber }}</h3>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" :class="getStatusBadge(order.status)">
-                      {{ getStatusDisplayName(order.status) }}
-                    </span>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="font-semibold text-white">#{{ order.orderNumber }}</h3>
+                    <Badge :class="getStatusBadge(order.status)">{{ getStatusDisplayName(order.status) }}</Badge>
                   </div>
-                  <p class="text-sm text-gray-300 mb-1">📅 {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
-                  <p class="text-sm text-gray-300">📦 {{ order.items?.length || 0 }} artículos</p>
+                  <p class="text-xs text-gray-300 mb-0.5">📅 {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
+                  <p class="text-xs text-gray-300">📦 {{ order.items?.length || 0 }} artículos</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-2xl text-white">S/ {{ Number(order.total).toFixed(2) }}</p>
-                  <RouterLink :to="`/orders/${order.id}`" class="text-sm text-purple-400 hover:text-purple-300 mt-2 block">Ver detalles</RouterLink>
+                  <p class="font-bold text-lg text-white">S/ {{ Number(order.total).toFixed(2) }}</p>
+                  <RouterLink :to="`/orders/${order.id}`" class="text-xs text-purple-400 hover:text-purple-300 mt-1 block">Ver detalles</RouterLink>
                 </div>
               </div>
             </div>
@@ -103,11 +105,9 @@
               Explorar productos
             </RouterLink>
           </div>
-        </div>
+        </Card>
 
-<!-- Pedidos Pendientes - Full width -->
-      <div class="w-full mt-8">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl max-w-3xl mx-auto">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl self-start">
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-2xl font-bold text-white">⏳ Pedidos Pendientes</h2>
@@ -115,22 +115,20 @@
             </div>
           </div>
 
-          <div v-if="pendingOrders.length > 0" class="space-y-4">
-            <div v-for="order in pendingOrders.slice(0, 4)" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 hover:bg-white/20 transition-all">
+          <div v-if="pendingOrders.length > 0" class="space-y-3">
+            <div v-for="order in pendingOrders.slice(0, 4)" :key="order.id" class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 hover:bg-white/20 transition-all">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-2">
-                    <h3 class="font-bold text-white">#{{ order.orderNumber }}</h3>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" :class="getStatusBadge(order.status)">
-                      {{ getStatusDisplayName(order.status) }}
-                    </span>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="font-semibold text-white">#{{ order.orderNumber }}</h3>
+                    <Badge :class="getStatusBadge(order.status)">{{ getStatusDisplayName(order.status) }}</Badge>
                   </div>
-                  <p class="text-sm text-gray-300 mb-1">📅 Pedido: {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
-                  <p class="text-sm text-green-400 font-medium">🚚 Llegada estimada: {{ order.estimatedDelivery }}</p>
+                  <p class="text-xs text-gray-300 mb-0.5">📅 Pedido: {{ new Date(order.createdAt).toLocaleDateString('es-ES') }}</p>
+                  <p class="text-xs text-green-400 font-medium">🚚 Llegada estimada: {{ order.estimatedDelivery || 'Por confirmar' }}</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-xl text-white mb-2">S/ {{ Number(order.total).toFixed(2) }}</p>
-                  <RouterLink :to="`/order-tracking/${order.id}`" class="inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
+                  <p class="font-bold text-lg text-white mb-1">S/ {{ Number(order.total).toFixed(2) }}</p>
+                  <RouterLink :to="`/order-tracking/${order.id}`" class="inline-flex items-center px-2 py-1 bg-purple-600 text-white text-xs rounded-lg hover:bg-purple-700">
                     📍 Rastrear
                   </RouterLink>
                 </div>
@@ -142,35 +140,35 @@
             <h3 class="text-lg font-bold text-white mb-2">Sin pedidos pendientes</h3>
             <p class="text-gray-400">Todos tus pedidos han sido entregados</p>
           </div>
-        </div>
+        </Card>
       </div>
 
-<!-- Acciones Rápidas -->
-<div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl mx-auto mt-8 w-full">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-white mb-2">⚡ Acciones Rápidas</h2>
-      <p class="text-gray-400">Todo lo que necesitas en un solo lugar</p>
-    </div>
+      <div class="w-full mt-8">
+        <Card class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl mx-auto mt-8 w-full">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-white mb-2">⚡ Acciones Rápidas</h2>
+            <p class="text-gray-400">Todo lo que necesitas en un solo lugar</p>
+          </div>
 
-    <div class="grid grid-cols-2 gap-4">
-      <RouterLink to="/products" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-4 text-center hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
-        <span class="text-3xl block mb-2">🛒</span>
-        <span class="font-bold">Comprar</span>
-        <span class="text-sm opacity-90 block">Explorar productos</span>
-      </RouterLink>
-      <RouterLink to="/orders" class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl p-4 text-center hover:from-green-600 hover:to-teal-600 transition-all duration-300">
-        <span class="text-3xl block mb-2">📋</span>
-        <span class="font-bold">Mis Pedidos</span>
-        <span class="text-sm opacity-90 block">Ver historial</span>
-      </RouterLink>
+          <div class="grid grid-cols-2 gap-3">
+            <RouterLink to="/products" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-3 text-center hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
+              <span class="text-2xl block mb-1">🛒</span>
+              <span class="font-semibold text-sm">Comprar</span>
+              <span class="text-xs opacity-90 block">Explorar productos</span>
+            </RouterLink>
+            <RouterLink to="/orders" class="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl p-3 text-center hover:from-green-600 hover:to-teal-600 transition-all duration-300">
+              <span class="text-2xl block mb-1">📋</span>
+              <span class="font-semibold text-sm">Mis Pedidos</span>
+              <span class="text-xs opacity-90 block">Ver historial</span>
+            </RouterLink>
 
-      <RouterLink to="/profile" class="bg-white/10 border border-white/20 text-white rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300">
-        <span class="text-3xl block mb-2">👤</span>
-        <span class="font-bold">Perfil</span>
-        <span class="text-sm opacity-90 block">Mi cuenta</span>
-      </RouterLink>
-    </div>
-</div>
+            <RouterLink to="/profile" class="bg-white/10 border border-white/20 text-white rounded-xl p-3 text-center hover:bg-white/20 transition-all duration-300">
+              <span class="text-2xl block mb-1">👤</span>
+              <span class="font-semibold text-sm">Perfil</span>
+              <span class="text-xs opacity-90 block">Mi cuenta</span>
+            </RouterLink>
+          </div>
+        </Card>
       </div>
 
       <RouterLink v-if="userRole === 'admin'" to="/admin" class="inline-flex items-center px-6 py-3 mt-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all">
@@ -184,7 +182,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { ordersAPI } from '../api'
+import { ordersAPI, api } from '../api'
+import type { Order } from '../types'
+import { Button, Card, Badge, RouterLink } from '../components/ui'
+import { getProductImage } from '../utils/productImages'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -204,8 +205,8 @@ const userRole = computed(() => {
 
 const user = ref<any>(null)
 const stats = ref({ totalOrders: 0, totalSpent: 0 })
-const recentOrders = ref<any[]>([])
-const pendingOrders = ref<any[]>([])
+const recentOrders = ref<Order[]>([])
+const pendingOrders = ref<Order[]>([])
 const memberSince = ref('')
 
 const getStatusBadge = (status: string) => {
@@ -228,66 +229,8 @@ const getStatusDisplayName = (status: string) => {
   return names[status] || status
 }
 
-onMounted(async () => {
-  // Ensure auth is initialized from localStorage
-  authStore.initAuth()
-  user.value = authStore.user || JSON.parse(localStorage.getItem('user') || 'null')
-  
-  if (user.value) {
-    memberSince.value = user.value.createdAt 
-      ? new Date(user.value.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-      : new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-  }
-  
-  // Load orders
-  try {
-    const ordersRes = await ordersAPI.getAll()
-    console.log('Orders API response:', ordersRes.data)
-    
-    const orders = ordersRes.data || []
-    if (orders.length > 0) {
-      recentOrders.value = orders.slice(0, 5)
-      pendingOrders.value = orders.filter((o: any) => o.status && o.status !== 'delivered')
-      stats.value.totalOrders = orders.length
-      stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
-    }
-  } catch (err) {
-    console.error('Error loading orders:', err)
-  }
-
-  // Always set demo data if not loaded from API
-  if (stats.value.totalOrders === 0) {
-    stats.value.totalOrders = 4
-    stats.value.totalSpent = 1255.50
-    recentOrders.value = [
-      { id: 1, orderNumber: 'ORD-2025-00001', status: 'delivered', createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), total: 350.00, items: [{ id: 1, product: { name: 'Camisa Formal' }, quantity: 2 }] },
-      { id: 2, orderNumber: 'ORD-2025-00002', status: 'shipped', createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), total: 450.00, items: [{ id: 2, product: { name: 'Pantalón Jeans' }, quantity: 3 }] },
-    ]
-    pendingOrders.value = [
-      { id: 3, orderNumber: 'ORD-2025-00003', status: 'processing', createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), total: 280.00, estimatedDelivery: '5 Feb 2025' },
-      { id: 4, orderNumber: 'ORD-2025-00004', status: 'pending', createdAt: new Date().toISOString(), total: 175.50, estimatedDelivery: 'Pending' },
-    ]
-  }
-  
-  // Always set demo wishlist if not loaded from API
-  if (stats.value.wishlistItems === 0) {
-    wishlistItems.value = [
-      { id: 1, productId: 1, product: { name: 'Camisa Algodón Premium', description: 'Camisa de algodón premium', price: 89.99, category: 'hombre' } },
-      { id: 2, productId: 2, product: { name: 'Vestido Casual Verano', description: 'Vestido ligero y fresco', price: 69.90, category: 'mujer' } },
-      { id: 3, productId: 3, product: { name: 'Reloj Elegante Acero', description: 'Reloj de pulsera minimalista', price: 149.95, category: 'accesorios' } },
-      { id: 4, productId: 4, product: { name: 'Sneakers Deportivos', description: 'Zapatillas cómodas', price: 89.95, category: 'zapatos' } },
-    ]
-    stats.value.wishlistItems = 4
-  }
-})
-
-const getProductEmoji = (product: any): string => {
-  const category = (product.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
+const moveToCart = (item: any) => {
+  // Use cart store to add item
 }
 
 const getUserName = (): string => {
@@ -306,4 +249,57 @@ const getUserName = (): string => {
   }
   return 'Usuario'
 }
+
+onMounted(async () => {
+  authStore.initAuth()
+  user.value = authStore.user || JSON.parse(localStorage.getItem('user') || 'null')
+  
+  if (user.value) {
+    memberSince.value = user.value.createdAt 
+      ? new Date(user.value.createdAt).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+      : new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
+  }
+  
+  try {
+    const ordersRes = await ordersAPI.getAll()
+    const orders = ordersRes.data || []
+    if (orders.length > 0) {
+      recentOrders.value = orders.slice(0, 5)
+      pendingOrders.value = orders.filter((o: any) => o.status && o.status !== 'delivered')
+      stats.value.totalOrders = orders.length
+      stats.value.totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0)
+    }
+  } catch (err) {
+    console.error('Error loading orders:', err)
+  }
+})
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bounce { animation: bounce 2s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.animate-pulse { animation: pulse 3s ease-in-out infinite; }
+</style>

@@ -76,7 +76,12 @@
               <div class="space-y-3">
                 <div v-for="item in order.items" :key="item.id" class="flex items-center space-x-4">
                   <div class="flex-shrink-0 w-16 h-16 bg-white/10 rounded-md flex items-center justify-center text-2xl">
-                    <span v-if="item.product">{{ getProductEmoji(item.product) }}</span>
+                    <img
+                      v-if="item.product"
+                      :src="getProductImage(item.product.name, item.product.category, item.product.imageUrl)"
+                      :alt="item.product.name"
+                      class="w-full h-full object-cover rounded-md"
+                    />
                     <span v-else class="text-gray-400 text-xs">📦</span>
                   </div>
                   <div class="flex-1 min-w-0">
@@ -177,6 +182,7 @@ import { ref, onMounted } from 'vue'
 import { ordersAPI } from '../api'
 import type { Order } from '../types'
 import axios from 'axios'
+import { getProductImage } from '../utils/productImages'
 
 const orders = ref<Order[]>([])
 const loading = ref(true)
@@ -301,15 +307,6 @@ const handleCancelOrder = async () => {
 }
 
 onMounted(() => { fetchOrders() })
-
-const getProductEmoji = (product: any): string => {
-  const category = (product.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
-}
 </script>
 
 <style scoped>

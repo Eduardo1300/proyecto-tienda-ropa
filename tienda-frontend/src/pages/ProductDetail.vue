@@ -6,27 +6,20 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 relative z-10">
-      <!-- Breadcrumb -->
-      <div class="mb-6 animate-fade-in-up">
-        <RouterLink to="/products" class="text-purple-400 hover:text-purple-300 hover:underline transition-colors inline-flex items-center gap-2">
-          ← Volver a productos
-        </RouterLink>
-      </div>
-
       <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div class="animate-pulse space-y-4">
-            <div class="aspect-square bg-white/10 rounded-2xl"></div>
-            <div class="grid grid-cols-4 gap-4">
-              <div v-for="i in 4" :key="i" class="aspect-square bg-white/5 rounded-lg"></div>
-            </div>
-          </div>
-          <div class="space-y-6 animate-pulse">
-            <div class="h-8 bg-white/10 rounded w-1/3"></div>
-            <div class="h-12 bg-white/10 rounded w-3/4"></div>
-            <div class="h-10 bg-white/10 rounded w-1/4"></div>
-            <div class="h-20 bg-white/5 rounded w-full"></div>
+        <div class="animate-pulse space-y-4">
+          <div class="aspect-square bg-white/10 rounded-2xl"></div>
+          <div class="grid grid-cols-4 gap-4">
+            <div v-for="i in 4" :key="i" class="aspect-square bg-white/5 rounded-lg"></div>
           </div>
         </div>
+        <div class="space-y-6 animate-pulse">
+          <div class="h-8 bg-white/10 rounded w-1/3"></div>
+          <div class="h-12 bg-white/10 rounded w-3/4"></div>
+          <div class="h-10 bg-white/10 rounded w-1/4"></div>
+          <div class="h-20 bg-white/5 rounded w-full"></div>
+        </div>
+      </div>
 
       <div v-else-if="!product" class="text-center py-20 animate-fade-in-up">
         <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 max-w-lg mx-auto">
@@ -40,25 +33,32 @@
       </div>
 
       <div v-else>
-        <!-- Product Main Info -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-          <!-- Images -->
           <div class="space-y-4 animate-scale-in">
             <div class="aspect-square bg-white/10 rounded-2xl overflow-hidden flex items-center justify-center border border-white/20 hover:border-purple-500/50 transition-all duration-300 group">
-              <span class="text-9xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">{{ getProductEmoji(product) }}</span>
+              <img
+                :src="productImages[activeImage] || product.imageUrl"
+                :alt="product.name"
+                class="w-full h-full object-cover"
+              />
             </div>
             <div class="grid grid-cols-4 gap-4">
-              <div 
-                v-for="i in 4" 
-                :key="i"
+              <button
+                v-for="(img, index) in productImages"
+                :key="index"
+                @click="activeImage = index"
                 class="aspect-square bg-white/10 rounded-lg flex items-center justify-center border border-white/20 hover:border-purple-500/50 hover:scale-105 transition-all duration-300 cursor-pointer"
+                :class="{ 'border-purple-400 shadow-lg shadow-purple-500/50': activeImage === index }"
               >
-                <span class="text-3xl transform hover:rotate-12 transition-transform duration-300">{{ getProductEmoji(product) }}</span>
-              </div>
+                <img
+                  :src="img || product.imageUrl"
+                  :alt="`${product.name} ${index + 1}`"
+                  class="w-full h-full object-cover rounded-lg"
+                />
+              </button>
             </div>
           </div>
 
-          <!-- Product Info -->
           <div class="space-y-6 animate-fade-in-up" style="animation-delay: 0.2s;">
             <div>
               <span class="inline-block px-3 py-1 bg-purple-500/30 text-purple-300 rounded-full text-sm mb-4 animate-pulse">
@@ -91,71 +91,65 @@
 
             <p class="text-gray-300 text-lg leading-relaxed border-l-4 border-purple-500 pl-4">{{ product.description }}</p>
 
-            <!-- Quantity & Add to Cart -->
             <div class="flex items-center gap-4 flex-wrap">
               <div class="flex items-center border border-white/20 rounded-xl bg-white/5">
                 <button @click="quantity > 1 && quantity--" class="px-4 py-3 text-white hover:bg-white/10 transition-colors rounded-l-xl">−</button>
                 <span class="px-6 py-3 text-white font-semibold border-x border-white/10">{{ quantity }}</span>
                 <button @click="quantity++" class="px-4 py-3 text-white hover:bg-white/10 transition-colors rounded-r-xl">+</button>
               </div>
-              <button 
-                @click="addToCart" 
+              <Button
+                @click="addToCart"
                 :disabled="product.stock <= 0"
                 class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 hover:shadow-lg"
               >
                 🛒 Agregar al Carrito
-              </button>
-              <button 
-                @click="toggleWishlist"
-                class="p-3 border border-white/20 rounded-xl text-white hover:bg-white/10 hover:border-purple-500/50 transition-all transform hover:scale-105"
+              </Button>
+              <Button
+                @click="buyNow"
+                :disabled="product.stock <= 0"
+                variant="success"
+                class="flex-1 py-3 px-6 rounded-xl font-bold hover:scale-105 transition-all"
               >
-                {{ isInWishlist ? '❤️' : '🤍' }} {{ isInWishlist ? 'Favorito' : 'Favoritos' }}
-              </button>
+                💳 Comprar ahora
+              </Button>
             </div>
 
-            <!-- Product Details -->
             <div class="bg-white/5 rounded-xl p-6 space-y-3 border border-white/10 hover:border-purple-500/30 transition-all">
               <h3 class="text-white font-semibold text-lg flex items-center gap-2">
                 <span>📋</span> Detalles del Producto
               </h3>
               <div class="grid grid-cols-2 gap-2 text-sm">
-                <span class="text-gray-400">Categoria:</span>
+                <span class="text-gray-400">Categoría:</span>
                 <span class="text-white">{{ product.category }}</span>
                 <span v-if="product.sku" class="text-gray-400">SKU:</span>
                 <span v-if="product.sku" class="text-white">{{ product.sku }}</span>
+                <span v-if="product.brand" class="text-gray-400">Marca:</span>
+                <span v-if="product.brand" class="text-white">{{ product.brand }}</span>
               </div>
             </div>
 
-            <!-- Shipping Info -->
             <div class="bg-white/5 rounded-xl p-6 space-y-3 border border-white/10 hover:border-purple-500/30 transition-all">
               <h3 class="text-white font-semibold text-lg flex items-center gap-2">
-                <span>🚚</span> Informacion de Envio
+                <span>🚚</span> Información de Envío
               </h3>
-              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-                <span class="text-xl">📦</span>
-                <span>Envio en 24-48 horas</span>
-              </div>
-              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-                <span class="text-xl">🎁</span>
-                <span>Envio gratis en pedidos mayores a S/ 100</span>
-              </div>
-              <div class="flex items-center gap-3 text-gray-300 hover:text-white transition-colors">
-                <span class="text-xl">🔄</span>
-                <span>30 dias para cambios y devoluciones</span>
+              <div class="space-y-3 text-gray-300 hover:text-white transition-colors">
+                <div class="flex items-center gap-3"><span class="text-xl">📦</span> Envío en 24-48 horas</div>
+                <div class="flex items-center gap-3"><span class="text-xl">🎁</span> Envío gratis en pedidos mayores a S/ 100</div>
+                <div class="flex items-center gap-3"><span class="text-xl">🔄</span> 30 días para cambios y devoluciones</div>
+                <div class="flex items-center gap-3"><span class="text-xl">🛡️</span> Compra protegida 100%</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Reviews Section -->
         <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-12 border border-white/20 hover:border-purple-500/30 transition-all animate-fade-in-up" style="animation-delay: 0.4s;">
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span>⭐</span> Reseñas del Producto
           </h2>
-          
+
           <div v-if="reviews.length === 0" class="text-center py-8">
             <div class="text-5xl mb-4">💬</div>
-            <p class="text-gray-400">No hay reseñas aun. Se el primero en opinar!</p>
+            <p class="text-gray-400">No hay reseñas aun. ¡Sé el primero en opinar!</p>
           </div>
 
           <div v-else class="space-y-6">
@@ -172,26 +166,22 @@
                   {{ '★'.repeat(review.rating || 5) }}{{ '☆'.repeat(5 - (review.rating || 5)) }}
                 </div>
               </div>
-              <h4 class="text-white font-medium mb-1">{{ review.title || 'Sin titulo' }}</h4>
+              <h4 class="text-white font-medium mb-1">{{ review.title || 'Sin título' }}</h4>
               <p class="text-gray-300">{{ review.comment || 'Sin comentario' }}</p>
               <p class="text-gray-500 text-sm mt-2">{{ formatDate(review.createdAt) }}</p>
             </div>
-            <div v-if="reviews.length === 0" class="text-center py-4">
-              <p class="text-gray-400">No hay reseñas aún. ¡Sé el primero en opinar!</p>
-            </div>
           </div>
 
-          <!-- Add Review Form -->
-          <div v-if="isLoggedIn && reviewsError === ''" class="mt-8 pt-6 border-t border-white/10">
+          <div v-if="isLoggedIn" class="mt-8 pt-6 border-t border-white/10">
             <h3 class="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-              <span>✍️</span> Escribir una Resena
+              <span>✍️</span> Escribir una Reseña
             </h3>
             <div class="space-y-4">
               <div>
-                <label class="text-gray-400 text-sm mb-1 block">Calificacion</label>
+                <label class="text-gray-400 text-sm mb-1 block">Calificación</label>
                 <div class="flex gap-2">
-                  <button 
-                    v-for="star in 5" 
+                  <button
+                    v-for="star in 5"
                     :key="star"
                     @click="newReview.rating = star"
                     class="text-3xl transition-transform hover:scale-125"
@@ -202,48 +192,51 @@
                 </div>
               </div>
               <div>
-                <input 
-                  v-model="newReview.title" 
-                  placeholder="Titulo de tu resena"
+                <input
+                  v-model="newReview.title"
+                  placeholder="Título de tu reseña"
                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               </div>
               <div>
-                <textarea 
-                  v-model="newReview.comment" 
-                  placeholder="Escribe tu resena..."
+                <textarea
+                  v-model="newReview.comment"
+                  placeholder="Escribe tu reseña..."
                   rows="3"
                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                 ></textarea>
               </div>
-              <button 
+              <Button
                 @click="submitReview"
                 class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all"
               >
-                📤 Enviar Resena
-              </button>
+                📤 Enviar Reseña
+              </Button>
             </div>
           </div>
         </div>
 
-        <!-- Related Products -->
         <div v-if="relatedProducts.length > 0" class="mb-12 animate-fade-in-up" style="animation-delay: 0.6s;">
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <span>🔗</span> Productos Relacionados
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div 
-              v-for="related in relatedProducts" 
+            <div
+              v-for="related in relatedProducts"
               :key="related.id"
               class="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20 hover:shadow-2xl hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-2 group"
             >
               <div class="h-48 bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <span class="text-5xl transform group-hover:rotate-12 transition-transform duration-300">{{ getProductEmoji(related) }}</span>
+                <img
+                  :src="getProductImage(related.name, related.category, related.imageUrl)"
+                  :alt="related.name"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               </div>
               <div class="p-4">
                 <h3 class="text-white font-semibold mb-1 line-clamp-1 group-hover:text-purple-400 transition-colors">{{ related.name }}</h3>
                 <p class="text-purple-400 font-bold">S/ {{ Number(related.price).toFixed(2) }}</p>
-                <RouterLink 
+                <RouterLink
                   :to="`/product/${related.id}`"
                   class="block mt-2 text-center py-2 bg-white/10 text-white rounded-lg text-sm hover:bg-purple-600 transition-all"
                 >
@@ -266,6 +259,8 @@ import api from '../api'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import type { Product, Review } from '../types'
+import { getProductImage, getProductImages } from '../utils/productImages'
+import Button from '../components/ui/Button.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -275,27 +270,16 @@ const authStore = useAuthStore()
 const product = ref<Product | null>(null)
 const loading = ref(true)
 const quantity = ref(1)
+const activeImage = ref(0)
 const reviews = ref<Review[]>([])
 const reviewsError = ref('')
 const relatedProducts = ref<Product[]>([])
-const isInWishlist = ref(false)
-
-const newReview = ref({
-  rating: 5,
-  title: '',
-  comment: ''
-})
-
+const newReview = ref({ rating: 5, title: '', comment: '' })
 const isLoggedIn = computed(() => authStore.isAuthenticated)
 
-const getProductEmoji = (p: any): string => {
-  const category = (p?.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
-}
+const productImages = computed(() => {
+  return product.value ? getProductImages(product.value.name, product.value.category, 4) : []
+})
 
 const formatDate = (dateStr: any): string => {
   if (!dateStr) return 'Hace poco'
@@ -319,21 +303,19 @@ const formatDate = (dateStr: any): string => {
 const addToCart = () => {
   if (product.value && product.value.stock > 0) {
     cartStore.addItem(product.value, quantity.value)
-    router.push('/cart')
   }
 }
 
-const toggleWishlist = () => {
-  if (!isLoggedIn.value) {
-    router.push('/login')
-    return
+const buyNow = () => {
+  if (product.value && product.value.stock > 0) {
+    cartStore.addItem(product.value, quantity.value)
+    router.push('/checkout')
   }
-  isInWishlist.value = !isInWishlist.value
 }
 
 const submitReview = async () => {
   if (!product.value || !newReview.value.title || !newReview.value.comment) return
-  
+
   try {
     await reviewsAPI.create({
       productId: product.value.id,
@@ -353,22 +335,12 @@ const loadReviews = async () => {
   reviewsError.value = ''
   try {
     const response = await api.get(`/reviews`, { params: { productId: product.value.id, limit: 50 } })
-    console.log('API Response:', response.data)
-    
-    // API returns { reviews: [...], total, pages, averageRating, ... }
     let reviewsData = []
-    if (response.data?.reviews) {
-      reviewsData = response.data.reviews
-    } else if (response.data?.data) {
-      reviewsData = response.data.data
-    } else if (Array.isArray(response.data)) {
-      reviewsData = response.data
-    }
-    
+    if (response.data?.reviews) reviewsData = response.data.reviews
+    else if (response.data?.data) reviewsData = response.data.data
+    else if (Array.isArray(response.data)) reviewsData = response.data
     reviews.value = reviewsData
-    console.log('Final reviews:', reviews.value)
   } catch (err: any) {
-    console.error('Error loading reviews:', err)
     reviewsError.value = err.response?.status === 404 ? '' : 'No se pudieron cargar las reseñas'
     reviews.value = []
   }
@@ -380,11 +352,8 @@ const loadRelatedProducts = async () => {
     const response = await productsAPI.getByCategory(product.value.category)
     if (response.data && Array.isArray(response.data)) {
       relatedProducts.value = response.data.filter((p: Product) => p.id !== product.value?.id).slice(0, 4)
-    } else {
-      relatedProducts.value = []
     }
   } catch (err) {
-    console.error('Error loading related products:', err)
     relatedProducts.value = []
   }
 }
@@ -400,7 +369,7 @@ onMounted(async () => {
     }
     const response = await productsAPI.getById(id)
     product.value = response.data
-    
+    activeImage.value = 0
     await Promise.all([loadReviews(), loadRelatedProducts()])
   } catch (err) {
     console.error(err)
@@ -411,34 +380,22 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-  opacity: 0;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
-
-.animate-scale-in {
-  animation: scaleIn 0.6s ease-out forwards;
-}
+.animate-scale-in { animation: scaleIn 0.6s ease-out forwards; opacity: 0; }
 </style>

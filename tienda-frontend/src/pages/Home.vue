@@ -11,10 +11,10 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div class="space-y-8 animate-fade-in-up">
             <div class="space-y-4">
-              <div class="inline-block px-4 py-2 bg-purple-600/30 rounded-full text-purple-300 text-sm mb-6 backdrop-blur-md animate-float">
-                Coleccion Premium 2024
-              </div>
-              <h1 class="text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight">
+              <Badge variant="primary" size="lg" class="mb-6 inline-block backdrop-blur-md animate-float">
+                ✨ Colección Premium 2024
+              </Badge>
+              <h1 class="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-tight">
                 Estilo que
                 <span class="block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-gradient-x">
                   Define tu Ser
@@ -26,51 +26,42 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4">
-              <RouterLink 
-                to="/products"
-                class="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full text-center overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
+              <Button
+                @click="navigateToProducts"
+                size="lg"
+                icon="🛍️"
+                class="transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-xl hover:shadow-2xl"
               >
-                <span class="relative z-10">Explorar Coleccion</span>
-                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-              </RouterLink>
-              <RouterLink 
-                to="/products"
-                class="group px-8 py-4 border border-white/30 text-white font-bold rounded-full text-center hover:bg-white/10 hover:border-purple-400 transition-all duration-300 backdrop-blur-md hover:shadow-lg"
+                Explorar Colección
+              </Button>
+              <Button
+                @click="navigateToProducts"
+                variant="outline"
+                size="lg"
+                icon="🔥"
+                class="transform hover:scale-105 transition-all duration-300 border-white/30 text-white hover:bg-white/10 font-bold backdrop-blur-md"
               >
-                <span class="inline-block">Ver Ofertas</span>
-              </RouterLink>
+                Ver Ofertas
+              </Button>
             </div>
 
             <div class="grid grid-cols-3 gap-6 pt-8">
-              <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
-                  2000+
+              <div v-for="(stat, index) in stats" :key="index" class="group cursor-pointer">
+                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 transition-transform">
+                  {{ stat.number }}
                 </div>
-                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Productos</p>
-              </div>
-              <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
-                  5000+
-                </div>
-                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Clientes</p>
-              </div>
-              <div class="cursor-pointer group">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300">
-                  24h
-                </div>
-                <p class="text-gray-400 text-sm group-hover:text-white transition-colors">Envio</p>
+                <p class="text-gray-400 text-sm">{{ stat.label }}</p>
               </div>
             </div>
           </div>
 
           <div class="relative h-96 md:h-full animate-scale-in">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-600/40 via-pink-600/40 to-transparent rounded-3xl blur-3xl animate-pulse"></div>
-            <div class="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl h-96 flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5 group">
-              <div class="text-center space-y-4 transform group-hover:scale-110 transition-transform duration-500">
-                <div class="text-9xl animate-bounce">{{ String.fromCodePoint(0x1F457) }}</div>
+            <div class="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl h-96 md:h-96 lg:h-96 flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5 group">
+              <div class="text-center space-y-4">
+                <div class="text-9xl animate-bounce" style="animation-duration: 2s;">{{ String.fromCodePoint(0x1F457) }}</div>
                 <p class="text-white/60 font-semibold">Moda Premium</p>
               </div>
-              <div class="absolute inset-0 ring-1 ring-white/20 rounded-3xl"></div>
             </div>
           </div>
         </div>
@@ -81,24 +72,25 @@
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-12 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            Explora por Categoria
+            Explora por Categoría
           </h2>
           <p class="text-gray-300 text-lg">Encuentra exactamente lo que buscas</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div v-for="(category, index) in categories" :key="index" class="cursor-pointer group animate-fade-in-up"
-            :style="{ animationDelay: `${index * 100}ms` }"
-          >
-            <div 
-              class="bg-gradient-to-br rounded-xl p-6 text-white text-center transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 shadow-lg hover:shadow-2xl hover:shadow-purple-500/25 border border-transparent hover:border-white/20"
+          <div v-for="(category, index) in categories" :key="index" class="cursor-pointer group animate-fade-in-up" :style="{ animationDelay: `${index * 100}ms` }">
+            <Card
+              class="bg-gradient-to-br text-white transform hover:scale-110 transition-all duration-300"
               :class="category.color"
+              padding="md"
             >
-              <div class="text-5xl group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300 mb-3">
-                {{ category.icon }}
+              <div class="text-center space-y-3">
+                <div class="text-5xl group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300">
+                  {{ category.icon }}
+                </div>
+                <h3 class="font-bold text-sm md:text-base">{{ category.name }}</h3>
               </div>
-              <h3 class="font-bold text-sm group-hover:text-white transition-colors">{{ category.name }}</h3>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -108,23 +100,24 @@
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            Ventajas Exclusivas
+            Ventajas Exclusivas ⭐
           </h2>
-          <p class="text-gray-300 text-lg">Porque tu satisfaccion es nuestra prioridad</p>
+          <p class="text-gray-300 text-lg">Porque tu satisfacción es nuestra prioridad</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="(feature, index) in features" :key="index" 
-            class="group bg-gradient-to-br rounded-xl p-6 text-white hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 hover:-translate-y-2 border border-transparent hover:border-white/20 animate-fade-in-up"
-            :class="feature.color"
-            :style="{ animationDelay: `${index * 150}ms` }"
+          <Card
+            v-for="(feature, index) in features"
+            :key="index"
+            :class="`text-white bg-gradient-to-br ${feature.color} hover:shadow-2xl transition-all duration-300 group border-0`"
+            hover
           >
-            <div class="text-4xl mb-4 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300">
+            <div class="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
               {{ feature.icon }}
             </div>
-            <h3 class="text-lg font-bold mb-2 group-hover:text-white transition-colors">{{ feature.title }}</h3>
+            <h3 class="text-lg font-bold mb-2">{{ feature.title }}</h3>
             <p class="text-white/90 text-sm">{{ feature.description }}</p>
-          </div>
+          </Card>
         </div>
       </div>
     </section>
@@ -132,13 +125,13 @@
     <section class="relative z-10 py-20 px-4">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16 animate-fade-in-up">
-          <span class="inline-block px-4 py-2 bg-red-600/30 rounded-full text-red-300 text-sm mb-4 animate-pulse">
-            Tendencias Actuales
-          </span>
+          <Badge variant="danger" size="lg" class="mb-4 inline-block animate-pulse">
+            🔥 Tendencias Actuales
+          </Badge>
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            Lo Mas Popular Ahora
+            Lo Más Popular Ahora
           </h2>
-          <p class="text-gray-300 text-lg">Descubre lo que todos estan comprando</p>
+          <p class="text-gray-300 text-lg">Descubre lo que todos están comprando</p>
         </div>
 
         <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -158,36 +151,38 @@
         </div>
 
         <div v-else-if="error" class="text-center py-16 animate-fade-in-up">
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 max-w-lg mx-auto">
-            <div class="text-6xl mb-6 animate-wiggle">🌐</div>
+          <Card class="text-center py-16 bg-white/10 backdrop-blur-md border border-white/20">
+            <div class="text-8xl mb-6">🌐</div>
             <h2 class="text-3xl font-bold text-white mb-4">Servidor Desconectado</h2>
             <p class="text-gray-300 mb-8 text-lg">El servidor está iniciando. Esto puede tomar 1-2 minutos.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <button @click="fetchProducts" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all">
-                🔄 Reintentar
-              </button>
-              <RouterLink to="/products" class="px-8 py-4 border border-white/30 text-white rounded-full font-bold hover:bg-white/10 transition-all">
-                Explorar Productos
+              <Button @click="fetchProducts" icon="🔄" class="transform hover:scale-105 shadow-xl">
+                Reintentar
+              </Button>
+              <RouterLink to="/products">
+                <Button variant="outline" icon="🛍️" class="transform hover:scale-105">
+                  Explorar Productos
+                </Button>
               </RouterLink>
             </div>
-          </div>
+          </Card>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <div v-for="(product, index) in products.slice(0, 6)" :key="product.id" 
-            class="group cursor-pointer animate-fade-in-up"
-            :style="{ animationDelay: `${index * 100}ms` }"
-          >
+          <div v-for="(product, index) in products.slice(0, 6)" :key="product.id" class="group cursor-pointer animate-fade-in-up" :style="{ animationDelay: `${index * 100}ms` }">
             <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/30 hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
-              <div class="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <span class="text-6xl transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">{{ getProductEmoji(product) }}</span>
+              <div class="relative h-72 bg-gradient-to-br from-purple-600/20 to-pink-600/20 overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                <img
+                  :src="getProductImageUrl(product)"
+                  :alt="product.name"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
                 <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2">
-                  <span v-if="product.stock <= 5 && product.stock > 0" class="px-2 py-1 bg-yellow-600 text-white text-xs rounded-full">
-                    ¡Solo {{ product.stock }}!
-                  </span>
+                  <Badge v-if="product.stock <= 5 && product.stock > 0" variant="warning" size="sm">¡Solo {{ product.stock }}!</Badge>
+                  <Badge v-if="product.stock === 0" variant="danger" size="sm">Agotado</Badge>
                 </div>
               </div>
-              
+
               <div class="p-6 space-y-3">
                 <h3 class="text-lg font-bold text-white line-clamp-2 group-hover:text-purple-400 transition-colors">
                   {{ product.name }}
@@ -204,22 +199,20 @@
                       <span class="text-gray-500 text-xs">({{ product.reviewCount }})</span>
                     </div>
                   </div>
-                  <span v-if="product.stock <= 0" class="px-2 py-1 bg-red-600 text-white text-xs rounded-full">Agotado</span>
                 </div>
 
                 <div class="flex gap-2 pt-2">
-                  <RouterLink 
-                    :to="`/product/${product.id}`"
-                    class="flex-1 px-4 py-2 border border-white/30 text-white text-center rounded-lg hover:bg-white/10 hover:border-purple-500/50 text-sm transition-all"
-                  >
+                  <RouterLink :to="`/product/${product.id}`" class="flex-1 px-4 py-2 border border-white/30 text-white text-center rounded-lg hover:bg-white/10 hover:border-purple-500/50 text-sm transition-all">
                     Detalles
                   </RouterLink>
-                  <button 
+                  <Button
                     @click.prevent="addToCart(product)"
-                    class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 text-sm transform hover:scale-105 transition-all"
+                    :disabled="product.stock <= 0"
+                    size="sm"
+                    class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white disabled:opacity-50 transform hover:scale-105 transition-all"
                   >
-                    Carrito
-                  </button>
+                    {{ product.stock <= 0 ? 'Agotado' : 'Agregar' }}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -227,32 +220,115 @@
         </div>
 
         <div class="text-center animate-fade-in-up">
-          <RouterLink 
-            to="/products"
-            class="group inline-block px-8 py-4 bg-white text-purple-900 font-bold rounded-full hover:bg-gray-100 transition-all transform hover:scale-105"
+          <Button
+            @click="navigateToProducts"
+            size="lg"
+            icon="🛍️"
+            class="transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-xl hover:shadow-2xl"
           >
-            <span class="group-hover:scale-110 transition-transform inline-block">Ver Todos los Productos</span>
-          </RouterLink>
+            Ver Todos los Productos ({{ products.length }})
+          </Button>
         </div>
       </div>
     </section>
 
-    <section class="relative z-10 py-20 px-4 bg-black/20">
+    <section class="relative z-10 py-20 px-4">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12 animate-fade-in-up">
+        <div class="text-center mb-16 animate-fade-in-up">
           <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            Lo que dicen nuestros clientes
+            Lo que Dicen Nuestros Clientes 💬
           </h2>
+          <p class="text-gray-300 text-lg">Historias reales de personas satisfechas</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-6">
-          <div v-for="(testimonial, index) in testimonials" :key="index" 
-            class="group bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up"
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card
+            v-for="(testimonial, index) in testimonials"
+            :key="index"
+            class="bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/40 transition-all duration-300 animate-fade-in-up"
             :style="{ animationDelay: `${index * 150}ms` }"
           >
-            <div class="text-yellow-400 mb-4 text-xl">★★★★★</div>
-            <p class="text-gray-300 mb-4 group-hover:text-white transition-colors">"{{ testimonial.text }}"</p>
-            <p class="font-semibold text-white group-hover:text-purple-400 transition-colors">- {{ testimonial.name }}</p>
+            <div class="space-y-4">
+              <div class="flex gap-1">
+                <span v-for="i in testimonial.rating" :key="i" class="text-2xl">⭐</span>
+              </div>
+              <p class="text-white text-lg italic">"{{ testimonial.text }}"</p>
+              <div class="pt-4 border-t border-white/10">
+                <p class="text-purple-300 font-semibold">{{ testimonial.name }}</p>
+                <p class="text-gray-400 text-sm">Cliente Verificado</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <section class="relative z-10 py-20 px-4">
+      <div class="max-w-4xl mx-auto">
+        <Card class="text-center bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white border-0 overflow-hidden" padding="lg">
+          <div class="absolute inset-0 opacity-10 mix-blend-overlay">
+            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
           </div>
+          <div class="relative space-y-6">
+            <div class="text-6xl">💌</div>
+            <div class="space-y-3">
+              <h2 class="text-4xl font-bold">¡Mantente Actualizado!</h2>
+              <p class="text-xl text-white/90">
+                Suscríbete y recibe ofertas exclusivas, nuevos diseños y consejos de moda directamente en tu inbox
+              </p>
+            </div>
+            <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="tu@email.com"
+                class="flex-1 px-6 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white/50 focus:outline-none font-semibold"
+              />
+              <Button icon="📧" class="bg-white text-purple-600 hover:bg-gray-100 font-bold whitespace-nowrap">
+                Suscribirse
+              </Button>
+            </form>
+            <p class="text-sm text-white/80">
+              ✓ Sin spam. Cancela cuando quieras. Recibirás ofertas exclusivas que no están disponibles en la web.
+            </p>
+          </div>
+        </Card>
+      </div>
+    </section>
+
+    <section class="relative z-10 py-24 px-4 border-t border-white/10">
+      <div class="max-w-4xl mx-auto text-center space-y-8">
+        <div class="space-y-4 animate-fade-in-up">
+          <h2 class="text-5xl md:text-6xl font-black text-white">
+            ¿Listo para 
+            <span class="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Transformar tu Estilo?
+            </span>
+          </h2>
+          <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+            Únete a miles de personas que ya descubrieron su look perfecto. ¡La moda que te define está esperándote!
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.2s;">
+          <Button
+            @click="navigateToProducts"
+            size="lg"
+            icon="🛍️"
+            class="transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-xl hover:shadow-2xl"
+          >
+            Comenzar a Comprar Ahora
+          </Button>
+          <Button
+            @click="navigateToRegister"
+            variant="outline"
+            size="lg"
+            icon="👤"
+            class="border-white/30 text-white hover:bg-white/10 font-bold backdrop-blur-md transform hover:scale-105 transition-all duration-300"
+          >
+            Crear Cuenta Gratis
+          </Button>
+        </div>
+        <div class="pt-8 text-gray-400 text-sm animate-fade-in-up" style="animation-delay: 0.4s;">
+          <p>Envío gratis en compras superiores a S/100 • Atención al cliente 24/7 • 100% satisfacción garantizada</p>
         </div>
       </div>
     </section>
@@ -261,14 +337,27 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { productsAPI } from '../api'
 import { useCartStore } from '../stores/cart'
 import type { Product } from '../types'
+import { getProductImage } from '../utils/productImages'
+import Button from '../components/ui/Button.vue'
+import Card from '../components/ui/Card.vue'
+import Badge from '../components/ui/Badge.vue'
 
+const router = useRouter()
 const cartStore = useCartStore()
+
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
+
+const stats = [
+  { number: '2000+', label: 'Productos' },
+  { number: '5000+', label: 'Clientes' },
+  { number: '24h', label: 'Envío' }
+]
 
 const categories = [
   { name: 'Camisetas', icon: String.fromCodePoint(0x1F455), color: 'from-blue-500 to-cyan-500' },
@@ -280,29 +369,32 @@ const categories = [
 ]
 
 const features = [
-  { icon: String.fromCodePoint(0x1F69A), title: 'Envio Rapido', description: 'Entregas en 24-48 horas', color: 'from-blue-500 to-cyan-500' },
+  { icon: String.fromCodePoint(0x1F69A), title: 'Envío Rápido', description: 'Entregas en 24-48 horas', color: 'from-blue-500 to-cyan-500' },
   { icon: String.fromCodePoint(0x1F4B3), title: 'Compra Segura', description: 'Pagos encriptados y protegidos', color: 'from-green-500 to-emerald-500' },
-  { icon: String.fromCodePoint(0x1F504), title: 'Devoluciones Gratis', description: '30 dias sin preguntas', color: 'from-purple-500 to-pink-500' },
+  { icon: String.fromCodePoint(0x1F504), title: 'Devoluciones Gratis', description: '30 días sin preguntas', color: 'from-purple-500 to-pink-500' },
   { icon: String.fromCodePoint(0x1F48E), title: 'Calidad Premium', description: 'Materiales de primera calidad', color: 'from-orange-500 to-red-500' }
 ]
 
 const testimonials = [
-  { name: 'Maria Garcia', text: 'Excelente calidad y muy rapido el envio. Volveria a comprar!' },
-  { name: 'Juan Lopez', text: 'Las mejores prendas que he comprado. Muy recomendado.' },
-  { name: 'Sofia Martinez', text: 'Servicio impecable, productos hermosos. 10/10' }
+  { name: 'María García', text: 'Excelente calidad y muy rápido el envío. ¡Volvería a comprar!', rating: 5 },
+  { name: 'Juan López', text: 'Las mejores prendas que he comprado. Muy recomendado.', rating: 5 },
+  { name: 'Sofia Martínez', text: 'Servicio impecable, productos hermosos. 10/10', rating: 5 }
 ]
 
-const getProductEmoji = (product: any): string => {
-  const category = (product.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
+const getProductImageUrl = (product: Product): string => {
+  return getProductImage(product.name, product.category, product.imageUrl)
 }
 
 const addToCart = (product: Product) => {
   cartStore.addItem(product, 1)
+}
+
+const navigateToProducts = () => {
+  router.push('/products')
+}
+
+const navigateToRegister = () => {
+  router.push('/register')
 }
 
 const fetchProducts = async () => {
@@ -330,11 +422,6 @@ onMounted(() => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
 }
 
 .animate-pulse {
@@ -406,14 +493,5 @@ onMounted(() => {
 
 .animate-gradient-x {
   animation: gradientX 3s ease infinite;
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-
-.animate-wiggle {
-  animation: wiggle 0.5s ease-in-out infinite;
 }
 </style>

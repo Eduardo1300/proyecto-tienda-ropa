@@ -1,180 +1,176 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8">
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-16">
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute top-20 -right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 -left-20 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-      <h1 class="text-4xl md:text-5xl font-black text-white mb-8 animate-fade-in-up">
-        🛒 <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">Carrito</span> de Compras
-      </h1>
-
-      <!-- Empty Cart -->
-      <div v-if="cartStore.items.length === 0" class="text-center py-12 animate-fade-in-up">
-        <div class="text-8xl mb-6 animate-bounce">🛒</div>
-        <h2 class="text-3xl font-bold text-white mb-4">Tu carrito esta vacio</h2>
-        <p class="text-gray-400 text-lg mb-8">Agrega algunos productos para empezar!</p>
-        <RouterLink 
-          to="/products" 
-          class="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 hover:shadow-lg"
-        >
-          Ver Productos
-        </RouterLink>
+    <div class="relative z-10 max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="text-5xl md:text-6xl font-black text-white mb-4">
+          🛒 Tu 
+          <span class="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Carrito de Compras
+          </span>
+        </h1>
+        <div v-if="totalItems > 0" class="text-xl text-gray-300">
+          <span class="flex items-center justify-center gap-2">
+            Tienes <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-bold text-2xl">{{ totalItems }}</span> 
+            {{ totalItems === 1 ? ' producto' : ' productos' }} en tu carrito
+          </span>
+        </div>
+        <p v-else class="text-xl text-gray-300">Tu carrito está vacío</p>
       </div>
 
-      <!-- Cart with Items -->
-      <div v-else class="grid lg:grid-cols-3 gap-8">
-        <!-- Cart Items -->
-        <div class="lg:col-span-2 space-y-4">
-          <div v-if="cartStore.items.length > 0" class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
-              📦 Productos
-              <span class="text-xl text-purple-400">({{ cartStore.itemCount }})</span>
-            </h2>
-            <button 
-              @click="clearCart" 
-              class="px-4 py-2 bg-red-600/20 border border-red-400/30 text-red-400 rounded-lg hover:bg-red-600/40 transition-all text-sm"
-            >
-              🗑️ Vaciar Carrito
-            </button>
-          </div>
-          <div v-for="(item, index) in cartStore.items" :key="item.id" 
-            class="group bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/20 flex items-center gap-4 hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-500/50 transition-all duration-300 animate-fade-in-up"
-            :style="{ animationDelay: `${index * 100}ms` }"
-          >
-            <!-- Image -->
-            <RouterLink :to="`/product/${item.productId}`">
-              <div class="w-24 h-24 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <span class="text-4xl transform group-hover:rotate-12 transition-transform duration-300">{{ getItemEmoji(item) }}</span>
-              </div>
-            </RouterLink>
-            
-            <!-- Info -->
-            <div class="flex-1">
-              <RouterLink :to="`/product/${item.productId}`">
-                <h3 class="font-bold text-white text-lg hover:text-purple-400 transition-colors">{{ item.name }}</h3>
-              </RouterLink>
-              <p class="text-gray-400 text-sm">{{ item.category }}</p>
-              <p class="text-purple-400 font-bold mt-1">S/ {{ Number(item.price).toFixed(2) }}</p>
-            </div>
-
-            <!-- Quantity Controls -->
-            <div class="flex items-center gap-2">
-              <button 
-                @click="cartStore.decrementQuantity(item.productId)" 
-                class="w-10 h-10 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 hover:border-purple-500/50 transition-all"
-              >
-                −
-              </button>
-              <span class="w-12 text-center text-white font-bold bg-white/5 rounded-lg py-1">{{ item.quantity }}</span>
-              <button 
-                @click="cartStore.incrementQuantity(item.productId)" 
-                class="w-10 h-10 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 hover:border-purple-500/50 transition-all"
-              >
-                +
-              </button>
-            </div>
-
-            <!-- Total & Remove -->
-            <div class="text-right">
-              <p class="text-xl font-bold text-white">S/ {{ (Number(item.price) * item.quantity).toFixed(2) }}</p>
-              <button 
-                @click="cartStore.removeItem(item.productId)" 
-                class="text-red-400 text-sm hover:text-red-300 mt-2 hover:underline transition-all"
-              >
-                🗑️ Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Summary -->
-        <div class="bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 h-fit sticky top-24 hover:border-purple-500/30 transition-all animate-slide-in">
-          <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <span>📋</span> Resumen del Pedido
-          </h3>
+      <div v-if="cart.length === 0" class="animate-fade-in-up">
+        <Card class="text-center py-20 bg-white/10 backdrop-blur-md border border-white/20">
+          <div class="text-9xl mb-8 animate-bounce" style="animation-duration: 2s;">🛒</div>
+          <h2 class="text-4xl font-bold text-white mb-6">Tu carrito está listo para llenarse</h2>
+          <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">¡Descubre nuestros increíbles productos y encuentra algo que te encante! Tenemos las mejores ofertas esperándote.</p>
+          <RouterLink to="/products">
+            <Button variant="primary" size="lg" icon="🛍️" class="transform hover:scale-105 shadow-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold">
+              Explorar Productos
+            </Button>
+          </RouterLink>
           
-          <div class="space-y-3 mb-6">
-            <div class="flex justify-between text-gray-300 hover:text-white transition-colors">
-              <span>Subtotal ({{ cartStore.itemCount }} items)</span>
-              <span>S/ {{ cartStore.subtotal.toFixed(2) }}</span>
+          <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-400/50 hover:border-purple-400 transition-all">
+              <div class="text-4xl mb-3">🚚</div>
+              <h3 class="font-semibold text-white">Envío Gratis</h3>
+              <p class="text-sm text-gray-300">En compras mayores a S/100</p>
             </div>
-            <div v-if="cartStore.discountPercent > 0" class="flex justify-between text-green-400">
-              <span>Descuento ({{ cartStore.discountPercent }}%)</span>
-              <span>-S/ {{ cartStore.discountAmount.toFixed(2) }}</span>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-400/50 hover:border-purple-400 transition-all">
+              <div class="text-4xl mb-3">🔒</div>
+              <h3 class="font-semibold text-white">Compra Segura</h3>
+              <p class="text-sm text-gray-300">Protección SSL garantizada</p>
             </div>
-            <div class="flex justify-between text-gray-300 hover:text-white transition-colors">
-              <span>Impuesto (18%)</span>
-              <span>S/ {{ cartStore.tax.toFixed(2) }}</span>
-            </div>
-            <div class="flex justify-between text-gray-300 hover:text-white transition-colors">
-              <span>Envio</span>
-              <span :class="cartStore.shipping === 0 ? 'text-green-400 font-bold' : ''">
-                {{ cartStore.shipping === 0 ? '🎉 Gratis' : `S/ ${cartStore.shipping.toFixed(2)}` }}
-              </span>
-            </div>
-            <div v-if="cartStore.subtotal < 100 && cartStore.discountPercent === 0" class="text-sm text-yellow-400 animate-pulse">
-              ✨ Agrega S/ {{ (100 - cartStore.subtotal).toFixed(2) }} mas para envio gratis!
-            </div>
-            <div class="border-t border-white/20 pt-3 flex justify-between">
-              <span class="text-xl font-bold text-white">Total</span>
-              <span class="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
-                S/ {{ cartStore.total.toFixed(2) }}
-              </span>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-purple-400/50 hover:border-purple-400 transition-all">
+              <div class="text-4xl mb-3">↩️</div>
+              <h3 class="font-semibold text-white">Devoluciones</h3>
+              <p class="text-sm text-gray-300">30 días sin preguntas</p>
             </div>
           </div>
+        </Card>
+      </div>
 
-          <RouterLink 
-            to="/checkout"
-            class="block w-full py-4 text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-xl transform hover:scale-105 hover:shadow-2xl"
-          >
-            💳 Proceder al Pago
-          </RouterLink>
-
-          <RouterLink 
-            to="/products"
-            class="block text-center mt-4 text-purple-400 hover:text-purple-300 hover:underline transition-all"
-          >
-            ← Seguir Comprando
-          </RouterLink>
-
-          <!-- Promo Code -->
-          <div class="mt-6 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <h3 class="font-semibold text-white mb-3 flex items-center gap-2">🎫 Código de Descuento</h3>
-            <div class="flex gap-2">
-              <input
-                v-model="promoCode"
-                type="text"
-                placeholder="Ingresa tu código"
-                class="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-              />
-              <button 
-                @click="applyPromoCode"
-                class="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 text-sm transition-all"
-              >
-                Aplicar
-              </button>
-            </div>
-            <p v-if="promoMessage" :class="promoSuccess ? 'text-green-400' : 'text-red-400'" class="text-xs mt-2">
-              {{ promoMessage }}
-            </p>
+      <div v-else>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <div class="xl:col-span-2">
+            <Card class="space-y-6 bg-white/10 backdrop-blur-md border border-white/20">
+              <div class="flex items-center justify-between border-b border-white/20 pb-4">
+                <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+                  📦 Productos
+                  <span class="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">{{ totalItems }}</span>
+                </h2>
+                <Button @click="clearCart" variant="danger" size="sm" icon="🗑️" class="bg-red-600/80 hover:bg-red-700 text-white">
+                  Vaciar
+                </Button>
+              </div>
+              
+              <div class="space-y-4">
+                <div v-for="item in cart" :key="item.id" class="group">
+                  <Card class="hover:border-white/40 transition-all duration-300 border border-white/20 bg-white/5 backdrop-blur-sm">
+                    <div class="flex items-center gap-6">
+                      <div class="relative">
+                        <img
+                          :src="getProductImage(item.product?.name || 'Producto', item.product?.category || '', item.product?.imageUrl || '/placeholder.jpg')"
+                          :alt="item.product?.name || 'Producto'"
+                          class="w-24 h-24 object-cover rounded-xl shadow-md hover:scale-110 transition-transform"
+                        />
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+                          {{ item.quantity }}
+                        </div>
+                      </div>
+                      
+                      <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-2">{{ item.product?.name || 'Producto sin nombre' }}</h3>
+                        <p class="text-gray-400 mb-3 text-sm">Moda premium de calidad</p>
+                        
+                        <div class="flex items-center gap-4">
+                          <span class="text-lg font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                            S/ {{ item.product?.price || 0 }}
+                          </span>
+                          
+                          <div class="flex items-center gap-2 bg-white/10 rounded-full p-1 border border-white/20">
+                            <button @click="updateQuantity(item.product?.id || item.id, Math.max(1, item.quantity - 1))" class="w-7 h-7 rounded-full bg-purple-600/50 hover:bg-purple-600 text-white flex items-center justify-center transition-all font-bold">−</button>
+                            <span class="w-8 text-center font-semibold text-white text-sm">{{ item.quantity }}</span>
+                            <button @click="updateQuantity(item.product?.id || item.id, item.quantity + 1)" class="w-7 h-7 rounded-full bg-pink-600/50 hover:bg-pink-600 text-white flex items-center justify-center transition-all font-bold">+</button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="text-right">
+                        <p class="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-3">
+                          S/ {{ ((item.product?.price || 0) * item.quantity).toFixed(2) }}
+                        </p>
+                        <Button @click="removeFromCart(item.product?.id || item.id)" variant="danger" size="sm" icon="🗑️" class="bg-red-600/60 hover:bg-red-700">
+                          Quitar
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              </div>
+            </Card>
           </div>
 
-          <!-- Security Badges -->
-          <div class="text-center mt-6">
-            <p class="text-sm text-gray-400 mb-3">Compra 100% segura</p>
-            <div class="flex justify-center gap-3">
-              <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
-                <span class="text-xl" title="Compra segura">🔒</span>
+          <div class="xl:col-span-1">
+            <Card class="sticky top-8 bg-gradient-to-br from-purple-600/30 via-pink-600/30 to-red-600/30 border border-white/20 backdrop-blur-md">
+              <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">💰 Resumen del Pedido</h2>
+              
+              <div class="space-y-4 mb-6">
+                <div class="flex justify-between items-center py-2 border-b border-white/10">
+                  <span class="text-gray-300">Subtotal ({{ totalItems }} productos)</span>
+                  <span class="font-semibold text-white">S/ {{ total.toFixed(2) }}</span>
+                </div>
+                
+                <div class="flex justify-between items-center py-2 border-b border-white/10">
+                  <span class="text-gray-300">Envío</span>
+                  <Badge variant="success" icon="🚚">GRATIS</Badge>
+                </div>
+                
+                <div class="flex justify-between items-center py-2 border-b border-white/10">
+                  <span class="text-gray-300">Impuestos (15%)</span>
+                  <span class="font-semibold text-white">S/ {{ (total * 0.15).toFixed(2) }}</span>
+                </div>
+                
+                <div class="border-t-2 border-white/20 pt-4 bg-white/5 rounded-lg p-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold text-white">Total</span>
+                    <span class="text-3xl font-black text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                      S/ {{ (total * 1.15).toFixed(2) }}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
-                <span class="text-xl" title="SSL Certificado">🛡️</span>
+
+              <RouterLink to="/checkout">
+                <Button variant="success" size="lg" full-width icon="💳" class="mb-6 shadow-xl">
+                  Finalizar Compra
+                </Button>
+              </RouterLink>
+
+              <div class="text-center mb-6">
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">Compra 100% segura</p>
+                <div class="flex justify-center gap-4">
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-2 border border-gray-200"><span class="text-2xl" title="Compra segura">🔒</span></div>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-2 border border-gray-200"><span class="text-2xl" title="SSL Certificado">🛡️</span></div>
+                  <div class="bg-white/60 backdrop-blur-sm rounded-lg p-2 border border-gray-200"><span class="text-2xl" title="Garantía">✅</span></div>
+                </div>
               </div>
-              <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
-                <span class="text-xl" title="Garantía">✅</span>
+
+              <RouterLink to="/products">
+                <Button variant="outline" full-width icon="⬅️">Seguir Comprando</Button>
+              </RouterLink>
+
+              <div class="mt-6 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200">
+                <h3 class="font-semibold text-gray-800 mb-3">🎫 Código de Descuento</h3>
+                <div class="flex gap-2">
+                  <input type="text" placeholder="Ingresa tu código" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
+                  <Button variant="outline" size="sm">Aplicar</Button>
+                </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -183,20 +179,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useCartStore } from '../stores/cart'
+import { Button, Card, Badge } from '../components/ui'
+import { getProductImage } from '../utils/productImages'
 
 const cartStore = useCartStore()
-const promoCode = ref('')
-const promoMessage = ref('')
-const promoSuccess = ref(false)
 
-const updateQuantity = (itemId: number, quantity: number) => {
-  cartStore.updateQuantity(itemId, quantity)
+const cart = computed(() => cartStore.items)
+const total = computed(() => cartStore.subtotal)
+const totalItems = computed(() => cartStore.itemCount)
+
+const updateQuantity = (productId: number, quantity: number) => {
+  cartStore.updateQuantity(productId, quantity)
 }
 
-const removeItem = (itemId: number) => {
-  cartStore.removeItem(itemId)
+const removeFromCart = (productId: number) => {
+  cartStore.removeItem(productId)
 }
 
 const clearCart = () => {
@@ -204,101 +203,25 @@ const clearCart = () => {
     cartStore.clearCart()
   }
 }
-
-const applyPromoCode = () => {
-  if (!promoCode.value.trim()) {
-    promoMessage.value = 'Ingresa un código'
-    promoSuccess.value = false
-    return
-  }
-  
-  // Simulación de códigos de descuento
-  const codes: Record<string, number> = {
-    'DESCUENTO10': 10,
-    'BIENVENIDO': 15,
-    'VERANO20': 20,
-  }
-  
-  const discount = codes[promoCode.value.toUpperCase()]
-  if (discount) {
-    promoMessage.value = `¡Código aplicado! -${discount}% de descuento`
-    promoSuccess.value = true
-    cartStore.applyDiscount(discount)
-  } else {
-    promoMessage.value = 'Código inválido'
-    promoSuccess.value = false
-  }
-}
-
-const getItemEmoji = (item: any): string => {
-  const category = (item.category || '').toLowerCase()
-  if (category.includes('hombre') || category.includes('men')) return String.fromCodePoint(0x1F455)
-  if (category.includes('mujer') || category.includes('women')) return String.fromCodePoint(0x1F457)
-  if (category.includes('shoes') || category.includes('zapato')) return String.fromCodePoint(0x1F45F)
-  if (category.includes('accessories') || category.includes('accesorio')) return String.fromCodePoint(0x1F6C1)
-  return String.fromCodePoint(0x1F455)
-}
-
-const getCartItemImage = (item: any): string => {
-  if (item.imageUrl) return item.imageUrl
-  if (item.image) return item.image
-  if (item.url) return item.url
-  
-  const category = item.category?.toLowerCase() || ''
-  const images: Record<string, string> = {
-    hombre: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
-    men: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
-    mujer: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=100&h=100&fit=crop',
-    women: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=100&h=100&fit=crop',
-    shoes: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&h=100&fit=crop',
-    zapato: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&h=100&fit=crop',
-    accessories: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=100&h=100&fit=crop',
-    accesorio: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=100&h=100&fit=crop',
-  }
-  
-  return images[category] || 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=100&h=100&fit=crop'
-}
 </script>
 
 <style scoped>
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
   opacity: 0;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-slide-in {
-  animation: slideIn 0.6s ease-out 0.3s forwards;
-  opacity: 0;
+.animate-bounce {
+  animation: bounce 2s ease-in-out infinite;
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
-
-.animate-bounce {
-  animation: bounce 2s ease-in-out infinite;
 }
 </style>

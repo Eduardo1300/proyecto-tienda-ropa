@@ -1,171 +1,141 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-12 relative overflow-hidden">
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-16 px-4">
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
-      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
     </div>
 
-    <div class="max-w-3xl mx-auto px-4 relative z-10">
-      <div v-if="!orderData" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-12 text-center">
-        <div class="text-6xl mb-6">Orden</div>
-        <h1 class="text-3xl font-bold text-white mb-4">No se encontro informacion de la orden</h1>
-        <p class="text-gray-300 mb-8">Parece que no hay informacion de orden disponible</p>
-        <RouterLink to="/" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all font-semibold">
-          Ir al Inicio
+    <div class="max-w-3xl mx-auto relative z-10">
+      <div class="text-center animate-fade-in-up">
+        <div class="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-5xl mx-auto mb-6 shadow-2xl shadow-green-500/50 animate-scale-in">
+          ✅
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black text-white mb-4">
+          ¡Pedido Confirmado! 🎉
+        </h1>
+        <p class="text-xl text-gray-300 mb-8">
+          Gracias por tu compra. Tu pedido ha sido procesado exitosamente.
+        </p>
+      </div>
+
+      <Card v-if="orderData" class="bg-white/10 backdrop-blur-md border border-white/20 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <div class="mb-6 p-6 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-2xl text-center">
+          <p class="text-gray-300 mb-1">Número de Pedido</p>
+          <p class="text-3xl font-bold text-white font-mono">{{ orderData.orderNumber }}</p>
+          <p class="text-purple-300 text-sm mt-2">Realizado el {{ formatDate(orderData.createdAt) }}</p>
+        </div>
+
+        <div class="space-y-4 mb-6">
+          <div v-for="item in orderData.items" :key="item.productId" class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
+            <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center text-3xl">
+              📦
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-white">{{ item.name || `Producto #${item.productId}` }}</h4>
+              <p class="text-gray-400 text-sm">Cantidad: {{ item.quantity }}</p>
+            </div>
+            <p class="text-white font-bold">S/ {{ (item.price * item.quantity).toFixed(2) }}</p>
+          </div>
+        </div>
+
+        <div class="border-t border-white/20 pt-6 space-y-3">
+          <div class="flex justify-between text-gray-300">
+            <span>Subtotal</span>
+            <span>S/ {{ (orderData.total / 1.15).toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between text-gray-300">
+            <span>Impuestos (15%)</span>
+            <span>S/ {{ (orderData.total * 0.15 / 1.15).toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between text-gray-300">
+            <span>Envío</span>
+            <Badge variant="success" icon="🚚">GRATIS</Badge>
+          </div>
+          <div class="flex justify-between text-2xl font-bold text-white pt-3 border-t border-white/20">
+            <span>Total</span>
+            <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">S/ {{ orderData.total.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 bg-green-500/20 border border-green-400/30 rounded-xl">
+          <p class="text-green-300 text-center">
+            📧 Se ha enviado la confirmación a tu email con los detalles del envío.
+          </p>
+        </div>
+      </Card>
+
+      <div class="mt-8 grid grid-cols-2 gap-4 animate-fade-in-up" style="animation-delay: 0.4s;">
+        <RouterLink to="/orders">
+          <Button variant="outline" full-width class="py-3">
+            📋 Ver Mis Pedidos
+          </Button>
+        </RouterLink>
+        <RouterLink to="/products">
+          <Button full-width class="py-3 bg-gradient-to-r from-purple-600 to-pink-600">
+            🛍️ Seguir Comprando
+          </Button>
         </RouterLink>
       </div>
 
-      <template v-else>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8 mb-8 text-center">
-          <div class="text-8xl mb-6 animate-bounce">Exito</div>
-          <h1 class="text-4xl font-bold text-green-400 mb-4">Orden Confirmada!</h1>
-          <p class="text-xl text-gray-300 mb-6">Gracias por tu compra. Hemos recibido tu orden y esta siendo procesada.</p>
-          
-          <div class="bg-green-500/10 border border-green-400/30 rounded-xl p-6 mb-6">
-            <div class="text-lg font-semibold text-green-400 mb-2">
-              Numero de Orden: <span class="font-mono text-white">{{ orderData.orderNumber }}</span>
-            </div>
-            <div class="text-green-300">
-              Total: <span class="text-xl font-bold text-white">S/ {{ Number(orderData.total).toFixed(2) }}</span>
-            </div>
-          </div>
-
-          <div v-if="orderData.orderId">
-          <div class="text-sm text-gray-400">
-            Tu pedido ha sido procesado correctamente. Puedes verificar el estado en la seccion de pedidos.
-          </div>
-        </div>
-        <div v-else class="text-sm text-gray-400">
-            Recibiras un email de confirmacion pronto.
-        </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8 mb-8">
-          <h2 class="text-2xl font-bold text-white mb-6">Detalles de la Orden</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
-              <h3 class="text-lg font-semibold text-white mb-4">Informacion del Pedido</h3>
-              <div class="space-y-2 text-gray-300">
-                <p><strong>Orden:</strong> {{ orderData.orderNumber }}</p>
-                <p><strong>Fecha:</strong> {{ new Date(orderData.createdAt).toLocaleDateString() }}</p>
-                <p><strong>Items:</strong> {{ orderData.items?.length || 0 }} productos</p>
-              </div>
-            </div>
-
-            <div class="bg-white/5 rounded-xl p-6 border border-white/10">
-              <h3 class="text-lg font-semibold text-white mb-4">Tiempo de Entrega</h3>
-              <div class="space-y-2 text-gray-300">
-                <p><strong>Estimado:</strong> 3-5 dias habiles</p>
-                <p><strong>Envio:</strong> Incluido</p>
-                <p><strong>Seguimiento:</strong> Via email</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg p-8 mb-8">
-          <h2 class="text-2xl font-bold text-white mb-6">Proximos Pasos</h2>
-          
-          <div class="space-y-4">
-            <div class="flex items-start space-x-4">
-              <div class="bg-purple-500/30 rounded-full p-2 mt-1 border border-purple-400/50">
-                <span class="text-purple-300 text-xl">1</span>
-              </div>
-              <div>
-                <h3 class="font-semibold text-white">Confirmacion por Email</h3>
-                <p class="text-gray-300">Recibiras un email con los detalles de tu orden en los proximos minutos.</p>
-              </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-              <div class="bg-purple-500/30 rounded-full p-2 mt-1 border border-purple-400/50">
-                <span class="text-purple-300 text-xl">2</span>
-              </div>
-              <div>
-                <h3 class="font-semibold text-white">Procesamiento</h3>
-                <p class="text-gray-300">Preparamos tu pedido y lo empacamos con cuidado (1-2 dias habiles).</p>
-              </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-              <div class="bg-purple-500/30 rounded-full p-2 mt-1 border border-purple-400/50">
-                <span class="text-purple-300 text-xl">3</span>
-              </div>
-              <div>
-                <h3 class="font-semibold text-white">Envío</h3>
-                <p class="text-gray-300">Tu pedido sale de nuestro almacén y te enviamos el código de seguimiento.</p>
-              </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-              <div class="bg-purple-500/30 rounded-full p-2 mt-1 border border-purple-400/50">
-                <span class="text-purple-300 text-xl">4</span>
-              </div>
-              <div>
-                <h3 class="font-semibold text-white">Entrega</h3>
-                <p class="text-gray-300">Recibes tu pedido en la direccion indicada (3-5 dias habiles).</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Soporte y Contacto</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="text-center p-4 bg-gray-50 rounded-xl">
-              <div class="text-3xl mb-2">Email</div>
-              <h3 class="font-semibold text-gray-800 mb-2">Email</h3>
-              <p class="text-sm text-gray-600">soporte@tienda.com</p>
-            </div>
-
-            <div class="text-center p-4 bg-gray-50 rounded-xl">
-              <div class="text-3xl mb-2">Tel</div>
-              <h3 class="font-semibold text-gray-800 mb-2">Telefono</h3>
-              <p class="text-sm text-gray-600">+51 999 888 777</p>
-            </div>
-
-            <div class="text-center p-4 bg-gray-50 rounded-xl">
-              <div class="text-3xl mb-2">Chat</div>
-              <h3 class="font-semibold text-gray-800 mb-2">Chat</h3>
-              <p class="text-sm text-gray-600">Lun-Vie 9am-6pm</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <RouterLink to="/products" class="bg-purple-600 text-white px-8 py-4 rounded-xl hover:bg-purple-700 transition-colors font-semibold text-center">
-            Seguir Comprando
-          </RouterLink>
-          
-          <RouterLink to="/orders" class="bg-gray-600 text-white px-8 py-4 rounded-xl hover:bg-gray-700 transition-colors font-semibold text-center">
-            Ver Mis Ordenes
-          </RouterLink>
-          
-          <RouterLink to="/" class="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-colors font-semibold text-center">
-            Ir al Inicio
-          </RouterLink>
-        </div>
-      </template>
+      <div class="mt-8 text-center animate-fade-in-up" style="animation-delay: 0.6s;">
+        <p class="text-gray-400">
+          ¿Necesitas ayuda? 
+          <RouterLink to="/contact" class="text-purple-400 hover:text-purple-300 font-medium">Contáctanos</RouterLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { Button, Card, Badge, RouterLink } from '../components/ui'
 
+const router = useRouter()
 const orderData = ref<any>(null)
 
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return 'N/A'
+  try {
+    return new Date(dateStr).toLocaleDateString('es-ES', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return dateStr
+  }
+}
+
 onMounted(() => {
-  const savedOrder = localStorage.getItem('lastOrder')
-  if (savedOrder) {
+  const saved = localStorage.getItem('lastOrder')
+  if (saved) {
     try {
-      orderData.value = JSON.parse(savedOrder)
-      localStorage.removeItem('lastOrder')
-    } catch (e) {
-      console.error('Error parsing order data:', e)
+      orderData.value = JSON.parse(saved)
+    } catch {
+      orderData.value = null
     }
+  }
+  
+  if (!orderData.value) {
+    router.push('/products')
   }
 })
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scaleIn 0.4s ease-out forwards; }
+</style>
