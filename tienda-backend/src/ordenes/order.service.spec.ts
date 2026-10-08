@@ -15,7 +15,6 @@ import { Product } from '../products/entities/product.entity';
 import { EmailService } from '../common/email.service';
 import { PdfService } from '../common/pdf.service';
 import { AnalyticsService } from '../analytics/services/analytics.service';
-import { LoyaltyService } from '../loyalty/services/loyalty.service';
 
 describe('OrderService', () => {
   let service: OrderService;
@@ -30,7 +29,6 @@ describe('OrderService', () => {
   let emailService: jest.Mocked<EmailService>;
   let pdfService: jest.Mocked<PdfService>;
   let analyticsService: jest.Mocked<AnalyticsService>;
-  let loyaltyService: jest.Mocked<LoyaltyService>;
 
   const mockUser: Partial<User> = {
     id: 1,
@@ -118,10 +116,6 @@ describe('OrderService', () => {
       trackEvent: jest.fn(),
     };
 
-    const mockLoyaltyService = {
-      processOrderPoints: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrderService,
@@ -169,10 +163,6 @@ describe('OrderService', () => {
           provide: AnalyticsService,
           useValue: mockAnalyticsService,
         },
-        {
-          provide: LoyaltyService,
-          useValue: mockLoyaltyService,
-        },
       ],
     }).compile();
 
@@ -188,7 +178,6 @@ describe('OrderService', () => {
     emailService = module.get(EmailService);
     pdfService = module.get(PdfService);
     analyticsService = module.get(AnalyticsService);
-    loyaltyService = module.get(LoyaltyService);
   });
 
   it('should be defined', () => {
@@ -205,7 +194,6 @@ describe('OrderService', () => {
       statusHistoryRepo.create.mockReturnValue({} as OrderStatusHistory);
       statusHistoryRepo.save.mockResolvedValue({} as OrderStatusHistory);
       analyticsService.trackEvent.mockResolvedValue({} as any);
-      loyaltyService.processOrderPoints.mockResolvedValue({} as any);
       emailService.sendOrderConfirmation.mockResolvedValue(undefined);
       cartRepo.delete.mockResolvedValue({ affected: 1 } as any);
       orderRepo.findOne.mockResolvedValue(mockOrder as Order);

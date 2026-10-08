@@ -210,36 +210,6 @@ export class AnalyticsService {
     };
   }
 
-  async getCouponAnalytics(startDate: Date, endDate: Date): Promise<{
-    totalCouponUsage: number;
-    topCoupons: any[];
-    totalDiscount: number;
-    conversionRate: number;
-  }> {
-    const dateRange = Between(startDate, endDate);
-
-    const totalCouponUsage = await this.analyticsRepository.count({
-      where: { eventType: EventType.COUPON_APPLIED, createdAt: dateRange }
-    });
-
-    // Simplified - return mock data for now to avoid JSON query issues
-    const topCoupons = [
-      { couponCode: 'WELCOME10', usage: 15, totalDiscount: 150.00 },
-      { couponCode: 'SAVE20', usage: 8, totalDiscount: 160.00 },
-      { couponCode: 'FIRST5', usage: 5, totalDiscount: 25.00 },
-    ];
-
-    const totalDiscount = 335.00;
-    const conversionRate = totalCouponUsage > 0 ? 75.5 : 0;
-
-    return {
-      totalCouponUsage,
-      topCoupons,
-      totalDiscount,
-      conversionRate
-    };
-  }
-
   async getCustomerSegmentation(startDate: Date, endDate: Date): Promise<{
     newCustomers: number;
     returningCustomers: number;

@@ -4,7 +4,6 @@ import { ProductsService } from '../src/products/products.service';
 import { UsersService } from '../src/users/users.service';
 import { OrderService } from '../src/ordenes/order.service';
 import { ReviewsService } from '../src/reviews/reviews.service';
-import { WishlistService } from '../src/products/services/wishlist.service';
 import * as bcrypt from 'bcrypt';
 
 async function seed() {
@@ -13,7 +12,6 @@ async function seed() {
   const usersService = app.get(UsersService);
   const ordersService = app.get(OrderService);
   const reviewsService = app.get(ReviewsService);
-  const wishlistService = app.get(WishlistService);
 
   console.log('🌱 Starting database seeding...');
 
@@ -290,27 +288,6 @@ async function seed() {
 
     await dataSource.destroy();
     console.log('✅ Reviews created for all products');
-
-    // Crear listas de deseos de ejemplo
-    console.log('💖 Creating wishlists...');
-    const mockWishlists = [
-      {
-        userId: testUser?.id || 2, // user@example.com
-        productId: 3, // Jeans Clásicos
-        createdAt: new Date(),
-      },
-      {
-        userId: adminUser?.id || 1, // admin@example.com
-        productId: 4, // Blusa Floral
-        createdAt: new Date(),
-      },
-    ];
-
-    for (const wishlistData of mockWishlists) {
-      await wishlistService.addToWishlist(wishlistData.userId, wishlistData);
-      console.log(`✅ Added product ID: ${wishlistData.productId} to wishlist for user ID: ${wishlistData.userId}`);
-    }
-
     console.log('🎉 Database seeding completed successfully!');
 
   } catch (error) {

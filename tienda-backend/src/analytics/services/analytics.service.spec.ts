@@ -170,18 +170,4 @@ describe('AnalyticsService', () => {
       expect(result.topSearchTerms).toBeDefined();
     });
   });
-
-  describe('getCouponAnalytics', () => {
-    it('should return coupon analytics', async () => {
-      analyticsRepo.count.mockResolvedValue(50);
-
-      const startDate = new Date('2025-01-01');
-      const endDate = new Date('2025-01-31');
-
-      const result = await service.getCouponAnalytics(startDate, endDate);
-
-      expect(result.totalCouponUsage).toBe(50);
-      expect(result.topCoupons).toBeDefined();
-    });
-  });
 });

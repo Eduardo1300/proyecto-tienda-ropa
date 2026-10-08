@@ -11,7 +11,6 @@ import { User } from '../../users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status-history.entity';
 import { OrderStatus } from '../enums/order-status.enum';
-import { Coupon } from '../../coupons/entities/coupon.entity';
 
 @Entity()
 export class Order {
@@ -87,9 +86,6 @@ export class Order {
 
   @Column({ type: 'text', nullable: true })
   refundReason: string;
-
-  @ManyToOne(() => Coupon, (coupon) => coupon.orders, { nullable: true })
-  coupon: Coupon;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   discountAmount: number;

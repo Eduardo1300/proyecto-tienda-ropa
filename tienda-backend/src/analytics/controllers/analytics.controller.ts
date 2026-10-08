@@ -68,7 +68,6 @@ export class AnalyticsController {
         topProducts,
         userBehaviorFunnel,
         searchAnalytics,
-        couponAnalytics,
         customerSegmentation
       ] = await Promise.all([
         this.analyticsService.getDashboardMetrics(startDate, endDate),
@@ -76,7 +75,6 @@ export class AnalyticsController {
         this.analyticsService.getTopProductsByRevenue(startDate, endDate),
         this.analyticsService.getUserBehaviorFunnel(startDate, endDate),
         this.analyticsService.getSearchAnalytics(startDate, endDate),
-        this.analyticsService.getCouponAnalytics(startDate, endDate),
         this.analyticsService.getCustomerSegmentation(startDate, endDate)
       ]);
 
@@ -89,7 +87,6 @@ export class AnalyticsController {
           topProducts: topProducts,
           userBehavior: userBehaviorFunnel,
           search: searchAnalytics,
-          coupons: couponAnalytics,
           customers: customerSegmentation
         },
       };
@@ -210,7 +207,6 @@ export class AnalyticsController {
         topProducts,
         userBehaviorFunnel,
         searchAnalytics,
-        couponAnalytics,
         customerSegmentation
       ] = await Promise.all([
         this.analyticsService.getDashboardMetrics(startDate, endDate),
@@ -218,7 +214,6 @@ export class AnalyticsController {
         this.analyticsService.getTopProductsByRevenue(startDate, endDate),
         this.analyticsService.getUserBehaviorFunnel(startDate, endDate),
         this.analyticsService.getSearchAnalytics(startDate, endDate),
-        this.analyticsService.getCouponAnalytics(startDate, endDate),
         this.analyticsService.getCustomerSegmentation(startDate, endDate)
       ]);
 
@@ -231,7 +226,6 @@ export class AnalyticsController {
           topProducts: topProducts,
           userBehavior: userBehaviorFunnel,
           search: searchAnalytics,
-          coupons: couponAnalytics,
           customers: customerSegmentation
         },
       };
@@ -391,33 +385,6 @@ export class AnalyticsController {
       return {
         success: false,
         message: 'Error al obtener analytics de búsquedas',
-        error: error.message,
-      };
-    }
-  }
-
-  @Get('coupons')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  async getCouponAnalytics(@Query() dateRange: DateRangeDto) {
-    try {
-      const startDate = dateRange.startDate 
-        ? new Date(dateRange.startDate) 
-        : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      const endDate = dateRange.endDate 
-        ? new Date(dateRange.endDate) 
-        : new Date();
-
-      const couponMetrics = await this.analyticsService.getCouponAnalytics(startDate, endDate);
-
-      return {
-        success: true,
-        data: couponMetrics,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Error al obtener analytics de cupones',
         error: error.message,
       };
     }
