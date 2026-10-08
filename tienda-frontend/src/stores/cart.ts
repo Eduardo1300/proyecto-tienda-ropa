@@ -7,20 +7,16 @@ export const useCartStore = defineStore('cart', () => {
   const items = ref<CartItem[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  const discount = ref(0)
-  const discountPercent = ref(0)
 
   const itemCount = computed(() => items.value.reduce((sum, item) => sum + item.quantity, 0))
   
   const subtotal = computed(() => items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0))
   
-  const discountAmount = computed(() => subtotal.value * (discountPercent.value / 100))
+  const tax = computed(() => subtotal.value * 0.18)
   
-  const tax = computed(() => (subtotal.value - discountAmount.value) * 0.18)
+  const shipping = computed(() => subtotal.value > 100 ? 0 : 10)
   
-  const shipping = computed(() => (subtotal.value - discountAmount.value) > 100 ? 0 : 10)
-  
-  const total = computed(() => subtotal.value - discountAmount.value + tax.value + shipping.value)
+  const total = computed(() => subtotal.value + tax.value + shipping.value)
 
   const fetchCart = async () => {
     isLoading.value = true
@@ -105,15 +101,9 @@ export const useCartStore = defineStore('cart', () => {
     try {
       await cartAPI.clear()
       items.value = []
-      discount.value = 0
-      discountPercent.value = 0
     } catch (err) {
       console.error('Error clearing cart:', err)
     }
-  }
-
-  const applyDiscount = (percent: number) => {
-    discountPercent.value = percent
   }
 
   return {
@@ -122,9 +112,6 @@ export const useCartStore = defineStore('cart', () => {
     error,
     itemCount,
     subtotal,
-    discount,
-    discountPercent,
-    discountAmount,
     tax,
     shipping,
     total,
@@ -134,7 +121,6 @@ export const useCartStore = defineStore('cart', () => {
     incrementQuantity,
     decrementQuantity,
     removeItem,
-    clearCart,
-    applyDiscount
+    clearCart
   }
 })

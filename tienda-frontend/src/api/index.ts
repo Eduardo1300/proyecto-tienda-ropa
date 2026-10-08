@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Product, CartItem, Order, LoginCredentials, RegisterData, ApiResponse, User, Review, Coupon } from '../types'
+import type { Product, CartItem, Order, LoginCredentials, RegisterData, ApiResponse, User, Review } from '../types'
 
 const getApiBaseUrl = (): string => {
   const envUrl = import.meta.env.VITE_API_URL
@@ -114,17 +114,6 @@ export const cartAPI = {
   update: (id: number, quantity: number) => api.patch<CartItem>(`/cart/${id}`, { quantity }),
   remove: (id: number) => api.delete(`/cart/${id}`),
   clear: () => api.delete('/cart'),
-}
-
-export const couponsAPI = {
-  getAll: () => api.get<Coupon[]>('/coupons'),
-  validate: (code: string) => api.post<ApiResponse<{ coupon: Coupon; discount: number }>>('/coupons/validate', { code }),
-}
-
-export const inventoryAPI = {
-  getAlerts: () => api.get<any[]>('/inventory/alerts'),
-  getStockMovements: (params?: any) => api.get<any[]>('/inventory/movements', { params }),
-  getSuppliers: () => api.get<any[]>('/inventory/suppliers'),
 }
 
 export const usersAPI = {

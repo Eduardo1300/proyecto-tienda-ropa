@@ -1,0 +1,203 @@
+// Mapeo de productos con imágenes de Unsplash apropiadas
+export const productImageMap: Record<string, string[]> = {
+  // Ropa masculina
+  camiseta: [
+    'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1583743814966-8936f37f4678?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=400&fit=crop&crop=center',
+  ],
+  'camiseta básica': [
+    'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1583743814966-8936f37f4678?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=400&fit=crop&crop=center',
+  ],
+  jeans: [
+    'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1506629905607-baa04bbfdcbb?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1475178626620-a4d074967452?w=400&h=400&fit=crop&crop=center',
+  ],
+  'jeans clásicos': [
+    'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1506629905607-baa04bbfdcbb?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1475178626620-a4d074967452?w=400&h=400&fit=crop&crop=center',
+  ],
+  chaqueta: [
+    'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1544966503-7cc5ac882d5c?w=400&h=400&fit=crop&crop=center',
+  ],
+  'chaqueta denim': [
+    'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1544966503-7cc5ac882d5c?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop&crop=center',
+  ],
+  pantalon: [
+    'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1506629905607-baa04bbfdcbb?w=400&h=400&fit=crop&crop=center',
+  ],
+
+  // Ropa femenina
+  vestido: [
+    'https://images.unsplash.com/photo-1566479179817-c0cede0c15b6?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=400&fit=crop&crop=center',
+  ],
+  blusa: [
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+  ],
+  'blusa floral': [
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+  ],
+  falda: [
+    'https://images.unsplash.com/photo-1583496661160-fb5886a13d44?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564557287817-3785e38ec2ce?w=400&h=400&fit=crop&crop=center',
+  ],
+  'falda midi': [
+    'https://images.unsplash.com/photo-1583496661160-fb5886a13d44?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564557287817-3785e38ec2ce?w=400&h=400&fit=crop&crop=center',
+  ],
+
+  // Calzado
+  zapatillas: [
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop&crop=center',
+  ],
+  'zapatillas deportivas': [
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=400&fit=crop&crop=center',
+  ],
+  zapatos: [
+    'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop&crop=center',
+  ],
+  botas: [
+    'https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1541963463532-d68292c34d19?w=400&h=400&fit=crop&crop=center',
+  ],
+
+  // Accesorios
+  bolso: [
+    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+  ],
+  'bolso de cuero': [
+    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+  ],
+  mochila: [
+    'https://images.unsplash.com/photo-1581605405669-fcdf81983e1a?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+  ],
+  gafas: [
+    'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=400&h=400&fit=crop&crop=center',
+  ],
+  reloj: [
+    'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=400&h=400&fit=crop&crop=center',
+  ],
+  cinturon: [
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop&crop=center',
+  ],
+};
+
+// Mapeo por categoría como fallback
+export const categoryImageMap: Record<string, string[]> = {
+  hombre: [
+    'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop&crop=center',
+  ],
+  mujer: [
+    'https://images.unsplash.com/photo-1566479179817-c0cede0c15b6?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1583496661160-fb5886a13d44?w=400&h=400&fit=crop&crop=center',
+  ],
+  zapatos: [
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&h=400&fit=crop&crop=center',
+  ],
+  accesorios: [
+    'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564422170194-896b89110ef8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=400&fit=crop&crop=center',
+  ],
+};
+
+// Función para obtener una imagen apropiada basada en el nombre y categoría del producto
+export const getProductImage = (productName: string, category: string, existingImage?: string): string => {
+  const normalizedName = productName.toLowerCase().trim();
+
+  // SI hay imagen existente de la base de datos, usarla directamente
+  if (existingImage && existingImage.trim() !== '') {
+    return existingImage;
+  }
+
+  // Buscar por palabras clave en el nombre del producto solo si no hay imagen
+  for (const [keyword, images] of Object.entries(productImageMap)) {
+    if (normalizedName.includes(keyword)) {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
+    }
+  }
+
+  // Si no se encuentra por nombre, usar la categoría
+  const normalizedCategory = category.toLowerCase().trim();
+  if (categoryImageMap[normalizedCategory]) {
+    const images = categoryImageMap[normalizedCategory];
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  }
+
+  // Imagen por defecto si no se encuentra nada
+  return 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop&crop=center';
+};
+
+// Función para obtener múltiples imágenes para la galería de un producto
+export const getProductImages = (productName: string, category: string, count: number = 4): string[] => {
+  const normalizedName = productName.toLowerCase().trim();
+  const images: string[] = [];
+
+  // Buscar por palabras clave en el nombre del producto
+  for (const [keyword, keywordImages] of Object.entries(productImageMap)) {
+    if (normalizedName.includes(keyword)) {
+      images.push(...keywordImages);
+      break;
+    }
+  }
+
+  // Si no hay suficientes imágenes, agregar de la categoría
+  if (images.length < count) {
+    const normalizedCategory = category.toLowerCase().trim();
+    if (categoryImageMap[normalizedCategory]) {
+      images.push(...categoryImageMap[normalizedCategory]);
+    }
+  }
+
+  // Si aún no hay suficientes, agregar imágenes genéricas
+  if (images.length < count) {
+    images.push(
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=400&fit=crop&crop=center'
+    );
+  }
+
+  // Remover duplicados y seleccionar solo la cantidad requerida
+  const uniqueImages = Array.from(new Set(images));
+  return uniqueImages.slice(0, count);
+};

@@ -78,34 +78,9 @@ const routes = [
     component: () => import('../pages/Dashboard.vue')
   },
   {
-    path: '/analytics',
-    name: 'Analytics',
-    component: () => import('../pages/Analytics.vue')
-  },
-  {
-    path: '/inventory',
-    name: 'Inventory',
-    component: () => import('../pages/Inventory.vue')
-  },
-  {
     path: '/return-request/:orderId',
     name: 'ReturnRequest',
     component: () => import('../pages/ReturnRequest.vue')
-  },
-  {
-    path: '/suppliers',
-    name: 'SupplierManagement',
-    component: () => import('../pages/SupplierManagement.vue')
-  },
-  {
-    path: '/product-images',
-    name: 'ProductImageManager',
-    component: () => import('../pages/ProductImageManager.vue')
-  },
-  {
-    path: '/supplier',
-    name: 'Supplier',
-    component: () => import('../pages/SupplierManagement.vue')
   }
 ]
 
