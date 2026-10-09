@@ -37,18 +37,18 @@ async function seed() {
     }
 
     // Crear usuario de prueba
-    const existingUser = await usersService.findByEmail('user@example.com');
+    const existingUser = await usersService.findByEmail('prueba@gmail.com');
     if (!existingUser) {
       const hashedPassword = await bcrypt.hash('password123', 10);
       await usersService.create({
         username: 'testuser',
-        email: 'user@example.com',
+        email: 'prueba@gmail.com',
         password: hashedPassword,
         firstName: 'Test',
         lastName: 'User',
         role: 'user'
       });
-      console.log('✅ Created test user: user@example.com');
+      console.log('✅ Created test user: prueba@gmail.com');
     } else {
       console.log('👤 Test user already exists');
     }
