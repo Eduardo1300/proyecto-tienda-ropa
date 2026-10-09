@@ -450,12 +450,6 @@ onMounted(() => {
   fetchProducts()
 })
 
-// Update heroProduct when products are loaded
-watch(products, (newProducts) => {
-  if (newProducts.length > 0 && heroProduct.value.id === 0) {
-    heroProduct.value = newProducts[0]
-  }
-})
 </script>
 
 <style scoped>
