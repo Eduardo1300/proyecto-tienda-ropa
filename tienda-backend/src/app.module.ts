@@ -46,7 +46,7 @@ import { AnalyticsEvent } from './analytics/entities/analytics-event.entity';
             type: 'postgres',
             url: databaseUrl,
             autoLoadEntities: true,
-            synchronize: false,
+            synchronize: true,
             ssl: {
               rejectUnauthorized: false, // Required for Render connections
             },
