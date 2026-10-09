@@ -21,3 +21,25 @@ span[class*="text-"],
 div[class*="text-"] {
   font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', system-ui, sans-serif;
 }
+
+/* Dark theme select dropdown options */
+select option {
+  @apply bg-gray-800 text-white;
+}
+
+select:focus {
+  @apply ring-2 ring-purple-500 border-transparent;
+}
+
+/* Ensure all form elements have consistent dark theme styling */
+input, select, textarea {
+  @apply bg-white/10 border-white/20 text-white;
+}
+
+input::placeholder, textarea::placeholder {
+  @apply text-gray-400;
+}
+
+input:focus, select:focus, textarea:focus {
+  @apply bg-white/15 border-purple-400/50;
+}

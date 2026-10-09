@@ -19,13 +19,10 @@ async function seed() {
   try {
     console.log('🌱 Starting database seed...');
 
-    // Crear usuarios de prueba
-    const hashedPassword = await bcrypt.hash('password123', 10);
-
     const adminUser = await usersService.create({
       username: 'admin',
       email: 'admin@example.com',
-      password: hashedPassword,
+      password: 'password123',
       firstName: 'Admin',
       lastName: 'User',
     });
@@ -35,8 +32,8 @@ async function seed() {
 
     const customerUser = await usersService.create({
       username: 'customer',
-      email: 'customer@example.com',
-      password: hashedPassword,
+      email: 'user@example.com',
+      password: 'password123',
       firstName: 'Customer',
       lastName: 'User',
     });

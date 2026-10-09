@@ -14,7 +14,7 @@
             @click="$emit('quick-view', product)"
             size="sm"
             icon="👁️"
-            class="bg-white text-gray-900 hover:bg-gray-100 font-semibold"
+            class="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 font-semibold"
           >
             Ver
           </Button>

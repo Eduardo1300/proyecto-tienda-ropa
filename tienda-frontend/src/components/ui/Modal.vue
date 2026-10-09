@@ -1,10 +1,10 @@
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm" @click.self="onClose">
-      <div :class="['bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full transform transition-all duration-300 scale-100', sizeClasses[size]]">
-        <div v-if="title || showCloseButton" class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 v-if="title" class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ title }}</h2>
-          <button v-if="showCloseButton" @click="onClose" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+    <div v-if="isOpen" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="onClose">
+      <div :class="['bg-gray-900 dark:bg-gray-900 rounded-2xl shadow-2xl w-full transform transition-all duration-300 scale-100 border border-gray-700/50', sizeClasses[size]]">
+        <div v-if="title || showCloseButton" class="flex items-center justify-between p-6 border-b border-gray-700/50">
+          <h2 v-if="title" class="text-2xl font-bold text-white">{{ title }}</h2>
+          <button v-if="showCloseButton" @click="onClose" class="text-gray-400 hover:text-gray-300 dark:hover:text-gray-300 transition-colors p-2 hover:bg-gray-800 rounded-lg">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>

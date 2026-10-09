@@ -1,14 +1,12 @@
 <template>
   <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="bg-gray-900 dark:bg-gray-900 rounded-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in border border-gray-700/50">
+      <div class="p-6 border-b border-gray-700/50">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Comparar Productos ({{ items.length }}/3)
-          </h2>
+          <h2 class="text-2xl font-bold text-white">Comparar Productos ({{ items.length }}/3)</h2>
           <div class="flex items-center gap-4">
-            <Button @click="$emit('clear')" variant="outline" size="sm">Limpiar todo</Button>
-            <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">✕</button>
+            <Button @click="$emit('clear')" variant="outline" size="sm" class="bg-gray-800/50 border-gray-600/50 hover:bg-gray-700/50">Limpiar todo</Button>
+            <button @click="$emit('close')" class="text-gray-400 hover:text-gray-300 dark:hover:text-gray-300 text-2xl">✕</button>
           </div>
         </div>
 
@@ -33,8 +31,8 @@
       <div v-else class="overflow-x-auto p-6">
         <table class="w-full">
           <thead>
-            <tr class="border-b border-gray-200 dark:border-gray-700">
-              <th class="text-left p-4 font-semibold text-gray-700 dark:text-gray-300">Característica</th>
+            <tr class="border-b border-gray-700/50">
+              <th class="text-left p-4 font-semibold text-gray-300">Característica</th>
               <th v-for="product in items" :key="product.id" class="text-center p-4 min-w-[200px]">
                 <div class="flex flex-col items-center">
                   <img
@@ -43,36 +41,36 @@
                     class="w-24 h-24 object-cover rounded-lg mx-auto mb-2"
                     loading="lazy"
                   />
-                  <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-100">{{ product.name }}</h4>
+                  <h4 class="font-semibold text-sm text-white">{{ product.name }}</h4>
                 </div>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr class="border-b border-gray-100 dark:border-gray-800">
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Precio</td>
+            <tr class="border-b border-gray-700/50">
+              <td class="p-4 font-medium text-gray-300">Precio</td>
               <td v-for="product in items" :key="product.id" class="text-center p-4">
-                <span class="text-xl font-bold text-purple-600 dark:text-purple-400">S/ {{ Number(product.price).toFixed(2) }}</span>
+                <span class="text-xl font-bold text-purple-400">S/ {{ Number(product.price).toFixed(2) }}</span>
               </td>
             </tr>
-            <tr class="border-b border-gray-100 dark:border-gray-800">
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Marca</td>
-              <td v-for="product in items" :key="product.id" class="text-center p-4 text-gray-600 dark:text-gray-400">{{ product.brand || 'N/A' }}</td>
+            <tr class="border-b border-gray-700/50">
+              <td class="p-4 font-medium text-gray-300">Marca</td>
+              <td v-for="product in items" :key="product.id" class="text-center p-4 text-gray-400">{{ product.brand || 'N/A' }}</td>
             </tr>
-            <tr class="border-b border-gray-100 dark:border-gray-800">
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Categoría</td>
-              <td v-for="product in items" :key="product.id" class="text-center p-4 text-gray-600 dark:text-gray-400 capitalize">{{ product.category }}</td>
+            <tr class="border-b border-gray-700/50">
+              <td class="p-4 font-medium text-gray-300">Categoría</td>
+              <td v-for="product in items" :key="product.id" class="text-center p-4 text-gray-400 capitalize">{{ product.category }}</td>
             </tr>
-            <tr class="border-b border-gray-100 dark:border-gray-800">
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Stock</td>
+            <tr class="border-b border-gray-700/50">
+              <td class="p-4 font-medium text-gray-300">Stock</td>
               <td v-for="product in items" :key="product.id" class="text-center p-4">
-                <span :class="product.stock > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                <span :class="product.stock > 0 ? 'text-green-400' : 'text-red-400'">
                   {{ product.stock > 0 ? `${product.stock} disponibles` : 'Sin stock' }}
                 </span>
               </td>
             </tr>
-            <tr class="border-b border-gray-100 dark:border-gray-800">
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Calificación</td>
+            <tr class="border-b border-gray-700/50">
+              <td class="p-4 font-medium text-gray-300">Calificación</td>
               <td v-for="product in items" :key="product.id" class="text-center p-4">
                 <div class="flex justify-center items-center gap-1">
                   <span class="text-yellow-400">★</span>
@@ -82,10 +80,10 @@
               </td>
             </tr>
             <tr>
-              <td class="p-4 font-medium text-gray-700 dark:text-gray-300">Acciones</td>
+              <td class="p-4 font-medium text-gray-300">Acciones</td>
               <td v-for="product in items" :key="product.id" class="text-center p-4">
                 <div class="flex flex-col gap-2">
-                  <Button @click="$emit('navigate', product.id)" size="sm" class="w-full">Ver Detalles</Button>
+                  <Button @click="$emit('navigate', product.id)" size="sm" class="w-full bg-purple-600 hover:bg-purple-700">Ver Detalles</Button>
                   <Button @click="$emit('remove', product.id)" variant="danger" size="sm" class="w-full">Quitar</Button>
                 </div>
               </td>
