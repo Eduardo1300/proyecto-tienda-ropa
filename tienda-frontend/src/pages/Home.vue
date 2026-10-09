@@ -58,10 +58,11 @@
           <div class="relative h-96 md:h-full animate-scale-in">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-600/40 via-pink-600/40 to-transparent rounded-3xl blur-3xl animate-pulse"></div>
             <div class="relative rounded-3xl overflow-hidden border border-white/20 backdrop-blur-xl h-96 md:h-96 lg:h-96 flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5 group">
-              <div class="text-center space-y-4">
-                <div class="text-9xl animate-bounce" style="animation-duration: 2s;">{{ String.fromCodePoint(0x1F457) }}</div>
-                <p class="text-white/60 font-semibold">Moda Premium</p>
-              </div>
+              <img
+                :src="getProductImageUrl(heroProduct)"
+                :alt="heroProduct.name"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
             </div>
           </div>
         </div>
@@ -353,6 +354,24 @@ const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
 
+const heroProduct = ref<Product>({
+  id: 0,
+  name: 'Vestido Elegante Negro',
+  price: 89.99,
+  description: 'Vestido perfecto para ocasiones especiales y eventos formales',
+  category: 'mujer',
+  stock: 25,
+  imageUrl: '',
+  isActive: true,
+  isFeatured: true,
+  isNew: true,
+  isBestseller: false,
+  isOnSale: false,
+  averageRating: 4.8,
+  reviewCount: 24,
+  createdAt: new Date().toISOString()
+})
+
 const stats = [
   { number: '2000+', label: 'Productos' },
   { number: '5000+', label: 'Clientes' },
@@ -429,6 +448,13 @@ const fetchProducts = async () => {
 
 onMounted(() => {
   fetchProducts()
+})
+
+// Update heroProduct when products are loaded
+watch(products, (newProducts) => {
+  if (newProducts.length > 0 && heroProduct.value.id === 0) {
+    heroProduct.value = newProducts[0]
+  }
 })
 </script>
 
