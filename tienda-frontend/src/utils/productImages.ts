@@ -62,6 +62,16 @@ export const productImageMap: Record<string, string[]> = {
     'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
     'https://images.unsplash.com/photo-1564557287817-3785e38ec2ce?w=400&h=400&fit=crop&crop=center',
   ],
+  'falda mini': [
+    'https://images.unsplash.com/photo-1583496661160-fb5886a13d44?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1564557287817-3785e38ec2ce?w=400&h=400&fit=crop&crop=center',
+  ],
+  'vestido elegante': [
+    'https://images.unsplash.com/photo-1566479179817-c0cede0c15b6?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop&crop=center',
+    'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=400&fit=crop&crop=center',
+  ],
 
   // Calzado
   zapatillas: [
@@ -141,8 +151,8 @@ export const categoryImageMap: Record<string, string[]> = {
 export const getProductImage = (productName: string, category: string, existingImage?: string): string => {
   const normalizedName = productName.toLowerCase().trim();
 
-  // SI hay imagen existente de la base de datos, usarla directamente
-  if (existingImage && existingImage.trim() !== '') {
+  // SI hay imagen existente válida de la base de datos, usarla directamente
+  if (existingImage && existingImage.trim() !== '' && existingImage.startsWith('http')) {
     return existingImage;
   }
 
@@ -167,9 +177,14 @@ export const getProductImage = (productName: string, category: string, existingI
 };
 
 // Función para obtener múltiples imágenes para la galería de un producto
-export const getProductImages = (productName: string, category: string, count: number = 4): string[] => {
+export const getProductImages = (productName: string, category: string, count: number = 4, existingImage?: string): string[] => {
   const normalizedName = productName.toLowerCase().trim();
   const images: string[] = [];
+
+  // Si hay imagen existente válida, usarla como primera imagen
+  if (existingImage && existingImage.trim() !== '' && existingImage.startsWith('http')) {
+    images.push(existingImage);
+  }
 
   // Buscar por palabras clave en el nombre del producto
   for (const [keyword, keywordImages] of Object.entries(productImageMap)) {

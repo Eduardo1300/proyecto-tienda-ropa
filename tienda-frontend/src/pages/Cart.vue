@@ -73,7 +73,7 @@
                     <div class="flex items-center gap-6">
                       <div class="relative">
                         <img
-                          :src="getProductImage(item.name || 'Producto', item.category || '', item.imageUrl || '/placeholder.jpg')"
+                          :src="getProductImage(item.name || 'Producto', item.category || '', item.imageUrl)"
                           :alt="item.name || 'Producto'"
                           class="w-24 h-24 object-cover rounded-xl shadow-md hover:scale-110 transition-transform"
                         />
@@ -92,9 +92,9 @@
                           </span>
                           
                           <div class="flex items-center gap-2 bg-white/10 rounded-full p-1 border border-white/20">
-                            <button @click="updateQuantity(item.id, Math.max(1, item.quantity - 1))" class="w-7 h-7 rounded-full bg-purple-600/50 hover:bg-purple-600 text-white flex items-center justify-center transition-all font-bold">−</button>
+                            <button @click="updateQuantity(item.productId, Math.max(1, item.quantity - 1))" class="w-7 h-7 rounded-full bg-purple-600/50 hover:bg-purple-600 text-white flex items-center justify-center transition-all font-bold">−</button>
                             <span class="w-8 text-center font-semibold text-white text-sm">{{ item.quantity }}</span>
-                            <button @click="updateQuantity(item.id, item.quantity + 1)" class="w-7 h-7 rounded-full bg-pink-600/50 hover:bg-pink-600 text-white flex items-center justify-center transition-all font-bold">+</button>
+                            <button @click="updateQuantity(item.productId, item.quantity + 1)" class="w-7 h-7 rounded-full bg-pink-600/50 hover:bg-pink-600 text-white flex items-center justify-center transition-all font-bold">+</button>
                           </div>
                         </div>
                       </div>
@@ -103,7 +103,7 @@
                         <p class="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text mb-3">
                           S/ {{ ((item.price || 0) * item.quantity).toFixed(2) }}
                         </p>
-                        <Button @click="removeFromCart(item.id)" variant="danger" size="sm" icon="🗑️" class="bg-red-600/60 hover:bg-red-700">
+                        <Button @click="removeFromCart(item.productId)" variant="danger" size="sm" icon="🗑️" class="bg-red-600/60 hover:bg-red-700">
                           Quitar
                         </Button>
                       </div>

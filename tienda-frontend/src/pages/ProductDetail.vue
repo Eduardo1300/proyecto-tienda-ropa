@@ -278,7 +278,7 @@ const newReview = ref({ rating: 5, title: '', comment: '' })
 const isLoggedIn = computed(() => authStore.isAuthenticated)
 
 const productImages = computed(() => {
-  return product.value ? getProductImages(product.value.name, product.value.category, 4) : []
+  return product.value ? getProductImages(product.value.name, product.value.category, 4, product.value.imageUrl || product.value.image) : []
 })
 
 const formatDate = (dateStr: any): string => {
