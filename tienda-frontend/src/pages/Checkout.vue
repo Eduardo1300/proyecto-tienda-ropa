@@ -184,7 +184,7 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import { ordersAPI } from '../api'
-import Button from '../components/ui/Button.vue'
+import { Button, Card } from '../components/ui'
 
 const router = useRouter()
 const cartStore = useCartStore()

@@ -41,11 +41,11 @@
         <div class="border-t border-white/20 pt-6 space-y-3">
           <div class="flex justify-between text-gray-300">
             <span>Subtotal</span>
-            <span>S/ {{ (orderData.total / 1.15).toFixed(2) }}</span>
+            <span>S/ {{ (Number(orderData.total) / 1.15).toFixed(2) }}</span>
           </div>
           <div class="flex justify-between text-gray-300">
             <span>Impuestos (15%)</span>
-            <span>S/ {{ (orderData.total * 0.15 / 1.15).toFixed(2) }}</span>
+            <span>S/ {{ (Number(orderData.total) * 0.15 / 1.15).toFixed(2) }}</span>
           </div>
           <div class="flex justify-between text-gray-300">
             <span>Envío</span>
@@ -53,7 +53,7 @@
           </div>
           <div class="flex justify-between text-2xl font-bold text-white pt-3 border-t border-white/20">
             <span>Total</span>
-            <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">S/ {{ orderData.total.toFixed(2) }}</span>
+            <span class="text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">S/ {{ Number(orderData.total).toFixed(2) }}</span>
           </div>
         </div>
 
@@ -80,7 +80,7 @@
       <div class="mt-8 text-center animate-fade-in-up" style="animation-delay: 0.6s;">
         <p class="text-gray-400">
           ¿Necesitas ayuda? 
-          <RouterLink to="/contact" class="text-purple-400 hover:text-purple-300 font-medium">Contáctanos</RouterLink>
+          <RouterLink to="/profile" class="text-purple-400 hover:text-purple-300 font-medium">Ver tu perfil</RouterLink>
         </p>
       </div>
     </div>
